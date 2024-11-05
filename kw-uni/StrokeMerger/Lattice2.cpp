@@ -47,6 +47,9 @@ namespace lattice2 {
     // 末尾がここで設定した長さ以上に同じ候補は、先頭だけを残して削除
     int LastSameLen = 5;
 
+    // 解の先頭部分が指定の長さ以上で同じなら、それらだけを残す
+    int SAME_LEADER_LEN = 4;
+
     // 非優先候補に与えるペナルティ
     int NON_PREFERRED_PENALTY = 1000000;
 
@@ -1181,22 +1184,24 @@ namespace lattice2 {
                     if ((int)_bestStack.size() > challengeNum) {
                         int basePos = (int)_bestStack.size() - challengeNum - 1;
                         auto baseStr = _bestStack[basePos];
-                        bool sameFlag = true;
-                        for (int i = basePos + 1; sameFlag && i < (int)_bestStack.size(); ++i) {
-                            sameFlag = utils::startsWith(_bestStack[i], baseStr);
-                        }
-                        if (sameFlag) {
-                            _LOG_DETAIL(L"_bestStack.size={}, challengeNum={}, baseStr={}", _bestStack.size(), challengeNum, to_wstr(baseStr));
-                            std::vector<CandidateString> tempCands;
-                            auto iter = _candidates.begin();
-                            tempCands.push_back(*iter++);
-                            for (; iter != _candidates.end(); ++iter) {
-                                if (utils::startsWith(iter->string(), baseStr)) {
-                                    // 先頭部分が一致する候補だけを残す
-                                    tempCands.push_back(*iter);
-                                }
+                        if ((int)baseStr.size() >= SAME_LEADER_LEN) {
+                            bool sameFlag = true;
+                            for (int i = basePos + 1; sameFlag && i < (int)_bestStack.size(); ++i) {
+                                sameFlag = utils::startsWith(_bestStack[i], baseStr);
                             }
-                            _candidates = std::move(tempCands);
+                            if (sameFlag) {
+                                _LOG_DETAIL(L"_bestStack.size={}, challengeNum={}, baseStr={}", _bestStack.size(), challengeNum, to_wstr(baseStr));
+                                std::vector<CandidateString> tempCands;
+                                auto iter = _candidates.begin();
+                                tempCands.push_back(*iter++);
+                                for (; iter != _candidates.end(); ++iter) {
+                                    if (utils::startsWith(iter->string(), baseStr)) {
+                                        // 先頭部分が一致する候補だけを残す
+                                        tempCands.push_back(*iter);
+                                    }
+                                }
+                                _candidates = std::move(tempCands);
+                            }
                         }
                     }
                 }
