@@ -9,7 +9,7 @@ cat $* | \
 |deckey=.* statesNum=.*|handleDeckey_single|BushuAssocExState|PostRewriteOneShotState|DoProcOnCreated|StrokeTableState.HandleDeckey|State.dispatchDeckey|CurrentStrokeTable=[12]\
 |[Cc]reateStrokeTree[123]?|Eisu(State)?|: (ja|LastJapanese)Key=.*|NAMESPACE.RomanToKatakana|RootStrokeTableState|GetResultString(Chain)?|StrokeStreamList.HandleDeckeyProc\
 |handleNextOrPrevCandTrigger|outputHistResult|StrokeMergerHistoryResidentStateImpl.HandleDeckeyChain|StartStateImpl.StartHandleDeckey.*==|^==*=$|\w+ candidate preferred|skip=true\
-|LatticeImpl.clear\w*|kanjiPref=true|rollOver=\w+|Non rollover.*penalty=[0-9]+|commitOnlyWithSameLeaderString.*' | \
+|LatticeImpl.clear\w*|kanjiPref=true|rollOver=\w+|Non rollover.*penalty=[0-9]+|commitOnlyWithSameLeaderString.*|LOCAL.lattice.addCandidate|newCandStr=|.totalCost=.*isStrokeBS=.*' | \
     $BINDIR/colorcat.sh -r 'WARN[H:].*' | \
     $BINDIR/colorcat.sh -y ' WARN ' | \
     $BINDIR/colorcat.sh -r ' ERROR ' | \

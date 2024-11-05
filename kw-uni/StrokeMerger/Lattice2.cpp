@@ -77,6 +77,9 @@ namespace lattice2 {
     // cost ファイルに登録がある unigram のデフォルトのボーナスカウント
     int DEFAULT_UNIGRAM_BONUS_COUNT = 10000;
 
+    // 1文字のひらがな形態素で、前後もひらがなの場合のコスト
+    int MORPH_ISOLATED_HIRAGANA_COST = 3000;
+
     // 2文字以上の形態素で漢字を含む場合のボーナス
     //int MORPH_ANY_KANJI_BONUS = 5000;
     int MORPH_ANY_KANJI_BONUS = 3000;
@@ -988,6 +991,12 @@ namespace lattice2 {
                 _LOG_DETAIL(L"{}: orig morphCost={}", to_wstr(s), cost);
                 for (auto iter = words.begin(); iter != words.end(); ++iter) {
                     const MString& w = *iter;
+                    if (w.size() == 1 && utils::is_hiragana(w[0])) {
+                        if ((iter != words.begin() && utils::is_hiragana((iter - 1)->back())) &&
+                            ((iter + 1) != words.end() && utils::is_hiragana((iter + 1)->front()))) {
+                            cost += MORPH_ISOLATED_HIRAGANA_COST;
+                        }
+                    }
                     //if (w.size() >= 2 && std::any_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_kanji(c); })) {
                     //    cost -= MORPH_ANY_KANJI_BONUS * (int)(w.size() - 1);
                     //}
