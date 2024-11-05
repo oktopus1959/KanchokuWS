@@ -78,7 +78,8 @@ namespace lattice2 {
     int DEFAULT_UNIGRAM_BONUS_COUNT = 10000;
 
     // 2文字以上の形態素で漢字を含む場合のボーナス
-    int MORPH_ANY_KANJI_BONUS = 5000;
+    //int MORPH_ANY_KANJI_BONUS = 5000;
+    int MORPH_ANY_KANJI_BONUS = 3000;
 
     // 3文字以上の形態素ですべてひらがなの場合のボーナス
     int MORPH_ALL_HIRAGANA_BONUS = 1000;
@@ -987,8 +988,12 @@ namespace lattice2 {
                 _LOG_DETAIL(L"{}: orig morphCost={}", to_wstr(s), cost);
                 for (auto iter = words.begin(); iter != words.end(); ++iter) {
                     const MString& w = *iter;
-                    if (w.size() >= 2 && std::any_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_kanji(c); })) {
-                        cost -= MORPH_ANY_KANJI_BONUS * (int)(w.size() - 1);
+                    //if (w.size() >= 2 && std::any_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_kanji(c); })) {
+                    //    cost -= MORPH_ANY_KANJI_BONUS * (int)(w.size() - 1);
+                    //}
+                    if (w.size() >= 2) {
+                        int kCnt = (int)std::count_if(w.begin(), w.end(), [](mchar_t c) { return utils::is_kanji(c); });
+                        cost -= MORPH_ANY_KANJI_BONUS * kCnt;
                     }
                     if (w.size() >= 3 && std::all_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_hiragana(c); })) {
                         cost -= MORPH_ALL_HIRAGANA_BONUS;
