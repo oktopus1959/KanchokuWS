@@ -998,11 +998,13 @@ namespace lattice2 {
                 _LOG_DETAIL(L"ENTER: {}: orig morphCost={}", to_wstr(s), cost);
                 for (auto iter = words.begin(); iter != words.end(); ++iter) {
                     const MString& w = *iter;
-                    if (w.size() == 1 && utils::is_hiragana(w[0])) {
-                        if ((iter != words.begin() && utils::is_hiragana((iter - 1)->back())) &&
-                            ((iter + 1) != words.end() && utils::is_hiragana((iter + 1)->front()))) {
+                    if (w.size() == 1 && utils::is_hiragana(w[0]) && (iter + 1) != words.end() && (iter + 1)->size() == 1 && utils::is_hiragana((iter + 1)->front())) {
+                        // 「開発させる」⇒「さ きれ て さ せる」
+                        // 1文字ひらがなが2つ続いた
+                        if ((iter != words.begin() && utils::is_hiragana((iter - 1)->back())) && ((iter + 2) != words.end() && utils::is_hiragana((iter + 2)->front()))) {
+                            // その前後もひらがながだった
                             cost += MORPH_ISOLATED_HIRAGANA_COST;
-                            _LOG_DETAIL(L"{}: ADD ISOLATED_HIRAGANA_COST({}): morphCost={}", to_wstr(w), MORPH_ISOLATED_HIRAGANA_COST, cost);
+                            _LOG_DETAIL(L"{} {}: ADD ISOLATED_HIRAGANA_COST({}): morphCost={}", to_wstr(w), to_wstr(*(iter + 1)), MORPH_ISOLATED_HIRAGANA_COST, cost);
                         }
                     }
                     //if (w.size() >= 2 && std::any_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_kanji(c); })) {
