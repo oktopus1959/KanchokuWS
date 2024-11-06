@@ -111,11 +111,11 @@ namespace lattice2 {
     // Ngramコストに対する係数
     int NGRAM_COST_FACTOR = 5;
 
-    // Online Ngram のカウントを水増しする係数
-    int ONLINE_FREQ_BOOST_FACTOR = 10;
+    // Realtime Ngram のカウントを水増しする係数
+    int REALTIME_FREQ_BOOST_FACTOR = 10;
 
-    //// Online 3gram のカウントからボーナス値を算出する際の係数
-    //int ONLINE_TRIGRAM_BONUS_FACTOR = 100;
+    //// Realtime 3gram のカウントからボーナス値を算出する際の係数
+    //int REALTIME_TRIGRAM_BONUS_FACTOR = 100;
 
     //int TIER1_NUM = 5;
     //int TIER2_NUM = 10;
@@ -141,37 +141,37 @@ namespace lattice2 {
     std::map<MString, int> systemWordCosts;
 
     // 利用者が入力した文字列から抽出したNgram統計
-    std::map<MString, int> onlineNgram;
-    int onlineMaxFreq = 0;
+    std::map<MString, int> realtimeNgram;
+    int realtimeMaxFreq = 0;
 
     // 常用対数でNgram頻度を補正した値に掛けられる係数
     int ngramLogFactor = 50;
 
     // Ngram頻度がオンラインで更新されたか
-    bool onlineNgram_updated = false;
+    bool realtimeNgram_updated = false;
 
     inline bool isDecimalString(StringRef item) {
         return utils::reMatch(item, L"[+\\-]?[0-9]+");
     }
 
-    inline void _updateNgramCost(const MString& word, int sysCount, int usrCount, int onlCount) {
+    inline void _updateNgramCost(const MString& word, int sysCount, int usrCount, int rtmCount) {
         if (word.size() <= 2) {
             // 1-2 gram は正のコスト
-            int total = sysCount + usrCount + onlCount * ONLINE_FREQ_BOOST_FACTOR;
+            int total = sysCount + usrCount + rtmCount * REALTIME_FREQ_BOOST_FACTOR;
             if (total > 0) ngramCosts[word] = DEFAULT_MAX_COST - (int)(std::log(total) * ngramLogFactor);
         } else if (word.size() == 3) {
             // 3gramは負のコスト
-            int bonumFactor = SETTINGS->onlineTrigramBonusFactor;
-            int numTier1 = SETTINGS->onlineTrigramTier1Num;
-            if (numTier1 > onlCount) numTier1 = onlCount;
-            int numTier2 = SETTINGS->onlineTrigramTier2Num;
-            if (numTier1 + numTier2 > onlCount) numTier2 = onlCount - numTier1;
+            int bonumFactor = SETTINGS->realtimeTrigramBonusFactor;
+            int numTier1 = SETTINGS->realtimeTrigramTier1Num;
+            if (numTier1 > rtmCount) numTier1 = rtmCount;
+            int numTier2 = SETTINGS->realtimeTrigramTier2Num;
+            if (numTier1 + numTier2 > rtmCount) numTier2 = rtmCount - numTier1;
             int maxTier3 = 100 - (numTier1 + numTier2);
             if (maxTier3 < 0) maxTier3 = 0;
-            int numTier3 = onlCount - (numTier1 + numTier2);
+            int numTier3 = rtmCount - (numTier1 + numTier2);
             if (numTier3 < 0) numTier3 = 0;
             if (numTier3 > maxTier3) numTier3 = maxTier3;
-            int numTier4 = onlCount - (numTier1 + numTier2 + numTier3);
+            int numTier4 = rtmCount - (numTier1 + numTier2 + numTier3);
             if (numTier4 < 0) numTier4 = 0;
             ngramCosts[word] = -(
                 numTier1 * (bonumFactor*10) +
@@ -180,33 +180,33 @@ namespace lattice2 {
                 (numTier4 + sysCount));
 
             //// 上のやり方は、間違いの方の影響も拡大してしまうので、結局、あまり意味が無いと思われる
-            //ngramCosts[word] = -(onlCount * bonumFactor + (sysCount + usrCount) * (bonumFactor/10));
+            //ngramCosts[word] = -(rtmCount * bonumFactor + (sysCount + usrCount) * (bonumFactor/10));
         }
         if (ngramCosts[word] < -100000) {
-            LOG_WARNH(L"ABNORMAL COST: word={}, cost={}, sysCount={}, usrCount={}, onlCount={}", to_wstr(word), ngramCosts[word], sysCount, usrCount, onlCount);
+            LOG_WARNH(L"ABNORMAL COST: word={}, cost={}, sysCount={}, usrCount={}, rtmCount={}", to_wstr(word), ngramCosts[word], sysCount, usrCount, rtmCount);
         }
     }
 
     // オンラインでのNgram更新
-    void _updateOnlineNgramByWord(const MString& word) {
-        int count = onlineNgram[word] += 1;
+    void _updateRealtimeNgramByWord(const MString& word) {
+        int count = realtimeNgram[word] += 1;
         _updateNgramCost(word, 0, 0, count);
-        onlineNgram_updated = true;
+        realtimeNgram_updated = true;
     }
 
     // ngramCosts の初期作成
     void makeInitialNgramCostMap() {
-        ngramLogFactor = (int)((DEFAULT_MAX_COST - 50) / std::log(systemMaxFreq + userMaxFreq + onlineMaxFreq * ONLINE_FREQ_BOOST_FACTOR));
-        _LOG_DETAIL(L"ENTER: systemMaxFreq={}, onlineMaxFreq={}, userMaxFreq={}, ngramLogFactor={}", systemMaxFreq, onlineMaxFreq, userMaxFreq, ngramLogFactor);
+        ngramLogFactor = (int)((DEFAULT_MAX_COST - 50) / std::log(systemMaxFreq + userMaxFreq + realtimeMaxFreq * REALTIME_FREQ_BOOST_FACTOR));
+        _LOG_DETAIL(L"ENTER: systemMaxFreq={}, realtimeMaxFreq={}, userMaxFreq={}, ngramLogFactor={}", systemMaxFreq, realtimeMaxFreq, userMaxFreq, ngramLogFactor);
         ngramCosts.clear();
         for (auto iter = systemNgram.begin(); iter != systemNgram.end(); ++iter) {
             const MString& word = iter->first;
             int sysCount = iter->second;
-            auto iterOnl = onlineNgram.find(iter->first);
-            int onlCount = iterOnl != onlineNgram.end() ? iterOnl->second : 0;
+            auto iterOnl = realtimeNgram.find(iter->first);
+            int rtmCount = iterOnl != realtimeNgram.end() ? iterOnl->second : 0;
             auto iterUsr = userNgram.find(iter->first);
             int usrCount = iterUsr != userNgram.end() ? iterUsr->second : 0;
-            _updateNgramCost(word, sysCount, usrCount, onlCount);
+            _updateNgramCost(word, sysCount, usrCount, rtmCount);
         }
         for (auto iter = userNgram.begin(); iter != userNgram.end(); ++iter) {
             const MString& word = iter->first;
@@ -217,17 +217,17 @@ namespace lattice2 {
             }
             if (ngramCosts.find(word) == ngramCosts.end()) {
                 // 未登録
-                auto iterOnl = onlineNgram.find(iter->first);
-                int onlCount = iterOnl != onlineNgram.end() ? iterOnl->second : 0;
-                _updateNgramCost(word, 0, usrCount, onlCount);
+                auto iterOnl = realtimeNgram.find(iter->first);
+                int rtmCount = iterOnl != realtimeNgram.end() ? iterOnl->second : 0;
+                _updateNgramCost(word, 0, usrCount, rtmCount);
             }
         }
-        for (auto iter = onlineNgram.begin(); iter != onlineNgram.end(); ++iter) {
+        for (auto iter = realtimeNgram.begin(); iter != realtimeNgram.end(); ++iter) {
             const MString& word = iter->first;
-            int onlCount = iter->second;
+            int rtmCount = iter->second;
             if (ngramCosts.find(word) == ngramCosts.end()) {
                 // 未登録
-                _updateNgramCost(word, 0, 0, onlCount);
+                _updateNgramCost(word, 0, 0, rtmCount);
             }
         }
         for (auto iter = systemWordCosts.begin(); iter != systemWordCosts.end(); ++iter) {
@@ -243,7 +243,7 @@ namespace lattice2 {
 
 #define SYSTEM_NGRAM_FILE L"mixed_all.ngram.txt"
 #define SYSTEM_COST_FILE  L"katakana.cost.txt"
-#define ONLINE_NGRAM_FILE L"online.ngram.txt"
+#define REALTIME_NGRAM_FILE L"realtime.ngram.txt"
 #define USER_COST_FILE    L"userword.cost.txt"
 
     int _loadNgramFile(StringRef ngramFile, std::map<MString, int>& ngramMap) {
@@ -320,11 +320,11 @@ namespace lattice2 {
         }
     }
 
-    void loadCostFile(bool onlyUserFile = false) {
-        _LOG_INFOH(L"ENTER: onlyUserFile={}", onlyUserFile);
-        if (!onlyUserFile) {
+    void loadCostFile(bool rtmyUserFile = false) {
+        _LOG_INFOH(L"ENTER: rtmyUserFile={}", rtmyUserFile);
+        if (!rtmyUserFile) {
             systemMaxFreq = _loadNgramFile(SYSTEM_NGRAM_FILE, systemNgram);
-            onlineMaxFreq = _loadNgramFile(ONLINE_NGRAM_FILE, onlineNgram);
+            realtimeMaxFreq = _loadNgramFile(REALTIME_NGRAM_FILE, realtimeNgram);
             _loadSystemCostFile();
         }
         _loadUserCostFile();
@@ -332,22 +332,22 @@ namespace lattice2 {
         _LOG_INFOH(L"LEAVE");
     }
 
-    void saveOnlineCostFile() {
-        _LOG_INFOH(L"CALLED: onlineNgram_updated={}", onlineNgram_updated);
-        auto path = utils::joinPath(SETTINGS->rootDir, ONLINE_NGRAM_FILE);
-        if (onlineNgram_updated) {
+    void saveRealtimeCostFile() {
+        _LOG_INFOH(L"CALLED: realtimeNgram_updated={}", realtimeNgram_updated);
+        auto path = utils::joinPath(SETTINGS->rootDir, REALTIME_NGRAM_FILE);
+        if (realtimeNgram_updated) {
             if (utils::moveFileToBackDirWithRotation(path, SETTINGS->backFileRotationGeneration)) {
                 _LOG_INFOH(_T("SAVE: {}"), path.c_str());
                 utils::OfstreamWriter writer(path);
                 if (writer.success()) {
-                    for (const auto& pair : onlineNgram) {
+                    for (const auto& pair : realtimeNgram) {
                         String line;
                         line.append(to_wstr(pair.first));           // 単語
                         line.append(_T("\t"));
                         line.append(std::to_wstring(pair.second));  // カウント
                         writer.writeLine(utils::utf8_encode(line));
                     }
-                    onlineNgram_updated = false;
+                    realtimeNgram_updated = false;
                 }
             }
         }
@@ -357,36 +357,36 @@ namespace lattice2 {
         return ch == ' ' || ch == '|';
     }
 
-    void updateOnlineNgram(const MString& str) {
-        _LOG_DETAIL(L"CALLED: str={}, collectOnlineNgram={}", to_wstr(str), SETTINGS->collectOnlineNgram);
-        if (!SETTINGS->collectOnlineNgram) return;
+    void updateRealtimeNgram(const MString& str) {
+        _LOG_DETAIL(L"CALLED: str={}, collectRealtimeNgram={}", to_wstr(str), SETTINGS->collectRealtimeNgram);
+        if (!SETTINGS->collectRealtimeNgram) return;
 
         int strlen = (int)str.size();
         for (int pos = 0; pos < strlen; ++pos) {
             //// 1gramなら漢字以外は無視
             //if (utils::is_kanji(str[pos])) {
-            //    _updateOnlineNgramByWord(str.substr(pos, 1));
+            //    _updateRealtimeNgramByWord(str.substr(pos, 1));
             //}
 
             if (!utils::is_japanese_char_except_nakaguro(str[pos])) continue;
             // 1-gram
-            _updateOnlineNgramByWord(str.substr(pos, 1));
+            _updateRealtimeNgramByWord(str.substr(pos, 1));
 
             if (pos + 1 >= strlen || !utils::is_japanese_char_except_nakaguro(str[pos + 1])) continue;
             // 2-gram
-            _updateOnlineNgramByWord(str.substr(pos, 2));
+            _updateRealtimeNgramByWord(str.substr(pos, 2));
 
             if (pos + 2 >= strlen || !utils::is_japanese_char_except_nakaguro(str[pos + 2])) continue;
             // 3-gram
-            _updateOnlineNgramByWord(str.substr(pos, 3));
+            _updateRealtimeNgramByWord(str.substr(pos, 3));
 
             //if (pos + 3 >= strlen || !utils::is_japanese_char_except_nakaguro(str[pos + 3])) continue;
-            //_updateOnlineNgramByWord(str.substr(pos, 4));
+            //_updateRealtimeNgramByWord(str.substr(pos, 4));
         }
     }
 
-    void updateOnlineNgram() {
-        updateOnlineNgram(OUTPUT_STACK->backStringUptoPunctWithFlag());
+    void updateRealtimeNgram() {
+        updateRealtimeNgram(OUTPUT_STACK->backStringUptoPunctWithFlag());
     }
 
     // 2～4gramに対する利用者定義コストを計算
@@ -1567,8 +1567,8 @@ namespace lattice2 {
                 auto s = pieces.front().getString();
                 if (s.size() == 1 && utils::is_punct(s[0])) {
                     // 前回の句読点から末尾までの出力文字列に対して Ngram解析を行う
-                    _LOG_DETAIL(L"CALL lattice2::updateOnlineNgram()");
-                    lattice2::updateOnlineNgram();
+                    _LOG_DETAIL(L"CALL lattice2::updateRealtimeNgram()");
+                    lattice2::updateRealtimeNgram();
                 }
             }
 
@@ -1650,14 +1650,14 @@ void Lattice2::reloadUserCostFile() {
     lattice2::loadCostFile(true);
 }
 
-void Lattice2::updateOnlineNgram() {
-    lattice2::updateOnlineNgram();
+void Lattice2::updateRealtimeNgram() {
+    lattice2::updateRealtimeNgram();
 }
 
-//void Lattice2::updateOnlineNgram(const MString& str) {
-//    lattice2::updateOnlineNgram(str);
+//void Lattice2::updateRealtimeNgram(const MString& str) {
+//    lattice2::updateRealtimeNgram(str);
 //}
 
-void Lattice2::saveOnlineCostFile() {
-    lattice2::saveOnlineCostFile();
+void Lattice2::saveRealtimeCostFile() {
+    lattice2::saveRealtimeCostFile();
 }

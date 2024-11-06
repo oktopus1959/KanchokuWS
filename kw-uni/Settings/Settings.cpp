@@ -122,14 +122,14 @@ void Settings::SetValues(const std::map<String, String>& dict) {
     SET_BOOL_VALUE(googleCompatible);
 
     SET_BOOL_VALUE(multiStreamMode);
-    SET_BOOL_VALUE(collectOnlineNgram);
+    SET_BOOL_VALUE(collectRealtimeNgram);
     SET_BOOL_VALUE(useMorphAnalyzer);
     SET_BOOL_VALUE(commitByPunctuation);
     SET_INT_VALUE(challengeNumForSameLeader);
     SET_INT_VALUE(kanjiNoKanjiBonus);
-    SET_INT_VALUE(onlineTrigramBonusFactor);
-    SET_INT_VALUE(onlineTrigramTier1Num);
-    SET_INT_VALUE(onlineTrigramTier2Num);
+    SET_INT_VALUE(realtimeTrigramBonusFactor);
+    SET_INT_VALUE(realtimeTrigramTier1Num);
+    SET_INT_VALUE(realtimeTrigramTier2Num);
     SET_KEY_VALUE(mergerCandidateFile);
 
     // 機能へのキー割り当ての変更

@@ -1316,8 +1316,8 @@ namespace {
                 State::handleEnter();
             }
             // 前回の句読点から末尾までの出力文字列に対して Ngram解析を行う
-            _LOG_DEBUGH(L"CALL WORD_LATTICE->updateOnlineNgram()");
-            WORD_LATTICE->updateOnlineNgram();
+            _LOG_DEBUGH(L"CALL WORD_LATTICE->updateRealtimeNgram()");
+            WORD_LATTICE->updateRealtimeNgram();
             _LOG_DEBUGH(_T("LEAVE"));
         }
 

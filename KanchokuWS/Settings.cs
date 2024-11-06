@@ -159,8 +159,8 @@ namespace KanchokuWS
         /// <summary>前回のデコーダ呼び出しから一定時間が経過したら、MulstStreamCommit を発行</summary>
         public static int CommitMultiStreamElapsedTime { get; set; } = 0;
 
-        /// <summary>Online Ngram 情報を収集する</summary>
-        public static bool CollectOnlineNgram { get; set; }
+        /// <summary>Realtime Ngram 情報を収集する</summary>
+        public static bool CollectRealtimeNgram { get; set; }
 
         /// <summary>形態素解析器を使用する</summary>
         public static bool UseMorphAnalyzer { get; set; }
@@ -174,14 +174,14 @@ namespace KanchokuWS
         /// <summary>「漢字+の+漢字」のような場合に与えるボーナス</summary>
         public static int KanjiNoKanjiBonus { get; set; }
 
-        /// <summary>Online 3gram のカウントからボーナス値を算出する際の係数</summary>
-        public static int OnlineTrigramBonusFactor { get; set; }
+        /// <summary>Realtime 3gram のカウントからボーナス値を算出する際の係数</summary>
+        public static int RealtimeTrigramBonusFactor { get; set; }
 
-        /// <summary>Online 3gram の Tier1 の数</summary>
-        public static int OnlineTrigramTier1Num {  get; set; }
+        /// <summary>Realtime 3gram の Tier1 の数</summary>
+        public static int RealtimeTrigramTier1Num {  get; set; }
 
-        /// <summary>Online 3gram の Tier2 の数</summary>
-        public static int OnlineTrigramTier2Num {  get; set; }
+        /// <summary>Realtime 3gram の Tier2 の数</summary>
+        public static int RealtimeTrigramTier2Num {  get; set; }
 
         /// <summary>解候補ログファイル</summary>
         public static string MergerCandidateFile = "tmp/merger_candidates.log";
@@ -1701,14 +1701,14 @@ namespace KanchokuWS
 
             PostRewriteCompatibleWithGooble = addDecoderSetting("googleCompatible", false);     // Google日本語入力と互換な書き換システム
 
-            CollectOnlineNgram = addDecoderSetting("collectOnlineNgram", true);                 // Online Ngram 情報を収集する
+            CollectRealtimeNgram = addDecoderSetting("collectRealtimeNgram", true);                 // Realtime Ngram 情報を収集する
             UseMorphAnalyzer = addDecoderSetting("useMorphAnalyzer", true);                     // 形態素解析器を使用する
             CommitByPunctuation = addDecoderSetting("commitByPunctuation", true);               // 句読点でコミットする
             ChallengeNumForSameLeader = addDecoderSetting("challengeNumForSameLeader", 4);      // 解の先頭部分が同じならそれらだけを残すようにするための、チャレンジ打鍵数
             KanjiNoKanjiBonus = addDecoderSetting("kanjiNoKanjiBonus", 1500);                   // 「漢字+の+漢字」のような場合に与えるボーナス
-            OnlineTrigramBonusFactor = addDecoderSetting("onlineTrigramBonusFactor", 100);      // Online 3gram のカウントからボーナス値を算出する際の係数
-            OnlineTrigramTier1Num = addDecoderSetting("onlineTrigramTier1Num", 5);              // Online 3gram の Tier1 の数
-            OnlineTrigramTier2Num = addDecoderSetting("onlineTrigramTier2Num", 10);             // Online 3gram の Tier2 の数
+            RealtimeTrigramBonusFactor = addDecoderSetting("realtimeTrigramBonusFactor", 100);    // Realtime 3gram のカウントからボーナス値を算出する際の係数
+            RealtimeTrigramTier1Num = addDecoderSetting("realtimeTrigramTier1Num", 5);            // Realtime 3gram の Tier1 の数
+            RealtimeTrigramTier2Num = addDecoderSetting("realtimeTrigramTier2Num", 10);           // Realtime 3gram の Tier2 の数
             setDecoderSetting("mergerCandidateFile", MergerCandidateFile );                     // 解候補ログファイル
 
             // キー割当

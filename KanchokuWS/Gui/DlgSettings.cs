@@ -1815,12 +1815,12 @@ namespace KanchokuWS.Gui
         //-----------------------------------------------------------------------------------
         void readSettings_tabFusion()
         {
-            checkBox_collectOnlineNgram.Checked = Settings.CollectOnlineNgram;
+            checkBox_collectRealtimeNgram.Checked = Settings.CollectRealtimeNgram;
             checkBox_useMorphAnalyzer.Checked = Settings.UseMorphAnalyzer;
             textBox_challengeNumForSameLeader.Text = $"{Settings.ChallengeNumForSameLeader}";
-            textBox_onlineTrigramBonusFactor.Text = $"{Settings.OnlineTrigramBonusFactor}";
-            textBox_onlineTrigramTier1Num.Text = $"{Settings.OnlineTrigramTier1Num}";
-            textBox_onlineTrigramTier2Num.Text = $"{Settings.OnlineTrigramTier2Num}";
+            textBox_realtimeTrigramBonusFactor.Text = $"{Settings.RealtimeTrigramBonusFactor}";
+            textBox_realtimeTrigramTier1Num.Text = $"{Settings.RealtimeTrigramTier1Num}";
+            textBox_realtimeTrigramTier2Num.Text = $"{Settings.RealtimeTrigramTier2Num}";
         }
 
         private void setFusionStatusChecker()
@@ -1829,12 +1829,12 @@ namespace KanchokuWS.Gui
             checkerFusion.CtlToBeEnabled = button_fusionEnter;
             checkerFusion.ControlEnabler = tabFusionStatusChanged;
 
-            checkerFusion.Add(checkBox_collectOnlineNgram);
+            checkerFusion.Add(checkBox_collectRealtimeNgram);
             checkerFusion.Add(checkBox_useMorphAnalyzer);
             checkerFusion.Add(textBox_challengeNumForSameLeader);
-            checkerFusion.Add(textBox_onlineTrigramBonusFactor);
-            checkerFusion.Add(textBox_onlineTrigramTier1Num);
-            checkerFusion.Add(textBox_onlineTrigramTier2Num);
+            checkerFusion.Add(textBox_realtimeTrigramBonusFactor);
+            checkerFusion.Add(textBox_realtimeTrigramTier1Num);
+            checkerFusion.Add(textBox_realtimeTrigramTier2Num);
 
             checkerAll.Add(checkerFusion);
         }
@@ -1850,12 +1850,12 @@ namespace KanchokuWS.Gui
             logger.Info("ENTER");
             frmMain?.DeactivateDecoderWithModifiersOff();
 
-            Settings.SetUserIni("collectOnlineNgram", checkBox_collectOnlineNgram.Checked);
+            Settings.SetUserIni("collectRealtimeNgram", checkBox_collectRealtimeNgram.Checked);
             Settings.SetUserIni("useMorphAnalyzer", checkBox_useMorphAnalyzer.Checked);
             Settings.SetUserIni("challengeNumForSameLeader", textBox_challengeNumForSameLeader.Text);
-            Settings.SetUserIni("onlineTrigramBonusFactor", textBox_onlineTrigramBonusFactor.Text);
-            Settings.SetUserIni("onlineTrigramTier1Num", textBox_onlineTrigramTier1Num.Text);
-            Settings.SetUserIni("onlineTrigramTier2Num", textBox_onlineTrigramTier2Num.Text);
+            Settings.SetUserIni("realtimeTrigramBonusFactor", textBox_realtimeTrigramBonusFactor.Text);
+            Settings.SetUserIni("realtimeTrigramTier1Num", textBox_realtimeTrigramTier1Num.Text);
+            Settings.SetUserIni("realtimeTrigramTier2Num", textBox_realtimeTrigramTier2Num.Text);
 
             Settings.ReadIniFile(false);
             // 各種定義ファイルの再読み込み

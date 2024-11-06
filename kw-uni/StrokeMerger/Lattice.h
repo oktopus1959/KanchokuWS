@@ -159,11 +159,11 @@ public:
 
     static void reloadUserCostFile();
 
-    static void updateOnlineNgram();
+    static void updateRealtimeNgram();
 
-    //static void updateOnlineNgram(const MString& str);
+    //static void updateRealtimeNgram(const MString& str);
 
-    static void saveOnlineCostFile();
+    static void saveRealtimeCostFile();
 
     static std::unique_ptr<Lattice2> Singleton;
 

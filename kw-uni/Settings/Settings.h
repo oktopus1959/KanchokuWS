@@ -102,15 +102,15 @@ struct Settings {
     bool googleCompatible = false;          // Google日本語入力と互換な後置書き換えか(falseなら書き換えられた文字列も1文字ずつが対象になる)
     bool multiStreamMode = false;           // 漢直・かな融合モードか
 
-    bool collectOnlineNgram = true;         // Online Ngram 情報を収集する
+    bool collectRealtimeNgram = true;         // Realtime Ngram 情報を収集する
     bool useMorphAnalyzer = true;           // 形態素解析器を使用する
     bool commitByPunctuation = true;        // 句読点でコミットする
     int challengeNumForSameLeader = 4;      // 解の先頭部分が同じならそれらだけを残すようにするための、チャレンジ打鍵数
     int kanjiNoKanjiBonus = 1500;           // 「漢字+の+漢字」のような場合に与えるボーナス
     String mergerCandidateFile;             // 解候補ログファイル
-    int onlineTrigramBonusFactor = 100;     // Online 3gram のカウントからボーナス値を算出する際の係数
-    int onlineTrigramTier1Num = 5;          // Online 3gram の Tier1 の数
-    int onlineTrigramTier2Num = 10;         // Online 3gram の Tier2 の数
+    int realtimeTrigramBonusFactor = 100;     // Realtime 3gram のカウントからボーナス値を算出する際の係数
+    int realtimeTrigramTier1Num = 5;          // Realtime 3gram の Tier1 の数
+    int realtimeTrigramTier2Num = 10;         // Realtime 3gram の Tier2 の数
 
     // for Debug
     bool debughState = false;               // State モジュールで DebugH を有効にする
