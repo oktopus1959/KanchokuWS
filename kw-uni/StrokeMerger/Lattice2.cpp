@@ -161,6 +161,11 @@ namespace lattice2 {
             if (total > 0) ngramCosts[word] = DEFAULT_MAX_COST - (int)(std::log(total) * ngramLogFactor);
         } else if (word.size() == 3) {
             // 3gramは負のコスト
+            if (std::all_of(word.begin(), word.end(), [](mchar_t x) { return utils::is_hiragana(x);})) {
+                // すべてひらがななら、system ngram として扱う。(「ってい」とかが高い realtime ngram になって、「調節す」⇒「ってい老」になってしまうことを防ぐ)
+                sysCount += rtmCount * REALTIME_FREQ_BOOST_FACTOR;
+                rtmCount = 0;
+            }
             int bonumFactor = SETTINGS->realtimeTrigramBonusFactor;
             int numTier1 = SETTINGS->realtimeTrigramTier1Num;
             if (numTier1 > rtmCount) numTier1 = rtmCount;
