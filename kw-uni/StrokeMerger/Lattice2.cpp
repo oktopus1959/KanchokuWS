@@ -161,21 +161,23 @@ namespace lattice2 {
             if (total > 0) ngramCosts[word] = DEFAULT_MAX_COST - (int)(std::log(total) * ngramLogFactor);
         } else if (word.size() == 3) {
             // 3gramは負のコスト
-            int tier1 = 0;
-            int tier2 = 0;
-            int tier3 = 0;
             int bonumFactor = SETTINGS->onlineTrigramBonusFactor;
-            int nTier1 = SETTINGS->onlineTrigramTier1Num;
-            int nTier2 = SETTINGS->onlineTrigramTier2Num;
-            if (onlCount >= nTier1 + nTier2) {
-                tier3 = onlCount - nTier1 + nTier2;
-                tier2 = nTier2;
-                tier1 = nTier1;
-            } else if (onlCount >= nTier1) {
-                tier2 = onlCount - nTier1;
-                tier1 = nTier1;
-            }
-            ngramCosts[word] = -(tier1 * (bonumFactor*10) + tier2 * bonumFactor + (tier3 + sysCount) * (bonumFactor/10));
+            int numTier1 = SETTINGS->onlineTrigramTier1Num;
+            if (numTier1 > onlCount) numTier1 = onlCount;
+            int numTier2 = SETTINGS->onlineTrigramTier2Num;
+            if (numTier1 + numTier2 > onlCount) numTier2 = onlCount - numTier1;
+            int maxTier3 = 100 - (numTier1 + numTier2);
+            if (maxTier3 < 0) maxTier3 = 0;
+            int numTier3 = onlCount - (numTier1 + numTier2);
+            if (numTier3 < 0) numTier3 = 0;
+            if (numTier3 > maxTier3) numTier3 = maxTier3;
+            int numTier4 = onlCount - (numTier1 + numTier2 + numTier3);
+            if (numTier4 < 0) numTier4 = 0;
+            ngramCosts[word] = -(
+                numTier1 * (bonumFactor*10) +
+                numTier2 * bonumFactor +
+                (maxTier3 > 0 && numTier3 > 0 ? (int)(numTier3 * bonumFactor * (1.0 - ((float)numTier3 / (maxTier3 * 2)))) : 0) +
+                (numTier4 + sysCount));
 
             //// 上のやり方は、間違いの方の影響も拡大してしまうので、結局、あまり意味が無いと思われる
             //ngramCosts[word] = -(onlCount * bonumFactor + (sysCount + usrCount) * (bonumFactor/10));
@@ -988,13 +990,14 @@ namespace lattice2 {
             int cost = 0;
             if (!s.empty()) {
                 cost = MorphBridge::morphCalcCost(s, words);
-                _LOG_DETAIL(L"{}: orig morphCost={}", to_wstr(s), cost);
+                _LOG_DETAIL(L"ENTER: {}: orig morphCost={}", to_wstr(s), cost);
                 for (auto iter = words.begin(); iter != words.end(); ++iter) {
                     const MString& w = *iter;
                     if (w.size() == 1 && utils::is_hiragana(w[0])) {
                         if ((iter != words.begin() && utils::is_hiragana((iter - 1)->back())) &&
                             ((iter + 1) != words.end() && utils::is_hiragana((iter + 1)->front()))) {
                             cost += MORPH_ISOLATED_HIRAGANA_COST;
+                            _LOG_DETAIL(L"{}: ADD ISOLATED_HIRAGANA_COST({}): morphCost={}", to_wstr(w), MORPH_ISOLATED_HIRAGANA_COST, cost);
                         }
                     }
                     //if (w.size() >= 2 && std::any_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_kanji(c); })) {
@@ -1002,19 +1005,25 @@ namespace lattice2 {
                     //}
                     if (w.size() >= 2) {
                         int kCnt = (int)std::count_if(w.begin(), w.end(), [](mchar_t c) { return utils::is_kanji(c); });
-                        cost -= MORPH_ANY_KANJI_BONUS * kCnt;
+                        if (kCnt > 0) {
+                            cost -= MORPH_ANY_KANJI_BONUS * kCnt;
+                            _LOG_DETAIL(L"{}: SUB ANY_KANJI_BONUS({}): morphCost={}", to_wstr(w), MORPH_ANY_KANJI_BONUS * kCnt, cost);
+                        }
                     }
                     if (w.size() >= 3 && std::all_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_hiragana(c); })) {
                         cost -= MORPH_ALL_HIRAGANA_BONUS;
+                        _LOG_DETAIL(L"{}: SUB ALL_HIRAGANA_BONUS({}): morphCost={}", to_wstr(w), MORPH_ALL_HIRAGANA_BONUS, cost);
                     }
                     if (w.size() >= 2 && std::all_of(w.begin(), w.end(), [](mchar_t c) { return utils::is_katakana(c); })) {
                         const MString& w2 = *(iter + 1);
                         if (!((iter + 1) != words.end() && std::all_of(w2.begin(), w2.end(), [](mchar_t c) { return utils::is_katakana(c); }) && w.size() + w2.size() <= 5)) {
                             // 次がカタカナ連でないか、合計で6文以上なら
                             cost -= MORPH_ALL_KATAKANA_BONUS;
+                            _LOG_DETAIL(L"{}: SUB ALL_KATAKANA_BONUS({}): morphCost={}", to_wstr(w), MORPH_ALL_KATAKANA_BONUS, cost);
                         }
                     }
                 }
+                _LOG_DETAIL(L"LEAVE: {}: total morphCost={}", to_wstr(s), cost);
             }
             return cost;
         }
