@@ -67,13 +67,13 @@ void StateCommonInfo::setVirtualKeyboardStrings(VkbLayout lo, const mchar_t* fcs
 
 // 仮想鍵盤と受渡しするための文字をセットする
 // lo : レイアウト, longKeys: 縦列または横列鍵盤にセットする文字列
-void StateCommonInfo::setVirtualKeyboardStrings(VkbLayout lo, const std::vector<MString>& verticals, size_t pos) {
+void StateCommonInfo::setVirtualKeyboardStrings(VkbLayout lo, const std::vector<MString>& longKeys, size_t pos) {
     LOG_DEBUG(_T("layout={}"), GetVkbLayoutStr(lo));
     SetVkbLayout(lo);
     for (int i = 0; i < NORMAL_DECKEY_NUM; ++i) faces[i] = 0;
     for (size_t n = 0; n < longVkeyCandidates.size(); ++n) {
-        if (pos + n < verticals.size())
-            longVkeyCandidates[n] = to_wstr(verticals[pos + n]);
+        if (pos + n < longKeys.size())
+            longVkeyCandidates[n] = to_wstr(longKeys[pos + n]);
         else
             longVkeyCandidates[n].clear();
     }
