@@ -49,6 +49,13 @@ namespace KanchokuWS
             ShowWindow(frmMode.Handle, SW_SHOWNA);   // NonActive
         }
 
+        /// <summary>出力文字列表字・編集用バッファ</summary>
+        private FrmEditBuffer frmEditBuf;
+
+        public void ShowFrmEditBuf()
+        {
+            frmEditBuf.ShowNonActive();
+        }
 
         private Queue<String> strokeLogQueue = new Queue<String>();
 
@@ -281,6 +288,10 @@ namespace KanchokuWS
             frmMode = new FrmModeMarker(this, frmVkb);
             frmMode.Show();
             frmMode.Hide();
+
+            // 表示・編集バッファフォームの作成
+            frmEditBuf = new FrmEditBuffer(this);
+            frmEditBuf.Hide();
 
             // アクティブなウィンドウのハンドラ作成
             ActiveWindowHandler.CreateSingleton();
@@ -518,6 +529,7 @@ namespace KanchokuWS
             ActiveWindowHandler.DisposeSingleton();
             SendInputHandler.DisposeSingleton();
             finalizeDecoder();
+            frmEditBuf?.Close();
             frmMode?.Close();
             frmVkb?.Close();
 
@@ -1336,6 +1348,7 @@ namespace KanchokuWS
                 logger.Info("LEAVE");
                 return;
             }
+
             IsDecoderActive = true;
             var ctrlKeyState = SendInputHandler.GetCtrlKeyState();
             if (activatorCode > 2) activatorCode = 0;
@@ -1378,6 +1391,8 @@ namespace KanchokuWS
                 notifyIcon1.Icon = Properties.Resources.kanmini1;
                 // 仮想鍵盤を移動させる
                 MoveFormVirtualKeyboard();
+                // 表示・編集バッファを移動させる
+                MoveFormEditBuffer();
                 Hide();
                 frmMode.Hide();
                 // ウィンドウが移動する時間をかせいでから画面を表示する ⇒ これは不要か？とりあえず待ち時間を短くしておく(50ms⇒20ms)(2021/8/2)
@@ -1405,6 +1420,7 @@ namespace KanchokuWS
                         }
                     }
                 }
+                ShowFrmEditBuf();
             } finally {
             }
             logger.Info("LEAVE");
@@ -1430,6 +1446,7 @@ namespace KanchokuWS
                 if (Settings.VirtualKeyboardShowStrokeCount != 1) {
                     frmMode.SetAlphaMode();
                 }
+                frmEditBuf.Hide();
             }
             logger.Info("LEAVE");
         }
@@ -1438,6 +1455,90 @@ namespace KanchokuWS
         public void DeactivateDecoderWithModifiersOff()
         {
             DeactivateDecoder(true);
+        }
+
+        public void MoveFormEditBuffer()
+        {
+            moveEditBufWindow(false, true, true);
+        }
+
+        private Rectangle prevCaretPosForEditBuf;
+
+        /// <summary>
+        /// 表示・編集バッファをカレットの近くに移動する<br/>
+        /// これが呼ばれるのはデコーダがONのときだけ
+        /// </summary>
+        private void moveEditBufWindow(bool bDiffWin, bool bMoveMandatory, bool bLog)
+        {
+            if (ActiveWindowHandler.Singleton == null) return;  // まだ Singleton が生成される前に呼び出される可能性あり
+
+            var activeWinClassName = ActiveWindowHandler.Singleton.ActiveWinClassName;
+            var activeWinSettings = Settings.GetWinClassSettings(activeWinClassName);
+            if (bLog || bFirstMove) {
+                logger.DebugH($"CALLED: diffWin={bDiffWin}, mandatory={bMoveMandatory}, firstMove={bFirstMove}");
+                ActiveWindowHandler.Singleton.LoggingCaretInfo(activeWinSettings);
+            }
+
+            var activeWinCaretPos = ActiveWindowHandler.Singleton.ActiveWinCaretPos;
+
+            bool isValidCaretShape()
+            {
+                bool result = activeWinCaretPos.Width > 0 || activeWinCaretPos.Height > 0;
+                if (bLog && !result) logger.DebugH("INVALID caret shape");
+                return result;
+            }
+
+            bool isValidCaretPos()
+            {
+                return
+                    (Math.Abs(activeWinCaretPos.X) >= NO_MOVE_OFFSET || Math.Abs(activeWinCaretPos.Y) >= NO_MOVE_OFFSET) &&
+                    (Math.Abs(activeWinCaretPos.X - prevCaretPosForEditBuf.X) >= NO_MOVE_OFFSET || Math.Abs(activeWinCaretPos.Y - prevCaretPosForEditBuf.Y) >= NO_MOVE_OFFSET);
+            }
+
+            if (isValidCaretShape() && isValidCaretPos() && ActiveWindowHandler.Singleton.IsInValidCaretMargin(activeWinSettings)) {
+                int xOffset = (activeWinSettings?.CaretOffset)._getNth(0, 2);
+                int yOffset = (activeWinSettings?.CaretOffset)._getNth(1, Settings.VirtualKeyboardOffsetY);
+                //double dpiRatio = 1.0; //FrmVkb.GetDeviceDpiRatio();
+                if (activeWinCaretPos.X >= 0) {
+                    int cX = activeWinCaretPos.X;
+                    int cY = activeWinCaretPos.Y;
+                    int cW = activeWinCaretPos.Width;
+                    int cH = activeWinCaretPos.Height;
+                    if (bLog) {
+                        logger.Info($"MOVE: X={cX}, Y={cY}, W={cW}, H={cH}, OX={xOffset}, OY={yOffset}");
+                        if (Settings.LoggingActiveWindowInfo) {
+                            var dpis = ScreenInfo.Singleton.ScreenDpi.Select(x => $"{x}")._join(", ");
+                            frmVkb.SetTopText($"DR={dpis}, CX={cX},CY={cY},CW={cW},CH={cH},OX={xOffset},OY={yOffset}");
+                        }
+                    }
+                    Action<Form> moveAction = (Form frm) => {
+                        int fX = 0;
+                        int fY = 0;
+                        int fW = frm.Size.Width;
+                        int fH = frm.Size.Height;
+                        fX = cX + (xOffset >= 0 ? cW : -fW) + xOffset;
+                        if (fX < 0) fX = cX + cW + Math.Abs(xOffset);
+                        fY = cY + cH - 24;
+                        if (fY < 0) fY = cY + cH + Math.Abs(yOffset);
+                        int fRight = fX + fW;
+                        int fBottom = fY + fH;
+                        Rectangle rect = ScreenInfo.Singleton.GetScreenContaining(cX, cY);
+                        //if (fRight >= rect.X + rect.Width) fX = cX - fW - Math.Abs(xOffset);
+                        //if (fBottom >= rect.Y + rect.Height) fY = cY - fH - Math.Abs(yOffset);
+                        if (fRight >= rect.X + rect.Width) {
+                            fX = cX - fW - Math.Abs(xOffset);
+                            if (fY >= cY && fY <= cY + cH || fY < cY && fY + fH >= cY) {
+                                fY = cY + cH;
+                            }
+                        }
+                        MoveWindow(frm.Handle, fX, fY, fW, fH, true);
+                    };
+                    // 表示・編集バッファの移動
+                    moveAction(frmEditBuf);
+
+                    prevCaretPosForEditBuf = activeWinCaretPos;
+                }
+            }
         }
 
         /// <summary>仮想鍵盤の表示位置を移動する</summary>

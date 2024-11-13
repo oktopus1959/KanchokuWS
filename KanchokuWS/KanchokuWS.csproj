@@ -96,6 +96,12 @@
     <Compile Include="Domain\KeyComboRepository.cs" />
     <Compile Include="Domain\KeyModifiers.cs" />
     <Compile Include="Domain\DecoderKeyVsVKey.cs" />
+    <Compile Include="FrmEditBuffer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmEditBuffer.Designer.cs">
+      <DependentUpon>FrmEditBuffer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\DlgSettings_Develop.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -232,6 +238,9 @@
     <Compile Include="TableParser\ContextAccessor.cs" />
     <Compile Include="TableParser\TableParserTokenizer.cs" />
     <Compile Include="TableParser\TOKEN.cs" />
+    <EmbeddedResource Include="FrmEditBuffer.resx">
+      <DependentUpon>FrmEditBuffer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\BackColorComboBox.resx">
       <DependentUpon>BackColorComboBox.cs</DependentUpon>
     </EmbeddedResource>
