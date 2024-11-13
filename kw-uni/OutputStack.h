@@ -25,7 +25,7 @@ public:
     static const unsigned short FLAG_REWRITABLE = 16;
     static const unsigned short FLAG_REWRITABLE_BEGIN = 32;     // Rewritable な文字列ブロックの先頭を表す
     static const unsigned short FLAG_REWRITABLE_BLOCK = 64;     // Rewritable な範囲の終わり(含まない)を表す
-    static const unsigned short FLAG_ALL_KEY_UP = 128;          // すべてのキーがUP状態にあることを示す
+    //static const unsigned short FLAG_ALL_KEY_UP = 128;          // すべてのキーがUP状態にあることを示す
 
     static const size_t HIST_KEY_MAX_LEN = 8;   // 履歴用のキーの最大長
     static const size_t HIST_ROMAN_KEY_MAX_LEN = 16;   // 英字履歴用のキーの最大長
@@ -184,17 +184,17 @@ public:
         }
     }
 
-    // 末尾に全キーUPフラグをセットする
-    inline void setAllKeyUp() {
-        __LOG_DEBUGH(_T("CALLED"));
-        setFlag(FLAG_ALL_KEY_UP);
-    }
+    //// 末尾に全キーUPフラグをセットする
+    //inline void setAllKeyUp() {
+    //    __LOG_DEBUGH(_T("CALLED"));
+    //    setFlag(FLAG_ALL_KEY_UP);
+    //}
 
-    // 末尾に全キーUPフラグがセットされているか
-    inline bool isAllKeyUp() {
-        __LOG_DEBUGH(_T("CALLED: {}"), (getFlag() & FLAG_ALL_KEY_UP) != 0);
-        return (getFlag() & FLAG_ALL_KEY_UP) != 0;
-    }
+    //// 末尾に全キーUPフラグがセットされているか
+    //inline bool isAllKeyUp() {
+    //    __LOG_DEBUGH(_T("CALLED: {}"), (getFlag() & FLAG_ALL_KEY_UP) != 0);
+    //    return (getFlag() & FLAG_ALL_KEY_UP) != 0;
+    //}
 
     // 末尾に交ぜ書きブロッカーをセットする
     inline void setMazeBlocker() {

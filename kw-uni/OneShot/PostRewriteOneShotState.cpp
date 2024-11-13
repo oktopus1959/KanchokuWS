@@ -178,7 +178,8 @@ void PostRewriteOneShotNode::addRewritePair(StringRef key, StringRef value, bool
 // 末尾文字列にマッチする RewriteInfo を取得する
 std::tuple<const RewriteInfo*, size_t> PostRewriteOneShotNode::matchWithTailString() const {
     size_t maxlen = SETTINGS->kanaTrainingMode && ROOT_STROKE_NODE->hasOnlyUsualRewriteNdoe() ? 0 : 8;     // かな入力練習モードで濁点のみなら書き換えをやらない
-    bool bAllKeyUp = OUTPUT_STACK->isAllKeyUp();
+    //bool bAllKeyUp = OUTPUT_STACK->isAllKeyUp();
+    bool bRollOverStroke = STATE_COMMON->IsRollOverStroke();
     while (maxlen > 0) {
         _LOG_DEBUGH(_T("maxlen={}"), maxlen);
         const MString targetStr = SETTINGS->googleCompatible ? OUTPUT_STACK->backStringWhileOnlyRewritable(maxlen) : OUTPUT_STACK->backStringUptoRewritableBlock(maxlen);
@@ -186,7 +187,7 @@ std::tuple<const RewriteInfo*, size_t> PostRewriteOneShotNode::matchWithTailStri
         if (targetStr.empty()) break;
 
         const RewriteInfo* rewInfo = 0;
-        if (!bAllKeyUp) rewInfo = getRewriteInfo(targetStr + MSTR_PLUS);        // ロールオーバー打ちのときは"+"を付加したエントリを検索
+        if (bRollOverStroke) rewInfo = getRewriteInfo(targetStr + MSTR_PLUS);        // ロールオーバー打ちのときは"+"を付加したエントリを検索
         if (!rewInfo) rewInfo = getRewriteInfo(targetStr);
         if (rewInfo) {
             _LOG_DEBUGH(_T("REWRITE_INFO found: outStr={}, rewritableLen={}, subTable={:p}"), to_wstr(rewInfo->rewriteStr), rewInfo->rewritableLen, (void*)rewInfo->subTable);

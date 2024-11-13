@@ -229,11 +229,11 @@ namespace KanchokuWS.CombinationKeyStroke
             logger.InfoH(() => $"LEAVE: isPreRewriteTarget={isPreRewriteTarget}, rewriteDt={rewriteDt}");
         }
 
-        private void setAllKeyUpFlag()
-        {
-            logger.InfoH("CALLED");
-            frmMain?.ExecCmdDecoder("allKeyUp", null);
-        }
+        //private void setAllKeyUpFlag()
+        //{
+        //    logger.InfoH("CALLED");
+        //    frmMain?.ExecCmdDecoder("allKeyUp", null);
+        //}
 
         public void Dispose()
         {
@@ -364,14 +364,14 @@ namespace KanchokuWS.CombinationKeyStroke
 
             checkRewriteTime(decKey);
 
-            if (strokeList.IsDownKeyListEmpty) setAllKeyUpFlag();
+            //if (strokeList.IsDownKeyListEmpty) setAllKeyUpFlag();
 
             strokeList.CheckComboShiftKeyUpDt(decKey);
 
             List<ResultKeyStroke> result = null;
             bool bUnconditional = false;
 
-            Func<List<ResultKeyStroke>> makeSinleHitResult = () => decKey._toSingleHitResultKeyStrokeList();
+            Func<List<ResultKeyStroke>> makeSingleHitResult = () => decKey._toSingleHitResultKeyStrokeList();
 
             try {
                 bool bWaitSecondStroke = frmMain != null && !frmMain.IsDecoderWaitingFirstStroke();
@@ -393,11 +393,11 @@ namespace KanchokuWS.CombinationKeyStroke
                     if (frmMain.DecoderOutput.IsDecoderEisuMode()) {
                         // デコーダが英数モードだったので、そのまま返す
                         logger.InfoH("decoder is EISU mode");
-                        result = makeSinleHitResult();
+                        result = makeSingleHitResult();
                     } else if (combo?.IsTerminal == true && KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
                         // 終端、かつキーリピートが可能なキーだった(BackSpaceとか)ので、それを返す
                         logger.InfoH("terminal and repeatable key");
-                        result = makeSinleHitResult();
+                        result = makeSingleHitResult();
                     } else {
                         logger.InfoH(() => stroke.DebugString());
 
@@ -410,11 +410,11 @@ namespace KanchokuWS.CombinationKeyStroke
                             if (!bDecoderOn) {
                                 // DecoderがOFFのときはキーリピート扱いとする
                                 logger.InfoH("Decoder OFF, so repeat key");
-                                result = makeSinleHitResult();
+                                result = makeSingleHitResult();
                             } else if (KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
                                 // キーリピートが可能なキー
                                 logger.InfoH("non terminal and repeatable key");
-                                result = makeSinleHitResult();
+                                result = makeSingleHitResult();
                             } else if ((stroke.IsComboShift || strokeList.Count == 2 && strokeList.First.IsComboShift) && handleComboKeyRepeat != null) {
                                 // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出すだけで、キーリピートは行わない(つまりシフト扱い)
                                 List<int> list = new List<int>();
@@ -498,7 +498,7 @@ namespace KanchokuWS.CombinationKeyStroke
                                 // 同時打鍵には使われないキーなので、そのまま返す
                                 logger.InfoH("Return ASIS");
                                 strokeList.RemoveUsedKey(decKey);
-                                result = makeSinleHitResult();
+                                result = makeSingleHitResult();
                             }
                         }
                     }
