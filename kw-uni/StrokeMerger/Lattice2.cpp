@@ -696,8 +696,6 @@ namespace lattice2 {
         // 末尾文字列にマッチする RewriteInfo を取得する
         std::tuple<const RewriteInfo*, int> matchWithTailString(const PostRewriteOneShotNode* rewriteNode) const {
             size_t maxlen = SETTINGS->kanaTrainingMode && ROOT_STROKE_NODE->hasOnlyUsualRewriteNdoe() ? 0 : 8;     // かな入力練習モードで濁点のみなら書き換えをやらない
-            //bool bAllKeyUp = false; //OUTPUT_STACK->isAllKeyUp();
-            //bool bAllKeyUp = OUTPUT_STACK->isAllKeyUp();
             bool bRollOverStroke = STATE_COMMON->IsRollOverStroke();
             _LOG_DETAIL(_T("bRollOverStroke={}"), bRollOverStroke);
             while (maxlen > 0) {

@@ -178,7 +178,6 @@ void PostRewriteOneShotNode::addRewritePair(StringRef key, StringRef value, bool
 // 末尾文字列にマッチする RewriteInfo を取得する
 std::tuple<const RewriteInfo*, size_t> PostRewriteOneShotNode::matchWithTailString() const {
     size_t maxlen = SETTINGS->kanaTrainingMode && ROOT_STROKE_NODE->hasOnlyUsualRewriteNdoe() ? 0 : 8;     // かな入力練習モードで濁点のみなら書き換えをやらない
-    //bool bAllKeyUp = OUTPUT_STACK->isAllKeyUp();
     bool bRollOverStroke = STATE_COMMON->IsRollOverStroke();
     while (maxlen > 0) {
         _LOG_DEBUGH(_T("maxlen={}"), maxlen);
