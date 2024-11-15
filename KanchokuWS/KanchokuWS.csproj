@@ -96,10 +96,17 @@
     <Compile Include="Domain\KeyComboRepository.cs" />
     <Compile Include="Domain\KeyModifiers.cs" />
     <Compile Include="Domain\DecoderKeyVsVKey.cs" />
-    <Compile Include="FrmEditBuffer.cs">
+    <Compile Include="Forms\FontInfo.cs" />
+    <Compile Include="Forms\FrmCandidateSelector.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmEditBuffer.Designer.cs">
+    <Compile Include="Forms\FrmCandidateSelector.Designer.cs">
+      <DependentUpon>FrmCandidateSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmEditBuffer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmEditBuffer.Designer.cs">
       <DependentUpon>FrmEditBuffer.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\DlgSettings_Develop.cs">
@@ -179,10 +186,10 @@
     <Compile Include="Gui\DlgSettings.Designer.cs">
       <DependentUpon>DlgSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmVirtualKeyboard.cs">
+    <Compile Include="Forms\FrmVirtualKeyboard.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmVirtualKeyboard.Designer.cs">
+    <Compile Include="Forms\FrmVirtualKeyboard.Designer.cs">
       <DependentUpon>FrmVirtualKeyboard.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\ForeColorComboBox.cs">
@@ -191,16 +198,16 @@
     <Compile Include="Gui\ForeColorComboBox.Designer.cs">
       <DependentUpon>ForeColorComboBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmSplash.cs">
+    <Compile Include="Forms\FrmSplash.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmSplash.Designer.cs">
+    <Compile Include="Forms\FrmSplash.Designer.cs">
       <DependentUpon>FrmSplash.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmModeMarker.cs">
+    <Compile Include="Forms\FrmModeMarker.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmModeMarker.Designer.cs">
+    <Compile Include="Forms\FrmModeMarker.Designer.cs">
       <DependentUpon>FrmModeMarker.cs</DependentUpon>
     </Compile>
     <Compile Include="Handler\GUIThreadInfo.cs" />
@@ -238,7 +245,10 @@
     <Compile Include="TableParser\ContextAccessor.cs" />
     <Compile Include="TableParser\TableParserTokenizer.cs" />
     <Compile Include="TableParser\TOKEN.cs" />
-    <EmbeddedResource Include="FrmEditBuffer.resx">
+    <EmbeddedResource Include="Forms\FrmCandidateSelector.resx">
+      <DependentUpon>FrmCandidateSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmEditBuffer.resx">
       <DependentUpon>FrmEditBuffer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\BackColorComboBox.resx">
@@ -268,7 +278,7 @@
     <EmbeddedResource Include="Gui\DlgSettings.resx">
       <DependentUpon>DlgSettings.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmVirtualKeyboard.resx">
+    <EmbeddedResource Include="Forms\FrmVirtualKeyboard.resx">
       <DependentUpon>FrmVirtualKeyboard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\DlgCandidateLog.resx">
@@ -280,10 +290,10 @@
     <EmbeddedResource Include="Gui\ForeColorComboBox.resx">
       <DependentUpon>ForeColorComboBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmSplash.resx">
+    <EmbeddedResource Include="Forms\FrmSplash.resx">
       <DependentUpon>FrmSplash.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmModeMarker.resx">
+    <EmbeddedResource Include="Forms\FrmModeMarker.resx">
       <DependentUpon>FrmModeMarker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

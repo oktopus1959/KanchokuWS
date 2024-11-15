@@ -16,7 +16,7 @@ using Utils;
 
 namespace KanchokuWS
 {
-    public partial class FrmVirtualKeyboard : Form
+    public partial class FrmCandidateSelector : Form
     {
         private static Logger logger = Logger.GetLogger();
 
@@ -52,27 +52,13 @@ namespace KanchokuWS
         /// <summary>現在表示されているのは通常鍵盤か</summary>
         public bool IsCurrentNormalVkb { get; private set; } = true;
 
-        /// <summary> 仮想鍵盤ウィンドウの ClassName の末尾のハッシュ部分 </summary>
-        private string dlgVkbClassNameHash;
-
-        public bool IsMyWinClassName(string winClassName = null)
-        {
-            if (dlgVkbClassNameHash._isEmpty()) {
-                dlgVkbClassNameHash = ActiveWindowHandler.GetWindowClassName(this.Handle)._safeSubstring(-16);
-                logger.Info(() => $"Vkb ClassName Hash={dlgVkbClassNameHash}");
-            }
-
-            return winClassName._orElse(ActiveWindowHandler.Singleton.ActiveWinClassName)._endsWith(dlgVkbClassNameHash);
-        }
-
-        /// <summary> ミニバッファにフォーカスがあるか </summary>
-        public bool IsTopTextFocused => topTextBox.Focused;
-
-
         /// <summary> ストローク文字横書きフォント </summary>
         private Font strokeCharFont;
         /// <summary> ストロークキー横書きフォント </summary>
         private Font strokeKeyFont;
+
+        [DllImport("user32.dll")]
+        private static extern bool MoveWindow(IntPtr handle, int x, int y, int width, int height, bool redraw);
 
         //------------------------------------------------------------------------------------
         /// <summary>
@@ -321,17 +307,15 @@ namespace KanchokuWS
 
         public void ShowNonActive()
         {
-            if (!frmMain.IsVkbHiddenTemporay) {
-                //topTextBox.Width = (int)(VkbNormalWidth);
-                ShowWindow(this.Handle, SW_SHOWNA);   // NonActive
-                if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"LEAVE: this.Width={this.Width}, this.Height={this.Height}, tex.Height={topTextBox.Height}, pic.top={pictureBox_Main.Top}");
-            }
+            //topTextBox.Width = (int)(VkbNormalWidth);
+            ShowWindow(this.Handle, SW_SHOWNA);   // NonActive
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"LEAVE: this.Width={this.Width}, this.Height={this.Height}, tex.Height={topTextBox.Height}, pic.top={pictureBox_Main.Top}");
         }
 
         //------------------------------------------------------------------------------------
         /// <summary> コンストラクタ </summary>
         /// <param name="form"></param>
-        public FrmVirtualKeyboard(FrmKanchoku form)
+        public FrmCandidateSelector(FrmKanchoku form)
         {
             frmMain = form;
 
@@ -353,19 +337,19 @@ namespace KanchokuWS
         /// <summary>上部ミニバッファの文字列を返す</summary>
         public string TopText => topTextBox.Text;
 
-        const int CS_DROPSHADOW = 0x00020000;
+        //const int CS_DROPSHADOW = 0x00020000;
 
-        /// <summary> フォームに影をつける </summary>
-        protected override CreateParams CreateParams {
-            get {
-                CreateParams cp = base.CreateParams;
-                cp.ClassStyle |= CS_DROPSHADOW;
-                return cp;
-            }
-        }
+        ///// <summary> フォームに影をつける </summary>
+        //protected override CreateParams CreateParams {
+        //    get {
+        //        CreateParams cp = base.CreateParams;
+        //        cp.ClassStyle |= CS_DROPSHADOW;
+        //        return cp;
+        //    }
+        //}
 
         /// <summary>フォームのクローズ</summary>
-        private void FrmVirtualKeyboard_FormClosing(object sender, FormClosingEventArgs e)
+        private void FrmDisplayBuffer_FormClosing(object sender, FormClosingEventArgs e)
         {
             normalFontInfo?.Dispose();
             centerFontInfo.Dispose();
@@ -377,7 +361,7 @@ namespace KanchokuWS
         }
 
         /// <summary> フォームのロード </summary>
-        private void DlgVirtualKeyboard_Load(object sender, EventArgs e)
+        private void FrmDisplayBuffer_Load(object sender, EventArgs e)
         {
             // focus move
             topTextBox.actionOnPaste = sendWord;        // 上部出力文字列に何かをペーストされたときのアクション
@@ -599,7 +583,7 @@ namespace KanchokuWS
             renewObjectsForDrawingVerticalChars();
 
             // 仮想鍵盤の再描画
-            if (frmMain.IsDecoderActive) DrawVirtualKeyboardChars();
+            if (frmMain.IsDecoderActive) DrawDisplayBufferChars();
         }
 
         //-----------------------------------------------------------------------------------------
@@ -1008,15 +992,15 @@ namespace KanchokuWS
             if (frmMain.DecoderOutput.strokeTableNum == 1 && StrokeTables1._notEmpty()) {
                 if (delta < 0) delta = StrokeTables1.Count - ((-delta) % StrokeTables1.Count);
                 selectedTable1 = (selectedTable1 + delta) % StrokeTables1.Count;
-                DrawVirtualKeyboardChars();
+                DrawDisplayBufferChars();
             } else if (frmMain.DecoderOutput.strokeTableNum == 2 && StrokeTables2._notEmpty()) {
                 if (delta < 0) delta = StrokeTables2.Count - ((-delta) % StrokeTables2.Count);
                 selectedTable2 = (selectedTable2 + delta) % StrokeTables2.Count;
-                DrawVirtualKeyboardChars();
+                DrawDisplayBufferChars();
             } else if (frmMain.DecoderOutput.strokeTableNum == 3 && StrokeTables3._notEmpty()) {
                 if (delta < 0) delta = StrokeTables3.Count - ((-delta) % StrokeTables3.Count);
                 selectedTable3 = (selectedTable3 + delta) % StrokeTables3.Count;
-                DrawVirtualKeyboardChars();
+                DrawDisplayBufferChars();
             }
         }
 
@@ -1029,7 +1013,7 @@ namespace KanchokuWS
         }
 
         /// <summary> 仮想キーボードにヘルプや文字候補を表示 </summary>
-        public void DrawVirtualKeyboardChars(int lastDeckey = -1)
+        public void DrawDisplayBufferChars(int lastDeckey = -1)
         {
             var decoderOutput = frmMain.DecoderOutput;
 
@@ -1132,7 +1116,8 @@ namespace KanchokuWS
             this.Height = newHeight;
             if (newHeight != oldHeight) {
                 // ウィンドウ位置の再取得を行わずに移動するので正しくない場所に表示される可能性はあるが、たいていの場合は大丈夫だろう
-                frmMain.MoveFormVirtualKeyboard();
+                //frmMain.MoveFormVirtualKeyboard();
+                MoveWindow(this.Handle, this.Location.X, this.Location.Y, this.Width, this.Height, true);
             }
             if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"LEAVE: this.Width={this.Width}, this.Height={this.Height}");
         }
@@ -1768,51 +1753,10 @@ namespace KanchokuWS
             }
         }
 
-        private void pictureBox_Main_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            //logger.Info($"CALLED: e.Delta={e.Delta}, scrollLines={SystemInformation.MouseWheelScrollLines}");
-            //frmMain.RotateStrokeTable(e.Delta * SystemInformation.MouseWheelScrollLines / 120);
-            frmMain.RotateStrokeTable(-e.Delta / 120);
-        }
-
-        // 終了
-        private void Exit_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            logger.Info("ENTER");
-            //frmMain.DeactivateDecoderWithModifiersOff();
-            //logger.Debug("Decoder OFF");
-            //if (!Settings.ConfirmOnClose || SystemHelper.OKCancelDialog("漢直窓を終了します。\r\nよろしいですか。")) {
-            //    this.Close();
-            //    logger.Debug("this.Closed");
-            //    frmMain.Close();
-            //    logger.Debug("Main.Closed");
-            //}
-            frmMain.Terminate();
-            logger.Info("LEAVE");
-        }
-
-        private void BushuAssocReload_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmMain.ExecCmdDecoder("mergeBushuAssoc", null);
-        }
-
         // 上部出力文字列に何かをペーストされたときのアクション
         private void sendWord(string str)
         {
             frmMain.SendToDictionary(str);
-        }
-
-        private void Settings_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmMain.DeactivateDecoderWithModifiersOff();
-            if (!DlgSettings.BringTopMostShownDlg()) {
-                var dlg = new DlgSettings(frmMain, this, null);
-                dlg.ShowDialog();
-                bool bRestart = dlg.RestartRequired;
-                bool bNoSave = dlg.NoSave;
-                dlg.Dispose();
-                if (bRestart) frmMain.Restart(bNoSave);
-            }
         }
 
         private void dgvHorizontal_SelectionChanged(object sender, EventArgs e)
@@ -1820,72 +1764,11 @@ namespace KanchokuWS
             dgvHorizontal.CurrentCell = null;   // どのセルも選択されていない状態に戻す
         }
 
-        private void DlgVirtualKeyboard_VisibleChanged(object sender, EventArgs e)
+        private void FrmDisplayBuffer_VisibleChanged(object sender, EventArgs e)
         {
             CommonState.VkbVisible = this.Visible;
             CommonState.VkbVisibiltyChangedDt = HRDateTime.Now;
         }
 
-        // 辞書内容を保存して再起動
-        private void RestartWithSave_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            logger.Info("ENTER");
-            frmMain.Restart(false);
-            logger.Info("LEAVE");
-        }
-
-        // 辞書内容を破棄して再起動
-        private void RestartWithDiscard_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            logger.Info("ENTER");
-            frmMain.Restart(true);
-            logger.Info("LEAVE");
-        }
-
-        private void ReadBushuDic_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmMain.ReloadBushuDic();
-        }
-
-        private void ReadMazeWikipediaDic_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmMain.ReadMazegakiWikipediaDic();
-        }
-
-        private void FollowCaret_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Settings.VirtualKeyboardPosFixedTemporarily = false;
-        }
-
-        private void ExcangeTable_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmMain.ExchangeCodeTable();
-        }
-
-        private void ReloadSettigs_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmMain.ReloadSettingsAndDefFiles();
-        }
-
-        private void KanaTrainingMode_ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmMain.KanaTrainingModeToggle();
-        }
-
-        private void CopyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            topTextBox.Copy();
-        }
-
-        private void contextMenuStrip2_Opened(object sender, EventArgs e)
-        {
-            topTextBox.SelectAll();
-        }
-
-        private void PasteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            topTextBox.Paste();
-            if (topTextBox.Text._notEmpty()) sendWord(topTextBox.Text);
-        }
     }
 }

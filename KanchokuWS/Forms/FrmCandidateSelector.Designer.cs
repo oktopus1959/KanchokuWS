@@ -1,7 +1,7 @@
 ﻿
 namespace KanchokuWS
 {
-    partial class FrmEditBuffer
+    partial class FrmCandidateSelector
     {
         /// <summary>
         /// Required designer variable.

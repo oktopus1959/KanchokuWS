@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using KanchokuWS.Forms;
 using KanchokuWS.Domain;
 using KanchokuWS.Handler;
 using KanchokuWS.Gui;
@@ -19,7 +20,7 @@ namespace KanchokuWS
 {
     public partial class FrmKanchoku : Form
     {
-        private static Logger logger = Logger.GetLogger();
+        private static Logger logger = Logger.GetLogger(true);
 
         //------------------------------------------------------------------
         [DllImport("user32.dll")]
@@ -64,6 +65,9 @@ namespace KanchokuWS
         private DateTime strokeLogLastDt;
 
         private StringBuilder sbStrokeLog = new StringBuilder();
+
+        [DllImport("user32.dll")]
+        private static extern bool MoveWindow(IntPtr handle, int x, int y, int width, int height, bool redraw);
 
         public void ShowDlgStrokeLog(Form frmFocus, int left, int top)
         {
@@ -205,7 +209,7 @@ namespace KanchokuWS
         //------------------------------------------------------------------
         //private string CharCountFile;
 
-        private const int timerInterval = 100;
+        private const int timerInterval = 10;
 
         private KeyboardEventHandler keHandler { get; set; }
 
@@ -281,17 +285,20 @@ namespace KanchokuWS
 
             // 仮想鍵盤フォームの作成
             frmVkb = new FrmVirtualKeyboard(this);
-            frmVkb.Opacity = 0;     // 最初は完全透明にして目に見えないようにする
-            frmVkb.Show();
+            frmVkb.Opacity = 0;     // Show() を呼ぶ必要があるので、最初は完全透明にして目に見えないようにする
+            frmVkb.Show();          // Show() を呼んでLoadを実行することで、ウィンドウの状態(サイズなど)が初期化される
 
             // 漢直モード表示フォームの作成
             frmMode = new FrmModeMarker(this, frmVkb);
-            frmMode.Show();
+            frmMode.Show();         // Show() を呼んでLoadを実行することで、ウィンドウの状態(サイズなど)が初期化される
             frmMode.Hide();
 
             // 表示・編集バッファフォームの作成
             frmEditBuf = new FrmEditBuffer(this);
+            frmEditBuf.ShowNonActive();      // Show() を呼んでLoadを実行することで、ウィンドウの状態(サイズなど)が初期化される
+            frmEditBuf.MoveWindow();
             frmEditBuf.Hide();
+            logger.WarnH($"EditBuf.Width={frmEditBuf.Width}, Height={frmEditBuf.Height}");
 
             // アクティブなウィンドウのハンドラ作成
             ActiveWindowHandler.CreateSingleton();
@@ -345,6 +352,7 @@ namespace KanchokuWS
 
             // キーボードイベントハンドラの初期化(フックの開始など)
             keHandler.Initialize(this, frmVkb);
+
         }
 
         // 各種サンプルから本番ファイルをコピー(もし無ければ)
@@ -910,9 +918,9 @@ namespace KanchokuWS
         /// </summary>
         /// <param name="deckey"></param>
         /// <returns>OSに処理を渡さない場合は true を返す</returns>
-        public bool FuncDispatcher(int deckey, int normalDeckey, uint mod, bool rollOverStroke)
+        public bool FuncDispatcher(int deckey, int origDeckey, uint mod, bool rollOverStroke)
         {
-            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), normalDeckey={normalDeckey:x}H({normalDeckey}), mod={mod:x}({mod})");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), normalDeckey={origDeckey:x}H({origDeckey}), mod={mod:x}({mod})");
             bool bPrevDtUpdate = false;
             //prevDeckey = prevFuncDeckey;
             //prevFuncDeckey = deckey;
@@ -1068,8 +1076,8 @@ namespace KanchokuWS
                             // 主に英数モードから抜けるために使う
                             logger.Info(() => $"UNDEFINED_DECKEY:{deckey}");
                             sendDeckeyToDecoder(deckey);
-                            if (normalDeckey >= 0 && normalDeckey < DecoderKeys.NORMAL_DECKEY_NUM) {
-                                return sendVkeyFromDeckey(normalDeckey, -1, mod);
+                            if (origDeckey >= 0 && origDeckey < DecoderKeys.NORMAL_DECKEY_NUM) {
+                                return sendVkeyFromDeckey(origDeckey, -1, mod);
                             } else {
                                 return false;
                             }
@@ -1079,7 +1087,7 @@ namespace KanchokuWS
                             if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {
                                 return InvokeDecoder(deckey, mod, rollOverStroke);
                             } else {
-                                return sendVkeyFromDeckey(deckey, normalDeckey, mod);
+                                return sendVkeyFromDeckey(deckey, origDeckey, mod);
                             }
                     }
                 } else {
@@ -1087,9 +1095,9 @@ namespace KanchokuWS
                     if (Settings.LoggingDecKeyInfo) logger.Info("Decoder Inactive");
                     bPrevDtUpdate = true;
                     if (deckey >= 0 && deckey != DecoderKeys.UNDEFINED_DECKEY) {
-                        return sendVkeyFromDeckey(deckey, normalDeckey, mod);
-                    } else if (normalDeckey >= 0) {
-                        return sendVkeyFromDeckey(normalDeckey, -1, mod);
+                        return sendVkeyFromDeckey(deckey, origDeckey, mod);
+                    } else if (origDeckey >= 0) {
+                        return sendVkeyFromDeckey(origDeckey, -1, mod);
                     }
                     return false;
                 }
@@ -1336,6 +1344,8 @@ namespace KanchokuWS
             logger.Info(() => $"\nENTER");
 
             HRDateTime.AdjustHiResNow();
+            //// 仮想鍵盤や編集バッファのウィンドウを移動する
+            //moveWindows(false, true, true);
 
             if (IsDecoderActive) {
                 logger.Info("Decoder already activated");
@@ -1389,10 +1399,12 @@ namespace KanchokuWS
                 frmVkb.DrawInitialVkb();
                 //Text = "漢直窓S - ON";
                 notifyIcon1.Icon = Properties.Resources.kanmini1;
-                // 仮想鍵盤を移動させる
-                MoveFormVirtualKeyboard();
-                // 表示・編集バッファを移動させる
-                MoveFormEditBuffer();
+                //// 仮想鍵盤を移動させる
+                //MoveFormVirtualKeyboard();
+                //// 表示・編集バッファを移動させる
+                //MoveFormEditBuffer();
+                // 仮想鍵盤や編集バッファのウィンドウを移動する
+                moveWindows(false, true, true);
                 Hide();
                 frmMode.Hide();
                 // ウィンドウが移動する時間をかせいでから画面を表示する ⇒ これは不要か？とりあえず待ち時間を短くしておく(50ms⇒20ms)(2021/8/2)
@@ -1457,130 +1469,25 @@ namespace KanchokuWS
             DeactivateDecoder(true);
         }
 
-        public void MoveFormEditBuffer()
-        {
-            moveEditBufWindow(false, true, true);
-        }
-
-        private Rectangle prevCaretPosForEditBuf;
-
-        /// <summary>
-        /// 表示・編集バッファをカレットの近くに移動する<br/>
-        /// これが呼ばれるのはデコーダがONのときだけ
-        /// </summary>
-        private void moveEditBufWindow(bool bDiffWin, bool bMoveMandatory, bool bLog)
-        {
-            if (ActiveWindowHandler.Singleton == null) return;  // まだ Singleton が生成される前に呼び出される可能性あり
-
-            var activeWinClassName = ActiveWindowHandler.Singleton.ActiveWinClassName;
-            var activeWinSettings = Settings.GetWinClassSettings(activeWinClassName);
-            if (bLog || bFirstMove) {
-                logger.DebugH($"CALLED: diffWin={bDiffWin}, mandatory={bMoveMandatory}, firstMove={bFirstMove}");
-                ActiveWindowHandler.Singleton.LoggingCaretInfo(activeWinSettings);
-            }
-
-            var activeWinCaretPos = ActiveWindowHandler.Singleton.ActiveWinCaretPos;
-
-            bool isValidCaretShape()
-            {
-                bool result = activeWinCaretPos.Width > 0 || activeWinCaretPos.Height > 0;
-                if (bLog && !result) logger.DebugH("INVALID caret shape");
-                return result;
-            }
-
-            bool isValidCaretPos()
-            {
-                return
-                    (Math.Abs(activeWinCaretPos.X) >= NO_MOVE_OFFSET || Math.Abs(activeWinCaretPos.Y) >= NO_MOVE_OFFSET) &&
-                    (Math.Abs(activeWinCaretPos.X - prevCaretPosForEditBuf.X) >= NO_MOVE_OFFSET || Math.Abs(activeWinCaretPos.Y - prevCaretPosForEditBuf.Y) >= NO_MOVE_OFFSET);
-            }
-
-            if (isValidCaretShape() && isValidCaretPos() && ActiveWindowHandler.Singleton.IsInValidCaretMargin(activeWinSettings)) {
-                int xOffset = (activeWinSettings?.CaretOffset)._getNth(0, 2);
-                int yOffset = (activeWinSettings?.CaretOffset)._getNth(1, Settings.VirtualKeyboardOffsetY);
-                //double dpiRatio = 1.0; //FrmVkb.GetDeviceDpiRatio();
-                if (activeWinCaretPos.X >= 0) {
-                    int cX = activeWinCaretPos.X;
-                    int cY = activeWinCaretPos.Y;
-                    int cW = activeWinCaretPos.Width;
-                    int cH = activeWinCaretPos.Height;
-                    if (bLog) {
-                        logger.Info($"MOVE: X={cX}, Y={cY}, W={cW}, H={cH}, OX={xOffset}, OY={yOffset}");
-                        if (Settings.LoggingActiveWindowInfo) {
-                            var dpis = ScreenInfo.Singleton.ScreenDpi.Select(x => $"{x}")._join(", ");
-                            frmVkb.SetTopText($"DR={dpis}, CX={cX},CY={cY},CW={cW},CH={cH},OX={xOffset},OY={yOffset}");
-                        }
-                    }
-                    Action<Form> moveAction = (Form frm) => {
-                        int fX = 0;
-                        int fY = 0;
-                        int fW = frm.Size.Width;
-                        int fH = frm.Size.Height;
-                        fX = cX + (xOffset >= 0 ? cW : -fW) + xOffset;
-                        if (fX < 0) fX = cX + cW + Math.Abs(xOffset);
-                        fY = cY + cH - 24;
-                        if (fY < 0) fY = cY + cH + Math.Abs(yOffset);
-                        int fRight = fX + fW;
-                        int fBottom = fY + fH;
-                        Rectangle rect = ScreenInfo.Singleton.GetScreenContaining(cX, cY);
-                        //if (fRight >= rect.X + rect.Width) fX = cX - fW - Math.Abs(xOffset);
-                        //if (fBottom >= rect.Y + rect.Height) fY = cY - fH - Math.Abs(yOffset);
-                        if (fRight >= rect.X + rect.Width) {
-                            fX = cX - fW - Math.Abs(xOffset);
-                            if (fY >= cY && fY <= cY + cH || fY < cY && fY + fH >= cY) {
-                                fY = cY + cH;
-                            }
-                        }
-                        MoveWindow(frm.Handle, fX, fY, fW, fH, true);
-                    };
-                    // 表示・編集バッファの移動
-                    moveAction(frmEditBuf);
-
-                    prevCaretPosForEditBuf = activeWinCaretPos;
-                }
-            }
-        }
-
-        /// <summary>仮想鍵盤の表示位置を移動する</summary>
-        public void MoveFormVirtualKeyboard()
-        {
-            logger.DebugH("CALLED");
-            moveVkbWindow(false, true, true);
-        }
-
-        /// <summary> ウィンドウを移動さ出ない微少変動量 </summary>
-        private const int NO_MOVE_OFFSET = 10;
-
-        /// <summary> 仮想鍵盤ウィンドウの ClassName の末尾のハッシュ部分 </summary>
-        private string dlgVkbClassNameHash;
-
         private bool bFirstMove = true;
 
-        private Rectangle prevCaretPos;
-
-        [DllImport("user32.dll")]
-        private static extern bool MoveWindow(IntPtr handle, int x, int y, int width, int height, bool redraw);
-
         /// <summary>
-        /// 仮想鍵盤(またはモード標識)をカレットの近くに移動する (仮想鍵盤自身がアクティブの場合は移動しない)<br/>
-        /// これが呼ばれるのはデコーダがONのときだけ
+        /// 仮想鍵盤や編集バッファのウィンドウを移動する
         /// </summary>
-        private void moveVkbWindow(bool bDiffWin, bool bMoveMandatory, bool bLog)
+        /// <param name="bDiffWin"></param>
+        /// <param name="bMoveMandatory"></param>
+        /// <param name="bLog"></param>
+        private void moveWindows(bool bDiffWin, bool bMoveMandatory, bool bLog)
         {
+            if (bLog) logger.WarnH($"ENTER: bDiffWin={bDiffWin}, bMoveMandatory={bMoveMandatory}, bLog={bLog}");
+
             if (ActiveWindowHandler.Singleton == null) return;  // まだ Singleton が生成される前に呼び出される可能性あり
 
             var activeWinClassName = ActiveWindowHandler.Singleton.ActiveWinClassName;
             var activeWinSettings = Settings.GetWinClassSettings(activeWinClassName);
             if (bLog || bFirstMove) {
-                logger.DebugH($"CALLED: diffWin={bDiffWin}, mandatory={bMoveMandatory}, firstMove={bFirstMove}");
+                if (bLog) logger.WarnH($"CALLED: diffWin={bDiffWin}, mandatory={bMoveMandatory}, firstMove={bFirstMove}");
                 ActiveWindowHandler.Singleton.LoggingCaretInfo(activeWinSettings);
-            }
-
-            if (Settings.VirtualKeyboardPosFixedTemporarily) return;    // 一時的に固定されている
-
-            if (dlgVkbClassNameHash._isEmpty()) {
-                dlgVkbClassNameHash = ActiveWindowHandler.GetWindowClassName(frmVkb.Handle)._safeSubstring(-16);
-                logger.DebugH(() => $"Vkb ClassName Hash={dlgVkbClassNameHash}");
             }
 
             var activeWinCaretPos = ActiveWindowHandler.Singleton.ActiveWinCaretPos;
@@ -1589,76 +1496,67 @@ namespace KanchokuWS
             bool isValidCaretShape()
             {
                 bool result = activeWinCaretPos.Width > 0 || activeWinCaretPos.Height > 0;
-                if (bLog && !result) logger.DebugH("INVALID caret shape");
+                if (bLog && !result) logger.WarnH("INVALID caret shape");
                 return result;
             }
 
-            bool isValidCaretPos()
-            {
-                return
-                    (Math.Abs(activeWinCaretPos.X) >= NO_MOVE_OFFSET || Math.Abs(activeWinCaretPos.Y) >= NO_MOVE_OFFSET) &&
-                    (Math.Abs(activeWinCaretPos.X - prevCaretPos.X) >= NO_MOVE_OFFSET || Math.Abs(activeWinCaretPos.Y - prevCaretPos.Y) >= NO_MOVE_OFFSET);
-            }
-
-            if (bFirstMove || (!this.IsVirtualKeyboardFreezed && !activeWinClassName.EndsWith(dlgVkbClassNameHash) && activeWinClassName._ne("SysShadow"))) {
-                if (isValidCaretShape() && (bFirstMove || bMoveMandatory || (isValidCaretPos() && ActiveWindowHandler.Singleton.IsInValidCaretMargin(activeWinSettings)))) {
-                    int xOffset = (activeWinSettings?.CaretOffset)._getNth(0, Settings.VirtualKeyboardOffsetX);
-                    int yOffset = (activeWinSettings?.CaretOffset)._getNth(1, Settings.VirtualKeyboardOffsetY);
-                    int xFixed = (activeWinSettings?.VkbFixedPos)._getNth(0, -1)._geZeroOr(Settings.VirtualKeyboardFixedPosX);
-                    int yFixed = (activeWinSettings?.VkbFixedPos)._getNth(1, -1)._geZeroOr(Settings.VirtualKeyboardFixedPosY);
-                    if (xFixed < 0 && bFixedPosWinClass) xFixed = Math.Abs(Settings.VirtualKeyboardFixedPosX);
-                    if (yFixed < 0 && bFixedPosWinClass) yFixed = Math.Abs(Settings.VirtualKeyboardFixedPosY);
-                    //double dpiRatio = 1.0; //FrmVkb.GetDeviceDpiRatio();
-                    if (bLog || bFirstMove) logger.Info($"CaretPos.X={activeWinCaretPos.X}, CaretPos.Y={activeWinCaretPos.Y}, xOffset={xOffset}, yOffset={yOffset}, xFixed={xFixed}, yFixed={yFixed}");
+            if (bFirstMove || isValidActiveWindow(activeWinClassName)) {
+                if (isValidCaretShape() &&
+                    (bFirstMove || bMoveMandatory ||
+                    (isValidCaretPos(activeWinCaretPos) && ActiveWindowHandler.Singleton.IsInValidCaretMargin(activeWinSettings)))) {
                     if (activeWinCaretPos.X >= 0) {
-                        int cX = activeWinCaretPos.X;
-                        int cY = activeWinCaretPos.Y;
-                        int cW = activeWinCaretPos.Width;
-                        int cH = activeWinCaretPos.Height;
-                        if (bLog) {
-                            logger.Info($"MOVE: X={cX}, Y={cY}, W={cW}, H={cH}, OX={xOffset}, OY={yOffset}");
-                            if (Settings.LoggingActiveWindowInfo) {
-                                var dpis = ScreenInfo.Singleton.ScreenDpi.Select(x => $"{x}")._join(", ");
-                                frmVkb.SetTopText($"DR={dpis}, CX={cX},CY={cY},CW={cW},CH={cH},OX={xOffset},OY={yOffset}");
-                            }
+                        if (!this.IsVirtualKeyboardFreezed && !Settings.VirtualKeyboardPosFixedTemporarily) {
+                            // 一時的に固定されている
+                            frmVkb.MoveWindow(activeWinSettings, activeWinCaretPos, bFixedPosWinClass, bLog);
                         }
-                        Action<Form> moveAction = (Form frm) => {
-                            int fX = 0;
-                            int fY = 0;
-                            int fW = frm.Size.Width;
-                            int fH = frm.Size.Height;
-                            if (xFixed >= 0 && yFixed >= 0) {
-                                fX = xFixed;
-                                fY = yFixed;
-                            } else {
-                                fX = cX + (xOffset >= 0 ? cW : -fW) + xOffset ;
-                                if (fX < 0) fX = cX + cW + Math.Abs(xOffset);
-                                fY = cY + (yOffset >= 0 ? cH : -fH) + yOffset;
-                                if (fY < 0) fY = cY + cH + Math.Abs(yOffset);
-                                int fRight = fX + fW;
-                                int fBottom = fY + fH;
-                                Rectangle rect = ScreenInfo.Singleton.GetScreenContaining(cX, cY);
-                                if (fRight >= rect.X + rect.Width) fX = cX - fW - Math.Abs(xOffset);
-                                if (fBottom >= rect.Y + rect.Height) fY = cY - fH - Math.Abs(yOffset);
-                            }
-                            MoveWindow(frm.Handle, fX, fY, fW, fH, true);
-                        };
-                        // 仮想鍵盤の移動
-                        moveAction(frmVkb);
-
-                        // 入力モード標識の移動
-                        moveAction(frmMode);
-                        if (bDiffWin && !this.IsVkbShown) {
-                            // 異なるウィンドウに移動したら入力モード標識を表示する
-                            frmMode.ShowImmediately();
+                        if (IsDecoderActive) {
+                            frmEditBuf.MoveWindow(activeWinSettings, activeWinCaretPos, bFixedPosWinClass, bLog);
                         }
                         prevCaretPos = activeWinCaretPos;
                     }
                 }
-                bFirstMove = false;
-            } else {
-                logger.Debug(() => $"ActiveWinClassName={activeWinClassName}, VkbClassName={dlgVkbClassNameHash}");
             }
+            bFirstMove = false;
+        }
+
+        /// <summary> 仮想鍵盤ウィンドウの ClassName の末尾のハッシュ部分 </summary>
+        private string frmVkbClassNameHash;
+
+        private string frmEditBufClassNameHash;
+
+        private bool isValidActiveWindow(string activeWinClassName)
+        {
+            //logger.WarnH("ENTER");
+            var activeWinHandle = ActiveWindowHandler.Singleton.ActiveWinHandle;
+            if (activeWinHandle == IntPtr.Zero || activeWinHandle == frmVkb.Handle || activeWinHandle == frmEditBuf.Handle) return false;
+
+            if (frmVkbClassNameHash._isEmpty()) {
+                frmVkbClassNameHash = ActiveWindowHandler.GetWindowClassName(frmVkb.Handle)._safeSubstring(-16);
+                logger.DebugH(() => $"Vkb ClassName Hash={frmVkbClassNameHash}");
+            }
+
+            if (frmEditBufClassNameHash._isEmpty()) {
+                frmEditBufClassNameHash = ActiveWindowHandler.GetWindowClassName(frmEditBuf.Handle)._safeSubstring(-16);
+                logger.DebugH(() => $"EditBuf ClassName Hash={frmEditBufClassNameHash}");
+            }
+
+            //return !this.IsVirtualKeyboardFreezed && !activeWinClassName.EndsWith(dlgVkbClassNameHash) && activeWinClassName._ne("SysShadow");
+            bool result = !activeWinClassName.EndsWith(frmVkbClassNameHash) && !activeWinClassName.EndsWith(frmEditBufClassNameHash) && activeWinClassName._ne("SysShadow");
+            //logger.WarnH($"LEAVE: result={result}");
+            return result;
+        }
+
+        /// <summary> ウィンドウを移動さ出ない微少変動量 </summary>
+        private const int NO_MOVE_OFFSET = 10;
+
+        private Rectangle prevCaretPos;
+
+        private bool isValidCaretPos(Rectangle activeWinCaretPos)
+        {
+            //logger.WarnH($"activeWinCaretPos.X={activeWinCaretPos.X}, Y={activeWinCaretPos.Y}, prevCaretPos.X={prevCaretPos.X}, Y={prevCaretPos.Y}");
+            return
+                (Math.Abs(activeWinCaretPos.X) >= NO_MOVE_OFFSET || Math.Abs(activeWinCaretPos.Y) >= NO_MOVE_OFFSET) &&
+                (Math.Abs(activeWinCaretPos.X - prevCaretPos.X) >= NO_MOVE_OFFSET || Math.Abs(activeWinCaretPos.Y - prevCaretPos.Y) >= NO_MOVE_OFFSET);
         }
 
         /// <summary>ストロークヘルプ</summary>
@@ -2010,7 +1908,8 @@ namespace KanchokuWS
                         sendClearStrokeToDecoder();
                     }
                     if (decoderOutput.numBackSpaces > 0) {
-                        SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(null, decoderOutput.numBackSpaces, true);
+                        //SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(null, decoderOutput.numBackSpaces, true);
+                        frmEditBuf.PutString(null, decoderOutput.numBackSpaces);
                     }
                 }
                 if (Settings.MultiStreamMode || decoderOutput.GetStrokeCount() < 1) {
@@ -2033,21 +1932,24 @@ namespace KanchokuWS
                     // BSと文字送出(もしあれば)
                     var outString = decoderOutput.outString;
                     int outLen = outString._strlen();
-                    if (outLen >= 0) {
+                    int numBS = decoderOutput.numBackSpaces;
+                    if (outLen > 0 || numBS > 0) {
                         logger.DebugH("PATH-4");
                         // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
                         bool bFuncVkeyContained = isFuncVkeyContained(outString, outLen);
-                        int numBS = decoderOutput.numBackSpaces;
                         int leadLen = calcSameLeadingLen(outString, outLen, numBS);
                         var outStr = leadLen > 0 ? outString.Skip(leadLen).ToArray() : outString;
                         /*if (Settings.LoggingDecKeyInfo)*/ logger.InfoH(() => $"outString={outString._toString()}, numBS={numBS}, leadLen={leadLen}, outStr={outStr._toString()}");
                         WriteStrokeLog(outStr._toString());
-                        SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(outStr, numBS - leadLen, bFuncVkeyContained);
+                        //SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(outStr, numBS - leadLen, bFuncVkeyContained);
+                        frmEditBuf.PutString(outStr, numBS - leadLen);
+#if false
                         if (bFuncVkeyContained) {
                             logger.DebugH("PATH-5");
                             // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
                             HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, 0, ref decoderOutput);
                         }
+#endif
                         // 前置書き換え対象文字なら、許容時間をセットする
                         CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(outString._toString());
                     }
@@ -2139,11 +2041,14 @@ namespace KanchokuWS
             // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
             bool bFuncVkeyContained = isFuncVkeyContained(decoderOutput.outString);
             // BSと文字送出(もしあれば)
-            SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces, bFuncVkeyContained);
+            //SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces, bFuncVkeyContained);
+            frmEditBuf.PutString(decoderOutput.outString, decoderOutput.numBackSpaces);
+#if false
             if (bFuncVkeyContained) {
                 // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく
                 HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, 0, ref decoderOutput);
             }
+#endif
             // 前置書き換え対象文字なら、許容時間をセットする
             if (decoderOutput.outString._strlen() > 0 || decoderOutput.numBackSpaces > 0)
                 CombinationKeyStroke.Determiner.Singleton.SetPreRewriteTime(decoderOutput.outString._toString());
@@ -2205,7 +2110,7 @@ namespace KanchokuWS
             bRomanMode = bRoman;
         }
 
-        private bool sendVkeyFromDeckey(int deckey, int normalDeckey, uint mod)
+        private bool sendVkeyFromDeckey(int deckey, int origDeckey, uint mod)
         {
             var ctrlKeyState = SendInputHandler.GetCtrlKeyState();
 
@@ -2240,7 +2145,8 @@ namespace KanchokuWS
                                 mod |= KeyModifiers.MOD_SHIFT;
                             }
                             if (Settings.LoggingDecKeyInfo) logger.Info($"SendVKeyCombo: mod={mod:x}H({mod}), vkey={vk:x}H({vk})");
-                            SendInputHandler.Singleton.SendVKeyCombo(mod, vk, 1);
+                            //SendInputHandler.Singleton.SendVKeyCombo(mod, vk, 1);
+                            frmEditBuf.PutVkeyCombo(mod, vk);
                             if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: TRUE");
                             return true;
                         }
@@ -2263,17 +2169,18 @@ namespace KanchokuWS
                     }
                     if (vk == 0) vk = DecoderKeyVsVKey.GetVKeyFromDecKey(normDeckey);
                     if (Settings.LoggingDecKeyInfo) logger.Info($"SendVKeyCombo: mod={_mod:x}H({_mod}), vkey={vk:x}H({vk})");
-                    SendInputHandler.Singleton.SendVKeyCombo(_mod, vk, 1);
+                    //SendInputHandler.Singleton.SendVKeyCombo(_mod, vk, 1);
+                    frmEditBuf.PutVkeyCombo(_mod, vk);
                     if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: TRUE");
                     return true;
                 } else {
                     if (Settings.LoggingDecKeyInfo) logger.Info($"NO VKEY COMBO for deckey={deckey:x}H({deckey})");
                 }
-            } else if (Settings.ShortcutKeyConversionEnabled && (mod & KeyModifiers.MOD_CONTROL) == 0 && normalDeckey >= 0 && normalDeckey < DecoderKeys.NORMAL_DECKEY_NUM) {
+            } else if (Settings.ShortcutKeyConversionEnabled && (mod & KeyModifiers.MOD_CONTROL) == 0 && origDeckey >= 0 && origDeckey < DecoderKeys.NORMAL_DECKEY_NUM) {
                 // Ctrl修飾を受け付けないウィンドウへのCtrl修飾キーの送信であり、ショートカットキーの変換をやる (PuTTYとか)
-                if (Settings.LoggingDecKeyInfo) { logger.Info($"SEND3: mod={mod:x}H({mod}), normalDeckey={normalDeckey:x}H({normalDeckey})"); }
+                if (Settings.LoggingDecKeyInfo) { logger.Info($"SEND3: mod={mod:x}H({mod}), normalDeckey={origDeckey:x}H({origDeckey})"); }
                 // ショートカットキーの変換をやる
-                uint vk = CharVsVKey.GetVKeyFromFaceChar(DecoderKeyVsChar.GetArrangedCharFromDecKey(normalDeckey), deckey);
+                uint vk = CharVsVKey.GetVKeyFromFaceChar(DecoderKeyVsChar.GetArrangedCharFromDecKey(origDeckey), deckey);
                 if (vk > 0) {
                     if (Settings.LoggingDecKeyInfo) logger.Info($"SendVKeyCombo: mod=CTRL, vkey={vk:x}H({vk})");
                     SendInputHandler.Singleton.SendVKeyCombo(KeyModifiers.MOD_CONTROL, vk, 1);
@@ -2432,7 +2339,7 @@ namespace KanchokuWS
                     initialSettingsDialogOpened = true; // 今回限りの起動とする
                     openSettingsDialog(true);
                 }
-                if (frmSplash == null) ActiveWindowHandler.Singleton.GetActiveWindowInfo(moveVkbWindow, frmVkb);
+                if (frmSplash == null) ActiveWindowHandler.Singleton.GetActiveWindowInfo(moveWindows, frmVkb);
                 activeWinInfoCount = Settings.GetActiveWindowInfoIntervalMillisec / timerInterval;
             }
 
@@ -2460,14 +2367,14 @@ namespace KanchokuWS
                     }
                 }
             }
-
+#if false
             // 前回のデコーダ呼び出しから一定時間が経過したら、MulstStreamCommit を発行
             if (Settings.MultiStreamMode && Settings.CommitMultiStreamElapsedTime > 0
                 && dtLastDecoderInvoked <= dtNow.AddMilliseconds(-Settings.CommitMultiStreamElapsedTime)) {
                 InvokeDecoder(DecoderKeys.MULTI_STREAM_COMMIT_DECKEY, 0, false);
                 dtLastDecoderInvoked = DateTime.MaxValue;
             }
-
+#endif
             // 辞書の自動保存
             if (dtNow >= saveDictsPlannedDt || (IsDecoderActive && dtNow >= saveDictsChallengeDt)) {
                 reinitializeSaveDictsChallengeDt();

@@ -16,7 +16,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.3.0-alpha";
+        public static string Version => "1.3.0-alpha2";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
@@ -1429,7 +1429,7 @@ namespace KanchokuWS
             ReductionExponet = GetString("reductionExponent")._parseDouble(0.7)._lowLimit(0.5);
 
             VirtualKeyboardMoveGuardMillisec = GetString("virtualKeyboardMoveGuardMillisec")._parseInt(500)._lowLimit(0);
-            GetActiveWindowInfoIntervalMillisec = GetString("activeWindowInfoIntervalMillisec")._parseInt(200)._lowLimit(100);
+            GetActiveWindowInfoIntervalMillisec = GetString("activeWindowInfoIntervalMillisec")._parseInt(200)._lowLimit(10);
 
             CancelSecondStrokeMillisec = GetString("cancelSecondStrokeMillisec")._parseInt(0);
 

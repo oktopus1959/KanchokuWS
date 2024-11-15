@@ -1140,7 +1140,7 @@ namespace KanchokuWS.Handler
         /// <summary> キーボードハンドラの処理中か </summary>
         private bool bInvokeHandlerBusy = false;
 
-        private bool invokeHandler(int kanchokuCode, int normalDecKey, uint mod, bool rollOverStroke, bool bUnconditional = false)
+        private bool invokeHandler(int kanchokuCode, int origDecKey, uint mod, bool rollOverStroke, bool bUnconditional = false)
         {
             if (Settings.LoggingDecKeyInfo) logger.Info(() =>
                 $"ENTER: kanchokuCode={kanchokuCode:x}H({kanchokuCode}), mod={mod:x}H({mod}), bUnconditional={bUnconditional}, " +
@@ -1152,7 +1152,7 @@ namespace KanchokuWS.Handler
                 logger.WarnH("Handler Busy");
             } else {
                 bInvokeHandlerBusy = true;
-                result = _invokeHandler(kanchokuCode, normalDecKey, mod, bUnconditional, rollOverStroke);
+                result = _invokeHandler(kanchokuCode, origDecKey, mod, bUnconditional, rollOverStroke);
             }
             bInvokeHandlerBusy = false;
 
@@ -1161,7 +1161,7 @@ namespace KanchokuWS.Handler
             return result;
         }
 
-        private bool _invokeHandler(int kanchokuCode, int normalDecKey, uint mod, bool bUnconditional, bool rollOverStroke)
+        private bool _invokeHandler(int kanchokuCode, int origDecKey, uint mod, bool bUnconditional, bool rollOverStroke)
         {
             switch (kanchokuCode) {
                 case DecoderKeys.TOGGLE_DECKEY:
@@ -1181,7 +1181,7 @@ namespace KanchokuWS.Handler
                     frmKanchoku?.DeactivateDecoder();
                     return true;
                 case -1:
-                    return frmKanchoku?.FuncDispatcher(DecoderKeys.UNDEFINED_DECKEY, normalDecKey, mod, rollOverStroke) ?? false;
+                    return frmKanchoku?.FuncDispatcher(DecoderKeys.UNDEFINED_DECKEY, origDecKey, mod, rollOverStroke) ?? false;
                 default:
                     if (kanchokuCode >= DecoderKeys.UNCONDITIONAL_DECKEY_OFFSET && kanchokuCode < DecoderKeys.UNCONDITIONAL_DECKEY_END) {
                         if (Settings.LoggingDecKeyInfo) logger.Info(() => $"InvokeDecoderUnconditionally: kanchokuCode={kanchokuCode}");
@@ -1193,7 +1193,7 @@ namespace KanchokuWS.Handler
                     }
                     if (kanchokuCode >= 0) {
                         if (Settings.LoggingDecKeyInfo) logger.Info(() => $"FuncDispatcher: kanchokuCode={kanchokuCode}");
-                        return frmKanchoku?.FuncDispatcher(kanchokuCode, normalDecKey, mod, rollOverStroke) ?? false;
+                        return frmKanchoku?.FuncDispatcher(kanchokuCode, origDecKey, mod, rollOverStroke) ?? false;
                     }
                     return false;
             }

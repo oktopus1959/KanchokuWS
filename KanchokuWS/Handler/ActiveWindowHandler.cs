@@ -104,7 +104,7 @@ namespace KanchokuWS.Handler
         /// <summary>
         /// アクティブウィンドウハンドルの取得
         /// </summary>
-        private void GetActiveWindowHandle(bool bLog)
+        private void getActiveWindowHandle(bool bLog)
         {
             if (bLog) logger.Info("ENTER");
 
@@ -295,7 +295,7 @@ namespace KanchokuWS.Handler
             using (syncObj) {   // 抜けたときにビジー状態が解除される
                 try {
                     string prevClassName = ActiveWinClassName;
-                    GetActiveWindowHandle(bLog);
+                    getActiveWindowHandle(bLog);
                     bOK = true;
                     bDiffWin = ActiveWinClassName._ne(prevClassName);
                     IsVkbWinActive = frmVkb.IsMyWinClassName(ActiveWinClassName);
