@@ -977,6 +977,30 @@ namespace lattice2 {
             return _candidates.empty() ? MString() : _candidates[0].string();
         }
 
+        std::vector<MString> getTopCandStrings() const {
+            std::vector<MString> result;
+            int maxStrokeLen = 0;
+            for (const auto& c : _candidates) {
+                if (c.strokeLen() >= maxStrokeLen) {
+                    //result.push_back(utils::safe_substr(c.string(), _prevFixedLen));
+                    result.push_back(c.string());
+                    maxStrokeLen = c.strokeLen();
+                }
+            }
+            size_t maxLen = 0;
+            for (const auto& s : result) {
+                if (maxLen < s.size()) maxLen = s.size();
+            }
+            size_t dispLen = 12;
+            size_t pos = maxLen > dispLen ? maxLen - dispLen : 0;
+            if (pos > 0) {
+                for (auto& s : result) {
+                    s = s.substr(pos);
+                }
+            }
+            return result;
+        }
+
         String debugKBestString(size_t maxLn = 100000) const {
             String result = L"kanjiPreferredNextCands=" + kanjiPreferredNextCandsDebug() + L"\n\n";
             result.append(_debugLog);
@@ -1618,6 +1642,11 @@ namespace lattice2 {
                     _debugLogQueue.push_back(std::format(L"\n{}\nOUTPUT: {}, numBS={}\n\n", _kBestList.debugKBestString(10), to_wstr(outStr), numBS));
                 }
             }
+
+            // 解候補を仮想鍵盤に表示する
+            std::vector<MString> candStrings = _kBestList.getTopCandStrings();
+            STATE_COMMON->SetVirtualKeyboardStrings(VkbLayout::MultiStreamCandidates, EMPTY_MSTR, candStrings);
+
             return LatticeResult(outStr, numBS);
         }
 

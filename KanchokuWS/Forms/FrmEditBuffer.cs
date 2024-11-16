@@ -21,12 +21,6 @@ namespace KanchokuWS.Forms
 
         public static int CurrentScreen = 0;
 
-        //private static float VkbNormalWidth = 201;
-
-        //private static float VkbCellHeight = 18;
-        //private static float VkbCellWidth = 18;
-        //private static float VkbCenterWidth = 20;
-
         private const int LongVkeyCharSize = 20;
 
         [DllImport("user32.dll")]
@@ -43,7 +37,7 @@ namespace KanchokuWS.Forms
 
             Width = 10;
 
-            // タイトルバーを消す
+            // タイトルバーや境界線を消す
             FormBorderStyle = FormBorderStyle.None;
 
             // 各種パラメータの初期化
@@ -185,6 +179,11 @@ namespace KanchokuWS.Forms
 
             editTextBox.Text = makeEditText(preText, postText);
             if (toFlush) FlushBuffer();
+            if (EditText._notEmpty()) {
+                ShowNonActive();
+            } else {
+                this.Hide();
+            }
             logger.WarnH(() => $"LEAVE: EditText={EditText}, pos={editTextBox.Text._safeIndexOf(CARET[0])}");
         }
 
@@ -223,6 +222,11 @@ namespace KanchokuWS.Forms
                     logger.WarnH($"Enter");
                     FlushBuffer();
                     break;
+            }
+            if (EditText._notEmpty()) {
+                ShowNonActive();
+            } else {
+                this.Hide();
             }
         }
 
@@ -315,7 +319,7 @@ namespace KanchokuWS.Forms
         /// <summary>Decoderの非活性化時に編集バッファをフラッシュして、アプリケーションに文字列を送出する</summary>
         public void FlushBufferOnDeactivated()
         {
-            if (EditText.Length <= 3) FlushBuffer();
+            if (EditText.Length <= 8) FlushBuffer();
         }
 
         private void resetFormSize()
@@ -344,8 +348,7 @@ namespace KanchokuWS.Forms
 
         public void ShowNonActive()
         {
-            //editTextBox.Width = (int)(VkbNormalWidth);
-            ShowWindow(this.Handle, SW_SHOWNA);   // NonActive
+            if (EditText._notEmpty()) ShowWindow(this.Handle, SW_SHOWNA);   // NonActive
         }
 
         /// <summary>編集バッファの文字列を返す</summary>
@@ -391,13 +394,6 @@ namespace KanchokuWS.Forms
             float rate = dpi / 96.0f;
 
             Func<float, float> mulRate = (float x) => (int)(x * rate);
-
-            //VkbCellHeight = mulRate(18);
-            //VkbCellWidth = mulRate(18);
-            //VkbCenterWidth = mulRate(20);
-
-
-            //VkbNormalWidth = VkbCellWidth * 10 + VkbCenterWidth + 1;
 
             resetFormSize();
 
@@ -474,12 +470,6 @@ namespace KanchokuWS.Forms
         //------------------------------------------------------------------
         // イベントハンドラ
         //------------------------------------------------------------------
-        private void FrmDisplayBuffer_VisibleChanged(object sender, EventArgs e)
-        {
-            CommonState.VkbVisible = this.Visible;
-            CommonState.VkbVisibiltyChangedDt = HRDateTime.Now;
-        }
-
         private void editTextBox_TextChanged(object sender, EventArgs e)
         {
             //logger.WarnH($"text={EditText}");

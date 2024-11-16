@@ -68,6 +68,7 @@ namespace KanchokuWS
         Normal = 50,
         StrokeHelp = 51,
         KanaTable = 52,
+        MultiStreamCandidates = 60,
     }
 
     /// <summary>

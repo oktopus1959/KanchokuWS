@@ -18,6 +18,7 @@ enum class VkbLayout {
     Horizontal = 20,
     Normal = 50,
     StrokeHelp = 51,
+    MultiStreamCandidates = 60,
 };
 
 // inputFlags の詳細

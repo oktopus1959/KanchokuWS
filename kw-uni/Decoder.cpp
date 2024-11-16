@@ -727,6 +727,7 @@ public:
             break;
         case VkbLayout::Vertical:
         case VkbLayout::Horizontal:
+        case VkbLayout::MultiStreamCandidates:
             LOG_DEBUG(_T("Vertical or Horizontal"));
         {
             //copyToTopString();

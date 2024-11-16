@@ -1167,7 +1167,7 @@ namespace KanchokuWS
                 return;
             }
 
-            if (decoderOutput.layout >= (int)VkbLayout.KanaTable) {
+            if (decoderOutput.layout == (int)VkbLayout.KanaTable) {
                 // 50音図配列
                 return;
             }

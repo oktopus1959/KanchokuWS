@@ -53,6 +53,9 @@ namespace KanchokuWS
         /// <summary>出力文字列表字・編集用バッファ</summary>
         private FrmEditBuffer frmEditBuf;
 
+        /// <summary>MultiStreamでの候補選択窓</summary>
+        private FrmCandidateSelector frmCands;
+
         public void ShowFrmEditBuf()
         {
             frmEditBuf.ShowNonActive();
@@ -295,10 +298,17 @@ namespace KanchokuWS
 
             // 表示・編集バッファフォームの作成
             frmEditBuf = new FrmEditBuffer(this);
-            frmEditBuf.ShowNonActive();      // Show() を呼んでLoadを実行することで、ウィンドウの状態(サイズなど)が初期化される
+            //frmEditBuf.ShowNonActive();      // Show() を呼んでLoadを実行することで、ウィンドウの状態(サイズなど)が初期化される
+            frmEditBuf.Show();      // Show() を呼んでLoadを実行することで、ウィンドウの状態(サイズなど)が初期化される
             frmEditBuf.MoveWindow();
             frmEditBuf.Hide();
             logger.WarnH($"EditBuf.Width={frmEditBuf.Width}, Height={frmEditBuf.Height}");
+
+            frmCands = new FrmCandidateSelector(this, frmEditBuf);
+            //frmCands.ShowNonActive();      // Show() を呼んでLoadを実行することで、ウィンドウの状態(サイズなど)が初期化される
+            frmCands.Show();      // Show() を呼んでLoadを実行することで、ウィンドウの状態(サイズなど)が初期化される
+            frmCands.MoveWindow();
+            frmCands.Hide();
 
             // アクティブなウィンドウのハンドラ作成
             ActiveWindowHandler.CreateSingleton();
@@ -1958,6 +1968,9 @@ namespace KanchokuWS
                 }
                 logger.DebugH("PATH-6");
 
+                // 融合時の選択候補を表示
+                frmCands.DrawCandidates();
+
                 // 仮想キーボードにヘルプや文字候補を表示
                 frmVkb.DrawVirtualKeyboardChars(Settings.ShowLastStrokeByDiffBackColor && !bPrevMultiStrokeChar ? unshiftDeckey(deckey) : -1);
 
@@ -2150,8 +2163,11 @@ namespace KanchokuWS
                                 mod |= KeyModifiers.MOD_SHIFT;
                             }
                             if (Settings.LoggingDecKeyInfo) logger.Info($"SendVKeyCombo: mod={mod:x}H({mod}), vkey={vk:x}H({vk})");
-                            //SendInputHandler.Singleton.SendVKeyCombo(mod, vk, 1);
-                            frmEditBuf.PutVkeyCombo(mod, vk);
+                            if (IsDecoderActive) {
+                                frmEditBuf.PutVkeyCombo(mod, vk);
+                            } else {
+                                SendInputHandler.Singleton.SendVKeyCombo(mod, vk, 1);
+                            }
                             if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: TRUE");
                             return true;
                         }
@@ -2174,8 +2190,11 @@ namespace KanchokuWS
                     }
                     if (vk == 0) vk = DecoderKeyVsVKey.GetVKeyFromDecKey(normDeckey);
                     if (Settings.LoggingDecKeyInfo) logger.Info($"SendVKeyCombo: mod={_mod:x}H({_mod}), vkey={vk:x}H({vk})");
-                    //SendInputHandler.Singleton.SendVKeyCombo(_mod, vk, 1);
-                    frmEditBuf.PutVkeyCombo(_mod, vk);
+                    if (IsDecoderActive) {
+                        frmEditBuf.PutVkeyCombo(_mod, vk);
+                    } else {
+                        SendInputHandler.Singleton.SendVKeyCombo(_mod, vk, 1);
+                    }
                     if (Settings.LoggingDecKeyInfo) logger.Info($"LEAVE: TRUE");
                     return true;
                 } else {

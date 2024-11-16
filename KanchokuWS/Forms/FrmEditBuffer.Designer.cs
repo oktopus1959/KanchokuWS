@@ -61,7 +61,6 @@ namespace KanchokuWS.Forms
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmEditBuffer_FormClosing);
             this.Load += new System.EventHandler(this.FrmEditBuffer_Load);
-            this.VisibleChanged += new System.EventHandler(this.FrmDisplayBuffer_VisibleChanged);
             this.ResumeLayout(false);
             this.PerformLayout();
 
