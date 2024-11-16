@@ -655,13 +655,14 @@ namespace {
 
                 // 新しい文字列が得られたらそれを返す
                 if (!result.outStr.empty() || result.numBS > 0) {
-                    resultOut.setResult(result.outStr, (int)(result.numBS));
-                    SetTranslatedOutString(resultOut);
                     _LOG_DEBUGH(_T("commitByPunctuation={}, outStr={}"), SETTINGS->commitByPunctuation, to_wstr(result.outStr));
                     if (SETTINGS->commitByPunctuation && utils::is_punct(result.outStr.back())) {
                         _LOG_DEBUGH(_T("commit by punctuation"));
+                        result.outStr += to_mstr(L"!{Enter}");
                         WORD_LATTICE->clearAll();
                     }
+                    resultOut.setResult(result.outStr, (int)(result.numBS));
+                    SetTranslatedOutString(resultOut);
                 } else {
                     _LOG_DEBUGH(_T("NO resultOut"));
                 }

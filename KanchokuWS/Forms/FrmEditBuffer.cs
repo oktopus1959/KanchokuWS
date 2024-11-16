@@ -9,6 +9,7 @@ using Utils;
 using System.Text;
 using System.Text.RegularExpressions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Linq;
 
 namespace KanchokuWS.Forms
 {
@@ -20,11 +21,11 @@ namespace KanchokuWS.Forms
 
         public static int CurrentScreen = 0;
 
-        private static float VkbNormalWidth = 201;
+        //private static float VkbNormalWidth = 201;
 
-        private static float VkbCellHeight = 18;
-        private static float VkbCellWidth = 18;
-        private static float VkbCenterWidth = 20;
+        //private static float VkbCellHeight = 18;
+        //private static float VkbCellWidth = 18;
+        //private static float VkbCenterWidth = 20;
 
         private const int LongVkeyCharSize = 20;
 
@@ -73,91 +74,117 @@ namespace KanchokuWS.Forms
         private static string CARET = "‸";
 
         /// <summary>文字列を編集バッファのカーソル位置に挿入する</summary>
-        /// <param name="str"></param>
-        public void PutString(char[] str, int numBS)
+        /// <param name="chars"></param>
+        public void PutString(char[] chars, int numBS)
         {
-            if ((str._isEmpty() || str[0] == 0) && numBS <= 0) return;
+            if ((chars._isEmpty() || chars[0] == 0) && numBS <= 0) return;
 
-            if (editTextBox.Text._isEmpty() && (str._isEmpty() || str[0] == 0 || str._safeLength() >= 2 && str[0] == '!' && str[1] == '{')) {
+            if (editTextBox.Text._isEmpty() && (chars._isEmpty() || chars[0] == 0 || chars._safeLength() >= 2 && chars[0] == '!' && chars[1] == '{')) {
                 // 何もせずに、呼び出し元に任せる
-                SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(str, numBS, true);
+                SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(chars, numBS, true);
                 return;
             }
+
+            var str = chars._toString();
 
             int prePos = editTextBox.Text._safeIndexOf(CARET[0]);
             if (prePos < 0) prePos = editTextBox.Text.Length;
             int postPos = prePos + 1;
-            logger.WarnH(() => $"ENTER: EditText={EditText}, pos={prePos}, str={str._toString()}, numBS={numBS}");
+            logger.WarnH(() => $"ENTER: EditText={EditText}, pos={prePos}, str={str}, numBS={numBS}");
             if (numBS > 0) {
                 prePos -= numBS;
                 if (prePos < 0) prePos = 0;
             }
-            logger.WarnH(() => $"prePos={prePos}, postPos={postPos}");
+            //logger.WarnH(() => $"prePos={prePos}, postPos={postPos}");
             string preText = editTextBox.Text._safeSubstring(0, prePos);
             string postText = editTextBox.Text._safeSubstring(postPos);
-            logger.WarnH(() => $"preText={preText}, postTest={postText}");
+            //logger.WarnH(() => $"preText={preText}, postTest={postText}");
 
-            if (str._notEmpty()) {
-                for (int i = 0; i < str.Length && str[i] != 0; i++) {
-                    if (str[i] == '!' && i + 1 < str.Length && str[i + 1] == '{') {
-                        // "!{...}"
-                        var sb = new StringBuilder();
-                        int p = i + 2;
-                        while (p < str.Length && str[p] != '}') {
-                            sb.Append(str[p++]);
-                        }
-                        switch (sb.ToString()) {
-                            case "Left":
-                                logger.WarnH($"Left");
-                                if (preText._notEmpty()) {
-                                    postText = preText._safeSubstring(-1) + postText;
-                                    preText = preText._safeSubstring(0, -1);
-                                }
-                                break;
-                            case "Right":
-                                logger.WarnH($"Right");
-                                if (postText._notEmpty()) {
-                                    preText = preText + postText._safeSubstring(0, 1);
-                                    postText = postText._safeSubstring(1);
-                                }
-                                break;
-                            case "Home":
-                                logger.WarnH($"Home");
-                                preText = "";
-                                postText = preText + postText;
-                                break;
-                            case "End":
-                                logger.WarnH($"End");
-                                preText = preText + postText;
-                                postText = "";
-                                break;
-                            case "BS":
-                            case "BackSpace":
-                                logger.WarnH($"BS");
-                                if (preText._notEmpty()) {
-                                    preText = preText._safeSubstring(0, -1);
-                                }
-                                break;
-                            case "DEL":
-                            case "Delete":
-                                logger.WarnH($"Delete");
-                                if (postText._notEmpty()) {
-                                    postText = postText._safeSubstring(1);
-                                }
-                                break;
-                            case "Enter":
-                                logger.WarnH($"Enter");
-                                FlushBuffer();
-                                logger.WarnH($"LEAVE: FlushBuffer");
-                                return;
-                        }
+            bool toFlush = false;
 
-                    } else {
-                        preText += str[i];
-                    }
+            void handleFunctionalKey(string fkey)
+            {
+                logger.WarnH($"fkey={fkey}");
+                switch (fkey) {
+                    case "Left":
+                        logger.WarnH($"Left");
+                        if (preText._notEmpty()) {
+                            postText = preText._safeSubstring(-1) + postText;
+                            preText = preText._safeSubstring(0, -1);
+                        }
+                        break;
+                    case "Right":
+                        logger.WarnH($"Right");
+                        if (postText._notEmpty()) {
+                            preText = preText + postText._safeSubstring(0, 1);
+                            postText = postText._safeSubstring(1);
+                        }
+                        break;
+                    case "Home":
+                        logger.WarnH($"Home");
+                        postText = preText + postText;
+                        preText = "";
+                        break;
+                    case "End":
+                        logger.WarnH($"End");
+                        preText = preText + postText;
+                        postText = "";
+                        break;
+                    case "BS":
+                    case "BackSpace":
+                        logger.WarnH($"BS");
+                        if (preText._notEmpty()) {
+                            preText = preText._safeSubstring(0, -1);
+                        }
+                        break;
+                    case "DEL":
+                    case "Delete":
+                        logger.WarnH($"Delete");
+                        if (postText._notEmpty()) {
+                            postText = postText._safeSubstring(1);
+                        }
+                        break;
+                    case "Enter":
+                        logger.WarnH($"Enter");
+                        toFlush = true;
+                        break;
+                    case "^U":
+                        logger.WarnH($"^U");
+                        preText = "";
+                        postText = "";
+                        break;
                 }
             }
+
+            if (str._notEmpty()) {
+                int i = 0;
+                while (i < str.Length) {
+                    if (str[i] == '!' && i + 1 < str.Length && str[i + 1] == '{') {
+                        // "!{...}"
+                        i += 2;
+                        var sb = new StringBuilder();
+                        while (i < str.Length && str[i] != '}') {
+                            sb.Append(str[i++]);
+                        }
+                        handleFunctionalKey(sb.ToString());
+                    } else {
+                        if (str[i] == '(' && str[str.Length - 1] == ')') {
+                            var value = Handler.HandlerUtils.ParseTernaryOperator(str._safeSubstring(i), "@");
+                            logger.WarnH($"value={value}");
+                            if (value._notEmpty()) {
+                                str = value;
+                                i = 0;
+                                continue;
+                            }
+                        }
+                        preText += str[i];
+                    }
+                    ++i;
+                }
+            }
+
             editTextBox.Text = makeEditText(preText, postText);
+            if (toFlush) FlushBuffer();
             logger.WarnH(() => $"LEAVE: EditText={EditText}, pos={editTextBox.Text._safeIndexOf(CARET[0])}");
         }
 
@@ -289,16 +316,16 @@ namespace KanchokuWS.Forms
             int textHeight = TextRenderer.MeasureText("亜", editTextBox.Font).Height;
 
             // 余裕を持たせて TextBox の幅を設定(上下左右にアンカーしているので、外側のフォームのサイズを変えればよい)
-            this.Width = textWidth + 4;
+            this.Width = textWidth + 8;
             this.Height = textHeight + 7;
             logger.WarnH($"Width={Size.Width}, Height={this.Size.Height}");
         }
 
         //------------------------------------------------------------------------------------
-        //private bool renewFontInfo(FontInfo fontInfo, string fontSpec)
-        //{
-        //    return fontInfo.RenewFontSpec(fontSpec, VkbCellWidth, VkbCellHeight, pictureBox_measureFontSize);
-        //}
+        private bool renewFontInfo(FontInfo fontInfo, string fontSpec)
+        {
+            return fontInfo.RenewFontSpec(fontSpec);
+        }
 
         [DllImport("user32.dll")]
         private static extern void ShowWindow(IntPtr hWnd, int nCmdShow);
@@ -344,7 +371,8 @@ namespace KanchokuWS.Forms
 
             resetDrawParameters(e.DeviceDpiNew);
 
-            redrawEditBuffer();
+            // 編集バッファの再描画
+            MoveWindow();
         }
 
         private void resetDrawParameters(int dpi)
@@ -355,92 +383,27 @@ namespace KanchokuWS.Forms
 
             Func<float, float> mulRate = (float x) => (int)(x * rate);
 
-            VkbCellHeight = mulRate(18);
-            VkbCellWidth = mulRate(18);
-            VkbCenterWidth = mulRate(20);
+            //VkbCellHeight = mulRate(18);
+            //VkbCellWidth = mulRate(18);
+            //VkbCenterWidth = mulRate(20);
 
 
-            VkbNormalWidth = VkbCellWidth * 10 + VkbCenterWidth + 1;
+            //VkbNormalWidth = VkbCellWidth * 10 + VkbCenterWidth + 1;
 
             resetFormSize();
 
             if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"LEAVE: this.Width={this.Width}");
         }
 
-        /// <summary>
-        /// 編集バッファの再描画
-        /// </summary>
-        private void redrawEditBuffer()
-        {
-            if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"CALLED: VkbNormalWidth={VkbNormalWidth}, VkbCellHeight={VkbCellHeight}");
+        /// <summary> 編集バッファフォント </summary>
+        private FontInfo editBufFontInfo = new FontInfo("EditBuf", false, false);
 
-            // 編集バッファの再描画
-            if (frmMain.IsDecoderActive) DrawDisplayBufferChars();
-        }
-
-        //-------------------------------------------------------------------------------
-        /// <summary> 表示・編集領域に文字列を出力する </summary>
-        public void SetEditText(string text, bool bRightAlign = false)
+        // 編集バッフ用フォントの更新
+        public void RenewEditBufFont()
         {
-            if (text != null) editTextBox.Text = text;
-            if (bRightAlign) {
-                editTextBox.SelectionStart = text._safeLength();
-                editTextBox.SelectionLength = 0;
+            if (renewFontInfo(editBufFontInfo, Settings.MiniBufVkbFontSpec)) {
+                editTextBox.Font = editBufFontInfo.MyFont;
             }
-        }
-
-        public void SetEditText(char[] text)
-        {
-            int maxEditLen = LongVkeyCharSize - 2;
-
-            int i = 0;
-            for (; i < 32; ++i) {
-                if (text[i] == 0) break;
-            }
-
-            int s = i > maxEditLen ? i - maxEditLen : 0;
-            SetEditText(new string(text, s, i - s), true);
-        }
-
-        // ASCII文字は 0.5文字としてカウント
-        /// <summary> 仮想キーボードにヘルプや文字候補を表示 </summary>
-        public void DrawDisplayBufferChars(int lastDeckey = -1)
-        {
-            var decoderOutput = frmMain.DecoderOutput;
-
-            if (decoderOutput.topString._isEmpty()) return;
-
-            const int maxEditLen = LongVkeyCharSize - 2;
-
-            string makeEditString()
-            {
-                int i = 0;
-                for (; i < 32; ++i) {
-                    if (decoderOutput.topString[i] == 0) break;
-                }
-                int s = i > maxEditLen ? i - maxEditLen : 0;
-                return new string(decoderOutput.topString, s, i - s);
-
-            }
-
-            var editText = makeEditString();
-
-            SetEditText(editText, true);
-        }
-
-        ///// <summary> 編集バッファフォント </summary>
-        //private FontInfo editBufFontInfo = new FontInfo("MiniBuf", false, false);
-
-        /// <summary>
-        /// 編集バッファを構成するコントロールの再配置
-        /// </summary>
-        private void resetEditBufControls(string editText, float picBoxWidth, float picBoxHeight, float centerHeight)
-        {
-            if (Settings.LoggingVirtualKeyboardInfo) logger.Info($"picBoxWidth={picBoxWidth:f3}, picBoxHeight={picBoxHeight:f3}, centerHeight={centerHeight:f3}");
-            //renewEditBufFont();
-            editTextBox.Width = (int)(VkbNormalWidth);
-            editTextBox.Show();
-            SetEditText(editText, true);
         }
 
         //------------------------------------------------------------------

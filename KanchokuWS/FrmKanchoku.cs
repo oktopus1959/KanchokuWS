@@ -1403,6 +1403,7 @@ namespace KanchokuWS
                 //MoveFormVirtualKeyboard();
                 //// 表示・編集バッファを移動させる
                 //MoveFormEditBuffer();
+                frmEditBuf.RenewEditBufFont();
                 // 仮想鍵盤や編集バッファのウィンドウを移動する
                 moveWindows(false, true, true);
                 Hide();
@@ -1444,6 +1445,7 @@ namespace KanchokuWS
             logger.Info(() => $"\nENTER");
             IsDecoderActive = false;
             CombinationKeyStroke.DeterminerLib.KeyCombinationPool.ChangeCurrentPoolByDecoderMode(IsDecoderActive);
+            //frmEditBuf.FlushBuffer();
             if (decoderPtr != IntPtr.Zero) {
                 handleKeyDecoder(DecoderKeys.DEACTIVE_DECKEY, 0, false);   // DecoderOff の処理をやる
                 if (bModifiersOff) SendInputHandler.Singleton.UpCtrlAndShftKeys();                  // CtrlとShiftキーをUP状態に戻す
@@ -2041,8 +2043,11 @@ namespace KanchokuWS
             // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
             bool bFuncVkeyContained = isFuncVkeyContained(decoderOutput.outString);
             // BSと文字送出(もしあれば)
-            //SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces, bFuncVkeyContained);
-            frmEditBuf.PutString(decoderOutput.outString, decoderOutput.numBackSpaces);
+            if (IsDecoderActive) {
+                frmEditBuf.PutString(decoderOutput.outString, decoderOutput.numBackSpaces);
+            } else {
+                SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(decoderOutput.outString, decoderOutput.numBackSpaces, bFuncVkeyContained);
+            }
 #if false
             if (bFuncVkeyContained) {
                 // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれている場合は、 FULL_ESCAPE を実行してミニバッファをクリアしておく

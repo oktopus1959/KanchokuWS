@@ -692,40 +692,40 @@ namespace KanchokuWS.Handler
             return pos;
         }
 
-        private static System.Text.RegularExpressions.Regex reThreeTerms = new System.Text.RegularExpressions.Regex(@"\(([^)]+)\)\?\(([^)]+)\):\(([^)]+)\)");
+        //private static System.Text.RegularExpressions.Regex reThreeTerms = new System.Text.RegularExpressions.Regex(@"\(([^)]+)\)\?\(([^)]+)\):\(([^)]+)\)");
 
-        /// <summary>(Q)?(A):(B) 形式だったら、Q に該当するウィンドウクラスか否かを判定し、当ならAを、否ならBを返す</summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        private string extractSubString(string str)
-        {
-            //logger.DebugH(() => $"CALLED: str={str}, actWinName={ActiveWinClassName._toLower()}");
-            var resultStr = str;
-            if (str._getFirst() == '(' && str.Last() == ')') {
-                var items = str._reScan(reThreeTerms);
-                //logger.DebugH(() => $"items={items._join(" | ")}, actWinName={ActiveWinClassName._toLower()}");
-                if (items._safeCount() == 4) {
-                    string activeWinClassName = ActiveWindowHandler.Singleton?.ActiveWinClassName._toLower();
-                    var names = items[1]._toLower()._split('|');
-                    bool checkFunc()
-                    {
-                        if (activeWinClassName._notEmpty() && names._notEmpty()) {
-                            foreach (var name in names) {
-                                if (name._notEmpty()) {
-                                    //logger.DebugH(() => $"name={name}");
-                                    if (activeWinClassName.StartsWith(name)) return true;
-                                    if (name.Last() == '$' && name.Length == activeWinClassName.Length + 1 && name.StartsWith(activeWinClassName)) return true;
-                                }
-                            }
-                        }
-                        return false;
-                    }
-                    resultStr = checkFunc() ? items[2] : items[3];
-                }
-            }
-            //logger.DebugH(() => $"RESULT: {resultStr}");
-            return resultStr;
-        }
+        ///// <summary>(Q)?(A):(B) 形式だったら、Q に該当するウィンドウクラスか否かを判定し、当ならAを、否ならBを返す</summary>
+        ///// <param name="str"></param>
+        ///// <returns></returns>
+        //private string extractSubString(string str)
+        //{
+        //    //logger.DebugH(() => $"CALLED: str={str}, actWinName={ActiveWinClassName._toLower()}");
+        //    var resultStr = str;
+        //    if (str._getFirst() == '(' && str.Last() == ')') {
+        //        var items = str._reScan(reThreeTerms);
+        //        //logger.DebugH(() => $"items={items._join(" | ")}, actWinName={ActiveWinClassName._toLower()}");
+        //        if (items._safeCount() == 4) {
+        //            string activeWinClassName = ActiveWindowHandler.Singleton?.ActiveWinClassName._toLower();
+        //            var names = items[1]._toLower()._split('|');
+        //            bool checkFunc()
+        //            {
+        //                if (activeWinClassName._notEmpty() && names._notEmpty()) {
+        //                    foreach (var name in names) {
+        //                        if (name._notEmpty()) {
+        //                            //logger.DebugH(() => $"name={name}");
+        //                            if (activeWinClassName.StartsWith(name)) return true;
+        //                            if (name.Last() == '$' && name.Length == activeWinClassName.Length + 1 && name.StartsWith(activeWinClassName)) return true;
+        //                        }
+        //                    }
+        //                }
+        //                return false;
+        //            }
+        //            resultStr = checkFunc() ? items[2] : items[3];
+        //        }
+        //    }
+        //    //logger.DebugH(() => $"RESULT: {resultStr}");
+        //    return resultStr;
+        //}
 
         private void sendInputsVkey(uint vkey, int num, bool bMoveVkbAtOnce = false)
         {
@@ -980,7 +980,9 @@ namespace KanchokuWS.Handler
             // 文字列
             if (strLen > 0) {
                 if (numBS > 0) waitAfterBS();
-                sendStringInputs(extractSubString(str._toString()));
+                var s = str._toString();
+                var v = HandlerUtils.ParseTernaryOperator(s);
+                sendStringInputs(v._notEmpty() ? v : s);
             }
 
             // Shift戻し

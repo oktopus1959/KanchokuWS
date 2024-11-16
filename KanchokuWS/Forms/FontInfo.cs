@@ -65,7 +65,7 @@ namespace KanchokuWS.Forms
             this.usePadding = padding;
         }
 
-        public bool RenewFontSpec(string fontSpec, float cellWidth, float cellHeight, PictureBox picBox)
+        public bool RenewFontSpec(string fontSpec, float cellWidth = 0f, float cellHeight = 0f, PictureBox picBox = null)
         {
             if (MyFont != null && fontSpec._equalsTo(currentFontSpec)) return false;    // 同じフォント指定なので、何もしない
 
@@ -84,7 +84,7 @@ namespace KanchokuWS.Forms
             fontName = fontName._safeReplace("@", "");          // 先頭の @ を削除しておく
             HorizontalFont = new Font(fontName, fontSize);
 
-            if (usePadding) {
+            if (usePadding && picBox != null) {
                 (float fw, float fh) = measureFontSize(MyFont, picBox);
 
                 CharHeight = fh + 1;
