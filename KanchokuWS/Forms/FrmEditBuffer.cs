@@ -229,69 +229,72 @@ namespace KanchokuWS.Forms
         private string makeEditText(string preText, string postText)
         {
             logger.WarnH(() => $"preText={preText}, preLen={preText.Length}, postText={postText}, postLen={postText}");
-            var text = preText + ((preText._notEmpty() || postText._notEmpty()) ? CARET : "") + postText;
+            var text = preText + ((/*preText._notEmpty() ||*/ postText._notEmpty()) ? CARET : "") + postText;       // 文中のときだけカレットを入れる
             logger.WarnH(() => $"text={text}, len={text.Length}");
             return text;
         }
 
-        private int findCaret()
+        private string[] splitByCaret()
         {
-            return editTextBox.Text._safeIndexOf(CARET[0]);
+            string[] result = new string[2];
+            int pos = editTextBox.Text._safeIndexOf(CARET[0]);
+            if (pos < 0) {
+                result[0] = editTextBox.Text;
+                result[1] = "";
+            } else {
+                result[0] = editTextBox.Text._safeSubstring(0, pos);
+                result[1] = editTextBox.Text._safeSubstring(pos + 1);
+            }
+            return result;
         }
 
         private void moveCaretLeft()
         {
-            int pos = findCaret();
-            if (pos > 0) {
-                string preText = editTextBox.Text._safeSubstring(0, pos - 1);
-                string postText = editTextBox.Text._safeSubstring(pos - 1).Remove(1, 1);
-                editTextBox.Text = makeEditText(preText, postText);
+            var ts = splitByCaret();
+            if (ts[0]._notEmpty()) {
+                string pre = ts[0]._safeSubstring(0, -1);
+                string post = ts[0]._safeSubstring(-1) + ts[1];
+                editTextBox.Text = makeEditText(pre, post);
             }
         }
 
         private void moveCaretRight()
         {
-            int pos = findCaret();
-            if (pos >= 0 && pos + 1 < editTextBox.Text.Length) {
-                string preText = editTextBox.Text._safeSubstring(0, pos + 2).Remove(pos, 1);
-                string postText = editTextBox.Text._safeSubstring(pos + 2);
-            editTextBox.Text = makeEditText(preText, postText);
+            var ts = splitByCaret();
+            if (ts[1]._notEmpty()) {
+                string pre = ts[0] + ts[1]._safeSubstring(0, 1);
+                string post = ts[1]._safeSubstring(1);
+                editTextBox.Text = makeEditText(pre, post);
             }
         }
 
         private void moveCaretHome()
         {
-            int pos = findCaret();
-            if (pos > 0) {
-            editTextBox.Text = makeEditText("", editTextBox.Text.Remove(pos, 1));
-            }
+            var ts = splitByCaret();
+            editTextBox.Text = makeEditText("", ts[0] + ts[1]);
         }
 
         private void moveCaretEnd()
         {
-            int pos = findCaret();
-            if (pos >= 0 && pos + 1 < editTextBox.Text.Length) {
-                editTextBox.Text = makeEditText(editTextBox.Text.Remove(pos, 1), "");
-            }
+            var ts = splitByCaret();
+            editTextBox.Text = makeEditText(ts[0] + ts[1], "");
         }
 
         private void backspace()
         {
-            int pos = findCaret();
-            if (pos > 0) {
-                string preText = editTextBox.Text._safeSubstring(0, pos - 1);
-                string postText = editTextBox.Text._safeSubstring(pos + 1);
-                editTextBox.Text = makeEditText(preText, postText);
+            var ts = splitByCaret();
+            if (ts[0]._notEmpty()) {
+                string pre = ts[0]._safeSubstring(0, -1);
+                editTextBox.Text = makeEditText(pre, ts[1]);
             }
         }
 
         private void delete()
         {
-            int pos = findCaret();
-            if (pos >= 0 && pos + 1 < editTextBox.Text.Length) {
-                string preText = editTextBox.Text._safeSubstring(0, pos);
-                string postText = editTextBox.Text._safeSubstring(pos + 2);
-                editTextBox.Text = makeEditText(preText, postText);
+            var ts = splitByCaret();
+            if (ts[1]._notEmpty()) {
+                string post = ts[1]._safeSubstring(1);
+                editTextBox.Text = makeEditText(ts[0], post);
             }
         }
 
@@ -307,6 +310,12 @@ namespace KanchokuWS.Forms
             SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(result._toCharArray(), 0, true);
             //this.ShowNonActive();
             logger.WarnH($"CALLED");
+        }
+
+        /// <summary>Decoderの非活性化時に編集バッファをフラッシュして、アプリケーションに文字列を送出する</summary>
+        public void FlushBufferOnDeactivated()
+        {
+            if (EditText.Length <= 3) FlushBuffer();
         }
 
         private void resetFormSize()

@@ -1445,7 +1445,7 @@ namespace KanchokuWS
             logger.Info(() => $"\nENTER");
             IsDecoderActive = false;
             CombinationKeyStroke.DeterminerLib.KeyCombinationPool.ChangeCurrentPoolByDecoderMode(IsDecoderActive);
-            //frmEditBuf.FlushBuffer();
+            frmEditBuf.FlushBufferOnDeactivated();
             if (decoderPtr != IntPtr.Zero) {
                 handleKeyDecoder(DecoderKeys.DEACTIVE_DECKEY, 0, false);   // DecoderOff の処理をやる
                 if (bModifiersOff) SendInputHandler.Singleton.UpCtrlAndShftKeys();                  // CtrlとShiftキーをUP状態に戻す
