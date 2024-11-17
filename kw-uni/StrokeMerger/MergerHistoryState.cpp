@@ -468,13 +468,23 @@ namespace {
                         WORD_LATTICE->removeSecondOrLesser();
                         if (WORD_LATTICE->isEmpty()) State::handleBS();
                         break;
-                    case MULTI_STREAM_NEXT_CAND_DECKEY:
                     case DOWN_ARROW_DECKEY:
+                        if (WORD_LATTICE->isEmpty()) {
+                            State::handleDownArrow();
+                            break;
+                        }
+                        [[fallthrough]];
+                    case MULTI_STREAM_NEXT_CAND_DECKEY:
                         _LOG_DEBUGH(_T("MULTI_STREAM_NEXT_CAND: select next candidate"));
                         WORD_LATTICE->selectNext();
                         break;
-                    case MULTI_STREAM_PREV_CAND_DECKEY:
                     case UP_ARROW_DECKEY:
+                        if (WORD_LATTICE->isEmpty()) {
+                            State::handleUpArrow();
+                            break;
+                        }
+                        [[fallthrough]];
+                    case MULTI_STREAM_PREV_CAND_DECKEY:
                         _LOG_DEBUGH(_T("MULTI_STREAM_PREV_CAND: select prev candidate"));
                         WORD_LATTICE->selectPrev();
                         break;

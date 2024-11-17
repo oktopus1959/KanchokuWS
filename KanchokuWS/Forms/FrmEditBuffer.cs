@@ -25,8 +25,11 @@ namespace KanchokuWS.Forms
 
         private const int LongVkeyCharSize = 20;
 
-        [DllImport("user32.dll")]
-        private static extern bool MoveWindow(IntPtr handle, int x, int y, int width, int height, bool redraw);
+        //------------------------------------------------------------------------------------
+        /// <summary>編集バッファの文字列を返す</summary>
+        public string EditText => editTextBox.Text;
+
+        public bool IsEmpty => EditText._isEmpty();
 
         //------------------------------------------------------------------------------------
         /// <summary> コンストラクタ </summary>
@@ -361,22 +364,6 @@ namespace KanchokuWS.Forms
             return fontInfo.RenewFontSpec(fontSpec);
         }
 
-        [DllImport("user32.dll")]
-        private static extern void ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        // ウィンドウをアクティブにせずに表示する
-        private const int SW_SHOWNA = 8;
-
-        public void ShowNonActive()
-        {
-            if (EditText._notEmpty()) ShowWindow(this.Handle, SW_SHOWNA);   // NonActive
-        }
-
-        /// <summary>編集バッファの文字列を返す</summary>
-        public string EditText => editTextBox.Text;
-
-        public bool IsEmpty => EditText._isEmpty();
-
         //const int CS_DROPSHADOW = 0x00020000;
 
         ///// <summary> フォームに影をつける </summary>
@@ -434,9 +421,24 @@ namespace KanchokuWS.Forms
             }
         }
 
-        //------------------------------------------------------------------
-        // 移動
-        //------------------------------------------------------------------
+        //------------------------------------------------------------------------------------
+        // 移動・表示
+        //------------------------------------------------------------------------------------
+        [DllImport("user32.dll")]
+        private static extern void ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("user32.dll")]
+        private static extern bool MoveWindow(IntPtr handle, int x, int y, int width, int height, bool redraw);
+
+        // ウィンドウをアクティブにせずに表示する
+        private const int SW_SHOWNA = 8;
+
+        /// <summary>バッファが空でない場合に入力フォームを表示する</summary>
+        public void ShowNonActive()
+        {
+            if (EditText._notEmpty()) ShowWindow(this.Handle, SW_SHOWNA);   // NonActive
+        }
+
         /// <summary>
         /// 表示・編集バッファをカレットの近くに移動する<br/>
         /// これが呼ばれるのはデコーダがONのときだけ
@@ -496,9 +498,9 @@ namespace KanchokuWS.Forms
             logger.WarnH($"MOVE after: X={Location.X}, Y={Location.Y}, W={Width}, H={Height}");
         }
 
-        //------------------------------------------------------------------
+        //------------------------------------------------------------------------------------
         // イベントハンドラ
-        //------------------------------------------------------------------
+        //------------------------------------------------------------------------------------
         private void editTextBox_TextChanged(object sender, EventArgs e)
         {
             //logger.WarnH($"text={EditText}");

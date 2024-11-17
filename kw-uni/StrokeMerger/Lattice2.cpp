@@ -227,7 +227,7 @@ namespace lattice2 {
                 _updateNgramCost(word, 0, usrCount, rtmCount);
             }
         }
-        // 下記は悪影響が大き過ぎるので、止めておく(「い朝です」の「い朝」のボーナスが大きくなりすぎて、「ないからです」が出なくなる)
+        // 下記(SystemNgramに含まれないNgramを優先する)は悪影響が大き過ぎるので、止めておく(「い朝です」の「い朝」のボーナスが大きくなりすぎて、「ないからです」が出なくなる)
         //for (auto iter = realtimeNgram.begin(); iter != realtimeNgram.end(); ++iter) {
         //    const MString& word = iter->first;
         //    int rtmCount = iter->second;
