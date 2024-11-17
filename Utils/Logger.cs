@@ -209,7 +209,7 @@ namespace Utils
             [CallerMemberName] string method = "",
             [CallerLineNumber] int lineNumber = -1)
         {
-            if (LogLevel >= LogLevelInfoH && func != null) {
+            if ((LogLevel >= LogLevelInfoH || (IsInfoPromoted && LogLevel >= LogPromotedLevel)) && func != null) {
                 writeLog("INFOH", $"{ClassName}.{method}", lineNumber, func());
             }
         }

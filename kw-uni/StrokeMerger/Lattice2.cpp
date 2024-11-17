@@ -901,6 +901,10 @@ namespace lattice2 {
 
         bool _prevBS = false;
 
+        int _origFirstCand = -1;
+
+        int _selectedCandPos = -1;
+
         // 次のストロークをスキップする候補文字列
         std::set<MString> _kanjiPreferredNextCands;
 
@@ -977,15 +981,61 @@ namespace lattice2 {
             return _candidates.empty() ? MString() : _candidates[0].string();
         }
 
+        int origFirstCand() const {
+            return _origFirstCand;
+        }
+
+        int selectedCandPos() const {
+            return _origFirstCand < 0 ? _origFirstCand : _selectedCandPos;
+        }
+
+        void setSelectedCandPos(int nSameLen) {
+            _selectedCandPos = _origFirstCand == 0 ? _origFirstCand : nSameLen - _origFirstCand;
+        }
+
+        int cookedOrigFirstCand() const {
+            return _origFirstCand >= 0 ? _origFirstCand : 0;
+        }
+
+        void resetOrigFirstCand() {
+            _origFirstCand = -1;
+        }
+
+        void incrementOrigFirstCand(int nSameLen) {
+            if (_origFirstCand < 0) {
+                _origFirstCand = 1;
+            } else {
+                ++_origFirstCand;
+                if (_origFirstCand >= (int)nSameLen) _origFirstCand = 0;
+            }
+            setSelectedCandPos(nSameLen);
+        }
+
+        void decrementOrigFirstCand(int nSameLen) {
+            --_origFirstCand;
+            if (_origFirstCand < 0) _origFirstCand = nSameLen - 1;
+            setSelectedCandPos(nSameLen);
+        }
+
         std::vector<MString> getTopCandStrings() const {
+            _LOG_DETAIL(L"ENTER: _origFirstCand={}", _origFirstCand);
             std::vector<MString> result;
-            int maxStrokeLen = 0;
-            for (const auto& c : _candidates) {
-                if (c.strokeLen() >= maxStrokeLen) {
-                    //result.push_back(utils::safe_substr(c.string(), _prevFixedLen));
-                    result.push_back(c.string());
-                    maxStrokeLen = c.strokeLen();
-                }
+            //int maxStrokeLen = 0;
+            //for (const auto& c : _candidates) {
+            //    if (c.strokeLen() >= maxStrokeLen) {
+            //        //result.push_back(utils::safe_substr(c.string(), _prevFixedLen));
+            //        result.push_back(c.string());
+            //        maxStrokeLen = c.strokeLen();
+            //    }
+            //}
+            int nSameLen = getNumOfSameStrokeLen();
+            int first = cookedOrigFirstCand();
+            if (first > nSameLen) first = nSameLen;
+            for (int i = first; i < nSameLen; ++i) {
+                result.push_back(_candidates[i].string());
+            }
+            for (int i = 0; i < first; ++i) {
+                result.push_back(_candidates[i].string());
             }
             size_t maxLen = 0;
             for (const auto& s : result) {
@@ -998,6 +1048,7 @@ namespace lattice2 {
                     s = s.substr(pos);
                 }
             }
+            _LOG_DETAIL(L"ENTER: result.size()={}, _origFirstCand={}", result.size(), _origFirstCand);
             return result;
         }
 
@@ -1329,6 +1380,7 @@ namespace lattice2 {
                 // 以前のストロークの候補が無ければ、通常のBSの動作とする
                 removeSecondOrLesser();
             }
+            bool isEmptyPiece = pieces.size() == 1 && pieces.front().isEmpty();
             bool isBSpiece = pieces.size() == 1 && pieces.front().isBS();
             _prevBS = isBSpiece;
             // BS でないか、以前の候補が無くなっていた
@@ -1346,6 +1398,10 @@ namespace lattice2 {
                         newCandidates.push_back(cand);
                     }
                 }
+            }
+            if (!isEmptyPiece || isBSpiece) {
+                // 新しく候補が作成された
+                resetOrigFirstCand();
             }
             return newCandidates;
         }
@@ -1424,35 +1480,41 @@ namespace lattice2 {
 
         // 先頭候補を最優先候補にする
         void selectFirst() {
-            _LOG_DETAIL(_T("CALLED"));
+            _LOG_DETAIL(_T("ENTER: _origFirstCand={}"), _origFirstCand);
             //size_t nSameLen = getNumOfSameStrokeLen();
             //if (nSameLen > 1) {
             //    arrangePenalties(nSameLen);
             //    _LOG_INFOH(_T("CALLED: First candidate preferred."));
             //}
             lattice2::selectFirst(_candidates);
+            resetOrigFirstCand();
+            _LOG_DETAIL(_T("LEAVE: _origFirstCand={}"), _origFirstCand);
         }
 
         // 次候補を最優先候補にする
         void selectNext() {
-            _LOG_DETAIL(_T("CALLED"));
+            _LOG_DETAIL(_T("ENTER: _origFirstCand={}"), _origFirstCand);
             size_t nSameLen = getNumOfSameStrokeLen();
             if (nSameLen > 1) {
                 auto begin = _candidates.begin();
                 std::rotate(begin, begin + 1, begin + nSameLen);
                 arrangePenalties(nSameLen);
+                decrementOrigFirstCand((int)nSameLen);
             }
+            _LOG_DETAIL(_T("LEAVE: _origFirstCand={}"), _origFirstCand);
         }
 
         // 前候補を最優先候補にする
         void selectPrev() {
-            _LOG_DETAIL(_T("CALLED"));
+            _LOG_DETAIL(_T("ENTER: _origFirstCand={}"), _origFirstCand);
             size_t nSameLen = getNumOfSameStrokeLen();
             if (nSameLen > 1) {
                 auto begin = _candidates.begin();
                 std::rotate(begin, begin + nSameLen - 1, begin + nSameLen);
                 arrangePenalties(nSameLen);
+                incrementOrigFirstCand((int)nSameLen);
             }
+            _LOG_DETAIL(_T("LEAVE: _origFirstCand={}"), _origFirstCand);
         }
 
         // 部首合成
@@ -1645,7 +1707,10 @@ namespace lattice2 {
 
             // 解候補を仮想鍵盤に表示する
             std::vector<MString> candStrings = _kBestList.getTopCandStrings();
-            STATE_COMMON->SetVirtualKeyboardStrings(VkbLayout::MultiStreamCandidates, EMPTY_MSTR, candStrings);
+            if (candStrings.size() > 1) {
+                STATE_COMMON->SetVirtualKeyboardStrings(VkbLayout::MultiStreamCandidates, EMPTY_MSTR, candStrings);
+                STATE_COMMON->SetWaitingCandSelect(_kBestList.selectedCandPos());
+            }
 
             return LatticeResult(outStr, numBS);
         }

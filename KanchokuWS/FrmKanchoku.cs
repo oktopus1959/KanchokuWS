@@ -943,6 +943,15 @@ namespace KanchokuWS
                 } else if (IsDecoderActive) {
                     renewSaveDictsPlannedDt();
                     switch (deckey) {
+                        case DecoderKeys.ESC_DECKEY:
+                            // ESC なら編集バッファをクリアする
+                            if (mod == 0 && frmEditBuf.ClearBuffer()) {
+                                // 何か文字列が残っていて、それをクリアしたら、Decoderを非活性化する
+                                DeactivateDecoder();
+                                return true;
+                            }
+                            break;
+
                         case DecoderKeys.VKB_SHOW_HIDE_DECKEY:
                             if (IsVkbHiddenTemporay) {
                                 IsVkbHiddenTemporay = false;
@@ -990,7 +999,7 @@ namespace KanchokuWS
                                 bHiraganaStrokeGuideMode = !bHiraganaStrokeGuideMode;
                                 if (bHiraganaStrokeGuideMode) {
                                     InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0, rollOverStroke);   // やっぱり出力文字列をクリアしておく必要あり
-                                                                                        //ExecCmdDecoder("setHiraganaBlocker", null);       // こっちだと、以前のひらがなが出力文字列に残ったりして、それを拾ってしまう
+                                                                                                        //ExecCmdDecoder("setHiraganaBlocker", null);       // こっちだと、以前のひらがなが出力文字列に残ったりして、それを拾ってしまう
                                 } else {
                                     //HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, 0, ref decoderOutput); // こっちだと、見えなくなるだけで、ひらがな列が残ってしまう
                                     ExecCmdDecoder("clearTailHiraganaStr", null);   // 物理的に読みのひらがな列を削除しておく必要あり
@@ -1075,7 +1084,7 @@ namespace KanchokuWS
                         case DecoderKeys.MULTI_STREAM_PREV_CAND_DECKEY:
                         case DecoderKeys.MULTI_STREAM_SELECT_FIRST_DECKEY:
                         case DecoderKeys.MULTI_STREAM_COMMIT_DECKEY:
-                            logger.Info(() => $"MULTI_STREAM_{ (deckey == DecoderKeys.MULTI_STREAM_NEXT_CAND_DECKEY ? "NEXT" : deckey == DecoderKeys.MULTI_STREAM_PREV_CAND_DECKEY ? "PREV" : deckey == DecoderKeys.MULTI_STREAM_SELECT_FIRST_DECKEY ? "FIRST" : "COMMIT") }_DECKEY:{deckey}");
+                            logger.Info(() => $"MULTI_STREAM_{(deckey == DecoderKeys.MULTI_STREAM_NEXT_CAND_DECKEY ? "NEXT" : deckey == DecoderKeys.MULTI_STREAM_PREV_CAND_DECKEY ? "PREV" : deckey == DecoderKeys.MULTI_STREAM_SELECT_FIRST_DECKEY ? "FIRST" : "COMMIT")}_DECKEY:{deckey}");
                             return InvokeDecoder(deckey, mod, rollOverStroke);
 
                         case DecoderKeys.DIRECT_SPACE_DECKEY:
@@ -1093,12 +1102,13 @@ namespace KanchokuWS
                             }
 
                         default:
-                            bPrevDtUpdate = true;
-                            if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {
-                                return InvokeDecoder(deckey, mod, rollOverStroke);
-                            } else {
-                                return sendVkeyFromDeckey(deckey, origDeckey, mod);
-                            }
+                            break;
+                    }
+                    bPrevDtUpdate = true;
+                    if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {
+                        return InvokeDecoder(deckey, mod, rollOverStroke);
+                    } else {
+                        return sendVkeyFromDeckey(deckey, origDeckey, mod);
                     }
                 } else {
                     // Decoder Inactive
@@ -1932,7 +1942,7 @@ namespace KanchokuWS
 
                     // 他のVKey送出(もしあれば)
                     if (decoderOutput.IsDeckeyToVkey()) {
-                        logger.DebugH("sendVkeyFromDeckey");
+                        logger.DebugH(() => $"sendVkeyFromDeckey: deckey={deckey}({deckey:x}), mode={mod:x}");
                         sendKeyFlag = sendVkeyFromDeckey(deckey, -1, mod);
                         //nPreKeys += 1;
                     }

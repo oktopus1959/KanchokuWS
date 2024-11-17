@@ -469,10 +469,12 @@ namespace {
                         if (WORD_LATTICE->isEmpty()) State::handleBS();
                         break;
                     case MULTI_STREAM_NEXT_CAND_DECKEY:
+                    case DOWN_ARROW_DECKEY:
                         _LOG_DEBUGH(_T("MULTI_STREAM_NEXT_CAND: select next candidate"));
                         WORD_LATTICE->selectNext();
                         break;
                     case MULTI_STREAM_PREV_CAND_DECKEY:
+                    case UP_ARROW_DECKEY:
                         _LOG_DEBUGH(_T("MULTI_STREAM_PREV_CAND: select prev candidate"));
                         WORD_LATTICE->selectPrev();
                         break;
@@ -657,8 +659,9 @@ namespace {
                 if (!result.outStr.empty() || result.numBS > 0) {
                     _LOG_DEBUGH(_T("commitByPunctuation={}, outStr={}"), SETTINGS->commitByPunctuation, to_wstr(result.outStr));
                     if (SETTINGS->commitByPunctuation && utils::is_punct(result.outStr.back())) {
+                        // 句読点の入力だったら、編集バッファをフラッシュする
                         _LOG_DEBUGH(_T("commit by punctuation"));
-                        result.outStr += to_mstr(L"!{Enter}");
+                        result.outStr += to_mstr(L"!{Flush}");
                         WORD_LATTICE->clearAll();
                     }
                     resultOut.setResult(result.outStr, (int)(result.numBS));

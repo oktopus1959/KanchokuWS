@@ -63,6 +63,7 @@ namespace KanchokuWS.Forms
         {
             this.frmMain = frmMain;
             this.frmEditBuf = frmEditBuf;
+            frmEditBuf.SetFrmCands(this);
 
             InitializeComponent();
 
@@ -207,7 +208,7 @@ namespace KanchokuWS.Forms
 
             logger.WarnH(() => $"CALLED: layout={decoderOutput.layout}, faceString={decoderOutput.faceStrings._toString()}");
 
-            if (decoderOutput.layout != (int)VkbLayout.MultiStreamCandidates || decoderOutput.faceStrings._isEmpty() || decoderOutput.faceStrings[0] == 0) {
+            if (frmEditBuf.IsEmpty || decoderOutput.layout != (int)VkbLayout.MultiStreamCandidates || decoderOutput.faceStrings._isEmpty() || decoderOutput.faceStrings[0] == 0) {
                 this.Hide();
                 logger.WarnH("Hide");
                 return;

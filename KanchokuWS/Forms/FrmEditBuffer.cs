@@ -19,6 +19,8 @@ namespace KanchokuWS.Forms
 
         private FrmKanchoku frmMain;
 
+        private FrmCandidateSelector frmCands;
+
         public static int CurrentScreen = 0;
 
         private const int LongVkeyCharSize = 20;
@@ -62,6 +64,11 @@ namespace KanchokuWS.Forms
         private void FrmEditBuffer_FormClosing(object sender, FormClosingEventArgs e)
         {
             //editBufFontInfo?.Dispose();
+        }
+
+        public void SetFrmCands(FrmCandidateSelector frmCands)
+        {
+            this.frmCands = frmCands;
         }
 
         //------------------------------------------------------------------------------------
@@ -139,6 +146,7 @@ namespace KanchokuWS.Forms
                         }
                         break;
                     case "Enter":
+                    case "Flush":
                         logger.WarnH($"Enter");
                         toFlush = true;
                         break;
@@ -309,6 +317,7 @@ namespace KanchokuWS.Forms
             editTextBox.Text = "";
             editTextBox.SelectionStart = 0;
             this.Hide();
+            //frmCands?.Hide();
             //Helper.WaitMilliSeconds(10);
             //System.Windows.Forms.Application.DoEvents();
             SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(result._toCharArray(), 0, true);
@@ -319,7 +328,18 @@ namespace KanchokuWS.Forms
         /// <summary>Decoderの非活性化時に編集バッファをフラッシュして、アプリケーションに文字列を送出する</summary>
         public void FlushBufferOnDeactivated()
         {
-            if (EditText.Length <= 8) FlushBuffer();
+            if (EditText.Length <= 10000) FlushBuffer();
+        }
+
+        public bool ClearBuffer()
+        {
+            if (editTextBox.Text._isEmpty()) return false;
+
+            editTextBox.Text = "";
+            editTextBox.SelectionStart = 0;
+            this.Hide();
+            frmCands?.Hide();
+            return true;
         }
 
         private void resetFormSize()
@@ -353,6 +373,8 @@ namespace KanchokuWS.Forms
 
         /// <summary>編集バッファの文字列を返す</summary>
         public string EditText => editTextBox.Text;
+
+        public bool IsEmpty => EditText._isEmpty();
 
         //const int CS_DROPSHADOW = 0x00020000;
 
