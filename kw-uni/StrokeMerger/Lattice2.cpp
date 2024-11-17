@@ -227,14 +227,15 @@ namespace lattice2 {
                 _updateNgramCost(word, 0, usrCount, rtmCount);
             }
         }
-        for (auto iter = realtimeNgram.begin(); iter != realtimeNgram.end(); ++iter) {
-            const MString& word = iter->first;
-            int rtmCount = iter->second;
-            if (ngramCosts.find(word) == ngramCosts.end()) {
-                // 未登録
-                _updateNgramCost(word, 0, 0, rtmCount);
-            }
-        }
+        // 下記は悪影響が大き過ぎるので、止めておく(「い朝です」の「い朝」のボーナスが大きくなりすぎて、「ないからです」が出なくなる)
+        //for (auto iter = realtimeNgram.begin(); iter != realtimeNgram.end(); ++iter) {
+        //    const MString& word = iter->first;
+        //    int rtmCount = iter->second;
+        //    if (ngramCosts.find(word) == ngramCosts.end()) {
+        //        // 未登録
+        //        _updateNgramCost(word, 0, 0, rtmCount);
+        //    }
+        //}
         for (auto iter = systemWordCosts.begin(); iter != systemWordCosts.end(); ++iter) {
             const MString& word = iter->first;
             int sysCost = iter->second;

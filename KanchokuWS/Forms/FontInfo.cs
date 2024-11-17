@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Drawing;
+using KanchokuWS.Handler;
 using Utils;
 
 namespace KanchokuWS.Forms
@@ -172,5 +174,74 @@ namespace KanchokuWS.Forms
                 }
             }
         }
+
+#if false
+        //------------------------------------------------------------------------
+        public static Font GetActiveWindowFont(float dpiRate)
+        {
+            IntPtr hwnd = ActiveWindowHandler.Singleton.ActiveWinHandle;
+            if (hwnd == IntPtr.Zero)
+                return null;
+
+            IntPtr hdc = GetWindowDC(hwnd);
+            if (hdc == IntPtr.Zero)
+                return null;
+
+            IntPtr hFont = GetCurrentObject(hdc, OBJ_FONT);
+            if (hFont == IntPtr.Zero) {
+                ReleaseDC(hwnd, hdc);
+                return null;
+            }
+
+            LOGFONT logFont = new LOGFONT();
+            int result = GetObject(hFont, Marshal.SizeOf(logFont), ref logFont);
+
+            ReleaseDC(hwnd, hdc);
+
+            if (result != 0) {
+                // ピクセルサイズをポイントサイズに変換（標準DPI 96の場合）
+                float fontSize = Math.Abs(logFont.lfHeight) * 72f / (96f * dpiRate);
+                return new Font(logFont.lfFaceName, fontSize);
+            }
+            return null;
+        }
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetWindowDC(IntPtr hWnd);
+
+        [DllImport("gdi32.dll")]
+        private static extern IntPtr GetCurrentObject(IntPtr hdc, uint uObjectType);
+
+        [DllImport("gdi32.dll")]
+        private static extern int GetObject(IntPtr hObject, int nCount, ref LOGFONT lpLogFont);
+
+        [DllImport("user32.dll")]
+        private static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+        private const uint OBJ_FONT = 6;
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        private struct LOGFONT
+        {
+            public int lfHeight;
+            public int lfWidth;
+            public int lfEscapement;
+            public int lfOrientation;
+            public int lfWeight;
+            public byte lfItalic;
+            public byte lfUnderline;
+            public byte lfStrikeOut;
+            public byte lfCharSet;
+            public byte lfOutPrecision;
+            public byte lfClipPrecision;
+            public byte lfQuality;
+            public byte lfPitchAndFamily;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string lfFaceName;
+        }
+#endif
     }
 }

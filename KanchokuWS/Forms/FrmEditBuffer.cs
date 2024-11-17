@@ -320,7 +320,8 @@ namespace KanchokuWS.Forms
             //frmCands?.Hide();
             //Helper.WaitMilliSeconds(10);
             //System.Windows.Forms.Application.DoEvents();
-            SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(result._toCharArray(), 0, true);
+            var winClass = ActiveWindowHandler.Singleton.ActiveWinClassName;
+            SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(result._toCharArray(), 0, winClass == "mintty" || winClass == "PuTTY");
             //this.ShowNonActive();
             logger.WarnH($"CALLED");
         }
@@ -440,8 +441,14 @@ namespace KanchokuWS.Forms
         /// 表示・編集バッファをカレットの近くに移動する<br/>
         /// これが呼ばれるのはデコーダがONのときだけ
         /// </summary>
-        public void MoveWindow(Settings.WindowsClassSettings activeWinSettings, Rectangle activeWinCaretPos, bool bFixedPosWinClass, bool bLog)
+        public void MoveWindow(Settings.WindowsClassSettings activeWinSettings, Rectangle activeWinCaretPos, bool bDiffWin, bool bFixedPosWinClass, bool bLog)
         {
+            //if (bDiffWin) {
+            //    var font = FontInfo.GetActiveWindowFont(1.0f);
+            //    logger.WarnH($"font.Name={font?.Name}, font.Size ={font.Size}");
+            //    if (font != null) editTextBox.Font = font;
+            //}
+
             int xOffset = (activeWinSettings?.CaretOffset)._getNth(0, 2);
             int yOffset = (activeWinSettings?.CaretOffset)._getNth(1, 2);
             //double dpiRatio = 1.0; //FrmVkb.GetDeviceDpiRatio();
@@ -460,7 +467,7 @@ namespace KanchokuWS.Forms
             int fX = cX + (xOffset >= 0 ? cW : -fW) + xOffset;
             if (fX < 0) fX = cX + cW + Math.Abs(xOffset);
 
-            int fY = cY + (cH - fH) / 2;      // カレットとTextBoxの中心を合わせる
+            int fY = cY + (cH - fH) / 2 + 1;      // カレットとTextBoxの中心より若干下に位置させる
             if (fY < 0) fY = cY + cH + Math.Abs(yOffset);
 
             int fRight = fX + fW;

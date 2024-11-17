@@ -1425,7 +1425,7 @@ namespace KanchokuWS
                 //MoveFormEditBuffer();
                 frmEditBuf.RenewEditBufFont();
                 // 仮想鍵盤や編集バッファのウィンドウを移動する
-                moveWindows(false, true, true);
+                moveWindows(true, true, true);
                 Hide();
                 frmMode.Hide();
                 // ウィンドウが移動する時間をかせいでから画面を表示する ⇒ これは不要か？とりあえず待ち時間を短くしておく(50ms⇒20ms)(2021/8/2)
@@ -1532,7 +1532,7 @@ namespace KanchokuWS
                             frmVkb.MoveWindow(activeWinSettings, activeWinCaretPos, bFixedPosWinClass, bLog);
                         }
                         if (IsDecoderActive) {
-                            frmEditBuf.MoveWindow(activeWinSettings, activeWinCaretPos, bFixedPosWinClass, bLog);
+                            frmEditBuf.MoveWindow(activeWinSettings, activeWinCaretPos, bDiffWin, bFixedPosWinClass, bLog);
                         }
                         prevCaretPos = activeWinCaretPos;
                     }
