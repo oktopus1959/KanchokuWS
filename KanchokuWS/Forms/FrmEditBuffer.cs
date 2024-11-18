@@ -196,8 +196,8 @@ namespace KanchokuWS.Forms
                 this.Hide();
             }
 
-            if (pos < str.Length) {
-                // 余った入力は、SendInputする
+            if (toFlush && pos < str.Length) {
+                // フラッシュの後の余った入力は、SendInputする
                 SendInputHandler.Singleton.SendString(str._safeSubstring(pos)._toCharArray(), str.Length - pos, 0);
             }
             logger.WarnH(() => $"LEAVE: EditText={EditText}, pos={editTextBox.Text._safeIndexOf(CARET[0])}");
@@ -205,7 +205,7 @@ namespace KanchokuWS.Forms
 
         public void PutVkeyCombo(uint modifier, uint vkey)
         {
-            if (modifier != 0 || editTextBox.Text._isEmpty()) {
+            if (/*modifier != 0 ||*/ editTextBox.Text._isEmpty()) {
                 SendInputHandler.Singleton.SendVKeyCombo(modifier, vkey, 1);
                 return;
             }

@@ -1942,7 +1942,7 @@ namespace KanchokuWS
 
                     // 他のVKey送出(もしあれば)
                     if (decoderOutput.IsDeckeyToVkey()) {
-                        logger.DebugH(() => $"sendVkeyFromDeckey: deckey={deckey}({deckey:x}), mode={mod:x}");
+                        logger.DebugH(() => $"sendVkeyFromDeckey: deckey={deckey}({deckey:x}), mod={mod:x}");
                         sendKeyFlag = sendVkeyFromDeckey(deckey, -1, mod);
                         //nPreKeys += 1;
                     }
