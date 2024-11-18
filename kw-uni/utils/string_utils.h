@@ -663,6 +663,10 @@ namespace utils
         return ch == TOTEN || ch == KUTEN;
     }
 
+    inline bool is_punct_or_question(mchar_t ch) {
+        return ch == TOTEN || ch == KUTEN || ch == QUESTION_MARK;
+    }
+
     inline bool is_hiragana_or_punct(mchar_t ch) {
         return is_hiragana(ch) || is_punct(ch);
     }

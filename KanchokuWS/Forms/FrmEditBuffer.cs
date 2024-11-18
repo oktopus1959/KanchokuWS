@@ -161,30 +161,30 @@ namespace KanchokuWS.Forms
                 }
             }
 
+            int pos = 0;
             if (str._notEmpty()) {
-                int i = 0;
-                while (i < str.Length) {
-                    if (str[i] == '!' && i + 1 < str.Length && str[i + 1] == '{') {
+                while (pos < str.Length && !toFlush) {
+                    if (str[pos] == '!' && pos + 1 < str.Length && str[pos + 1] == '{') {
                         // "!{...}"
-                        i += 2;
+                        pos += 2;
                         var sb = new StringBuilder();
-                        while (i < str.Length && str[i] != '}') {
-                            sb.Append(str[i++]);
+                        while (pos < str.Length && str[pos] != '}') {
+                            sb.Append(str[pos++]);
                         }
                         handleFunctionalKey(sb.ToString());
                     } else {
-                        if (str[i] == '(' && str[str.Length - 1] == ')') {
-                            var value = Handler.HandlerUtils.ParseTernaryOperator(str._safeSubstring(i), "@");
+                        if (str[pos] == '(' && str[str.Length - 1] == ')') {
+                            var value = Handler.HandlerUtils.ParseTernaryOperator(str._safeSubstring(pos), "@");
                             logger.WarnH($"value={value}");
                             if (value._notEmpty()) {
                                 str = value;
-                                i = 0;
+                                pos = 0;
                                 continue;
                             }
                         }
-                        preText += str[i];
+                        preText += str[pos];
                     }
-                    ++i;
+                    ++pos;
                 }
             }
 
@@ -194,6 +194,11 @@ namespace KanchokuWS.Forms
                 ShowNonActive();
             } else {
                 this.Hide();
+            }
+
+            if (pos < str.Length) {
+                // 余った入力は、SendInputする
+                SendInputHandler.Singleton.SendString(str._safeSubstring(pos)._toCharArray(), str.Length - pos, 0);
             }
             logger.WarnH(() => $"LEAVE: EditText={EditText}, pos={editTextBox.Text._safeIndexOf(CARET[0])}");
         }

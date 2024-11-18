@@ -668,7 +668,7 @@ namespace {
                 // 新しい文字列が得られたらそれを返す
                 if (!result.outStr.empty() || result.numBS > 0) {
                     _LOG_DEBUGH(_T("commitByPunctuation={}, outStr={}"), SETTINGS->commitByPunctuation, to_wstr(result.outStr));
-                    if (SETTINGS->commitByPunctuation && utils::is_punct(result.outStr.back())) {
+                    if (SETTINGS->commitByPunctuation && utils::is_punct_or_question(result.outStr.back())) {
                         // 句読点の入力だったら、編集バッファをフラッシュする
                         _LOG_DEBUGH(_T("commit by punctuation"));
                         result.outStr += to_mstr(L"!{Flush}");
