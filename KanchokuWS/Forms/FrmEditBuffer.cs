@@ -75,9 +75,9 @@ namespace KanchokuWS.Forms
         }
 
         //------------------------------------------------------------------------------------
-        private static string CARET = "‸";
+        private static string CARET = "▴"; // "⏐"; // "‸";
 
-        /// <summary>文字列を編集バッファのカーソル位置に挿入する</summary>
+        /// <summary>文字列を編集バッファのカーソル位置に挿入する。Abortの場合は true を返す</summary>
         /// <param name="chars"></param>
         public void PutString(char[] chars, int numBS)
         {
@@ -105,6 +105,7 @@ namespace KanchokuWS.Forms
             //logger.WarnH(() => $"preText={preText}, postTest={postText}");
 
             bool toFlush = false;
+            bool toAbort = false;
 
             void handleFunctionalKey(string fkey)
             {
@@ -158,6 +159,12 @@ namespace KanchokuWS.Forms
                         preText = "";
                         postText = "";
                         break;
+                    case "Abort":
+                        logger.WarnH($"Abort");
+                        preText = "";
+                        postText = "";
+                        toAbort = true;
+                        break;
                 }
             }
 
@@ -190,6 +197,10 @@ namespace KanchokuWS.Forms
 
             editTextBox.Text = makeEditText(preText, postText);
             if (toFlush) FlushBuffer();
+            if (toAbort) {
+                ClearBuffer();
+                frmMain.ToDeactivateDecoder();
+            }
             if (EditText._notEmpty()) {
                 ShowNonActive();
             } else {
@@ -249,7 +260,7 @@ namespace KanchokuWS.Forms
         private string makeEditText(string preText, string postText)
         {
             logger.WarnH(() => $"preText={preText}, preLen={preText.Length}, postText={postText}, postLen={postText}");
-            var text = preText + ((/*preText._notEmpty() ||*/ postText._notEmpty()) ? CARET : "") + postText;       // 文中のときだけカレットを入れる
+            var text = preText + ((preText._notEmpty() || postText._notEmpty()) ? CARET : "") + postText;       // 空でないときだけカレットを入れる
             logger.WarnH(() => $"text={text}, len={text.Length}");
             return text;
         }

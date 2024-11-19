@@ -148,7 +148,7 @@ namespace KanchokuWS
         public static bool OpenSettingsDlgWhenIconClicked { get; private set; } = false;
 
         //-------------------------------------------------------------------------------------
-        // 配列融合
+        // 配列融合と編集バッファ
         //-------------------------------------------------------------------------------------
         /// <summary> 複数配列の融合モードか </summary>        
         public static bool MultiStreamMode { get; set; } = false;
@@ -184,7 +184,10 @@ namespace KanchokuWS
         public static int RealtimeTrigramTier2Num {  get; set; }
 
         /// <summary>解候補ログファイル</summary>
-        public static string MergerCandidateFile = "tmp/merger_candidates.log";
+        public static string MergerCandidateFile { get; set; } = "tmp/merger_candidates.log";
+
+        /// <summary>編集バッファのカレット文字</summary>
+        public static string EditBufferCaretChar { get; set; } = "▴";
 
         //-------------------------------------------------------------------------------------
         // 各種ファイル
@@ -1706,9 +1709,10 @@ namespace KanchokuWS
             CommitByPunctuation = addDecoderSetting("commitByPunctuation", true);               // 句読点でコミットする
             ChallengeNumForSameLeader = addDecoderSetting("challengeNumForSameLeader", 4);      // 解の先頭部分が同じならそれらだけを残すようにするための、チャレンジ打鍵数
             KanjiNoKanjiBonus = addDecoderSetting("kanjiNoKanjiBonus", 1500);                   // 「漢字+の+漢字」のような場合に与えるボーナス
-            RealtimeTrigramBonusFactor = addDecoderSetting("realtimeTrigramBonusFactor", 100);    // Realtime 3gram のカウントからボーナス値を算出する際の係数
-            RealtimeTrigramTier1Num = addDecoderSetting("realtimeTrigramTier1Num", 5);            // Realtime 3gram の Tier1 の数
-            RealtimeTrigramTier2Num = addDecoderSetting("realtimeTrigramTier2Num", 10);           // Realtime 3gram の Tier2 の数
+            RealtimeTrigramBonusFactor = addDecoderSetting("realtimeTrigramBonusFactor", 100);  // Realtime 3gram のカウントからボーナス値を算出する際の係数
+            RealtimeTrigramTier1Num = addDecoderSetting("realtimeTrigramTier1Num", 5);          // Realtime 3gram の Tier1 の数
+            RealtimeTrigramTier2Num = addDecoderSetting("realtimeTrigramTier2Num", 10);         // Realtime 3gram の Tier2 の数
+            EditBufferCaretChar = addDecoderSetting("editBufferCaretChar", "▴");                // 編集バッファのカレット文字
             setDecoderSetting("mergerCandidateFile", MergerCandidateFile );                     // 解候補ログファイル
 
             // キー割当

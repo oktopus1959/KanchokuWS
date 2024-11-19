@@ -878,14 +878,23 @@ namespace KanchokuWS
 
         public bool IsVkbShown => Settings.VirtualKeyboardShowStrokeCountEffective > 0 && Settings.VirtualKeyboardShowStrokeCountEffective <= decoderOutput.GetStrokeCount() + 1;
 
+        private bool toDeactivateDecoder = false;
+
+        public void ToDeactivateDecoder()
+        {
+            toDeactivateDecoder = true;
+        }
+
         /// <summary>無条件にデコーダを呼び出す</summary>
         public bool InvokeDecoderUnconditionally(int deckey, uint mod)
         {
             if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), mod={mod}H({mod})");
+            toDeactivateDecoder = false;
             if (IsDecoderActive)
                 handleKeyDecoder(deckey, mod, false);
             else
                 handleKeyDecoderDirectly(deckey, mod);
+            if (toDeactivateDecoder) DeactivateDecoder();
             return true;
         }
 
@@ -943,14 +952,16 @@ namespace KanchokuWS
                 } else if (IsDecoderActive) {
                     renewSaveDictsPlannedDt();
                     switch (deckey) {
-                        case DecoderKeys.ESC_DECKEY:
-                            // ESC なら編集バッファをクリアする
-                            if (mod == 0 && frmEditBuf.ClearBuffer()) {
-                                // 何か文字列が残っていて、それをクリアしたら、Decoderを非活性化する
-                                DeactivateDecoder();
-                                return true;
-                            }
-                            break;
+                        // 英数モードから抜けようとしてESCを叩いた時もクリアされてしまうのはまずい
+                        // 替わりに "!{Abort}" を用意する
+                        //case DecoderKeys.ESC_DECKEY:
+                        //    // ESC なら編集バッファをクリアする
+                        //    if (mod == 0 && frmEditBuf.ClearBuffer()) {
+                        //        // 何か文字列が残っていて、それをクリアしたら、Decoderを非活性化する
+                        //        DeactivateDecoder();
+                        //        return true;
+                        //    }
+                        //    break;
 
                         case DecoderKeys.VKB_SHOW_HIDE_DECKEY:
                             if (IsVkbHiddenTemporay) {

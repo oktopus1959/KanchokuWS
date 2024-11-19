@@ -108,9 +108,10 @@ struct Settings {
     int challengeNumForSameLeader = 4;      // 解の先頭部分が同じならそれらだけを残すようにするための、チャレンジ打鍵数
     int kanjiNoKanjiBonus = 1500;           // 「漢字+の+漢字」のような場合に与えるボーナス
     String mergerCandidateFile;             // 解候補ログファイル
-    int realtimeTrigramBonusFactor = 100;     // Realtime 3gram のカウントからボーナス値を算出する際の係数
-    int realtimeTrigramTier1Num = 5;          // Realtime 3gram の Tier1 の数
-    int realtimeTrigramTier2Num = 10;         // Realtime 3gram の Tier2 の数
+    int realtimeTrigramBonusFactor = 100;   // Realtime 3gram のカウントからボーナス値を算出する際の係数
+    int realtimeTrigramTier1Num = 5;        // Realtime 3gram の Tier1 の数
+    int realtimeTrigramTier2Num = 10;       // Realtime 3gram の Tier2 の数
+    String editBufferCaretChar = L"▴";      // 編集バッファのカレット文字
 
     // for Debug
     bool debughState = false;               // State モジュールで DebugH を有効にする
