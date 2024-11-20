@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using Utils;
 using KanchokuWS.Domain;
+using System.Windows.Forms;
 
 namespace KanchokuWS.Handler
 {
@@ -223,9 +224,24 @@ namespace KanchokuWS.Handler
             return state;
         }
 
+        public static bool IsCtrlKeyPressed()
+        {
+            return (GetAsyncKeyState(FuncVKeys.CONTROL) & 0x8000) != 0;
+        }
+
+        public static bool IsShiftKeyPressed()
+        {
+            return (GetAsyncKeyState(FuncVKeys.SHIFT) & 0x8000) != 0;
+        }
+
         public static bool IsAltKeyPressed()
         {
             return (GetAsyncKeyState(FuncVKeys.ALT) & 0x8000) != 0;
+        }
+
+        public static uint GetCurrentKeyModifiers()
+        {
+            return KeyModifiers.MakeModifier(IsAltKeyPressed(), IsCtrlKeyPressed(), IsShiftKeyPressed());
         }
 
         class InputInfo
@@ -1045,7 +1061,7 @@ namespace KanchokuWS.Handler
                     SendString(str, len, numBS);
                 } else {
                     // クリップボードにコピー
-                    System.Windows.Forms.Clipboard.SetText(new string(str, 0, len));
+                    Clipboard.SetText(new string(str, 0, len));
                     // BSを送る
                     SendString(null, 0, numBS);
                     // Ctrl-V を送る (SendVirtualKeys の中でも upDownCtrlKey/revertCtrlKey をやっている)
@@ -1055,9 +1071,47 @@ namespace KanchokuWS.Handler
                         Helper.WaitMilliSeconds(waitMs);
                     }
                     SendVKeyCombo(KeyModifiers.MOD_CONTROL, (uint)Keys.V, 1);
+
+                    //Helper.WaitMilliSeconds(10);
+                    //// クリップボードの先頭を削除
+                    //removeFirstClipboardData();
                 }
 
                 LastOutputDt = HRDateTime.Now;
+            }
+        }
+
+        /// <summary>クリップボードの先頭を削除</summary>
+        private void removeFirstClipboardData()
+        {
+            try {
+                // クリップボードの内容を確認
+                IDataObject dataObject = Clipboard.GetDataObject();
+                if (dataObject == null) return;
+
+                // データ形式を取得
+                var formats = dataObject.GetFormats();
+                if (formats.Length == 0) return;
+
+                // 先頭のデータ形式を取得（例として、先頭のテキスト形式を削除）
+                string firstFormat = formats[0];
+
+                // クリップボードをクリア
+                Clipboard.Clear();
+
+                // 先頭以外のデータを再設定
+                DataObject newDataObject = new DataObject();
+                foreach (var format in formats) {
+                    if (format != firstFormat) {
+                        object data = dataObject.GetData(format);
+                        newDataObject.SetData(format, data);
+                    }
+                }
+
+                // 新しいデータをクリップボードに設定
+                Clipboard.SetDataObject(newDataObject);
+            } catch (Exception ex) {
+                logger.Error(ex.Message);
             }
         }
 

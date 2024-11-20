@@ -939,7 +939,7 @@ namespace KanchokuWS
         /// <returns>OSに処理を渡さない場合は true を返す</returns>
         public bool FuncDispatcher(int deckey, int origDeckey, uint mod, bool rollOverStroke)
         {
-            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), normalDeckey={origDeckey:x}H({origDeckey}), mod={mod:x}({mod})");
+            if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), origDeckey={origDeckey:x}H({origDeckey}), mod={mod:x}({mod})");
             bool bPrevDtUpdate = false;
             //prevDeckey = prevFuncDeckey;
             //prevFuncDeckey = deckey;
@@ -1125,7 +1125,8 @@ namespace KanchokuWS
                     // Decoder Inactive
                     if (Settings.LoggingDecKeyInfo) logger.Info("Decoder Inactive");
                     bPrevDtUpdate = true;
-                    if (deckey >= 0 && deckey != DecoderKeys.UNDEFINED_DECKEY) {
+                    if (deckey >= 0 && deckey < DecoderKeys.SPECIAL_DECKEY_ID_BASE /*deckey != DecoderKeys.UNDEFINED_DECKEY*/) {
+                        // DecoderKeyから仮想キーのComboに変換できるやつ
                         return sendVkeyFromDeckey(deckey, origDeckey, mod);
                     } else if (origDeckey >= 0) {
                         return sendVkeyFromDeckey(origDeckey, -1, mod);
@@ -2155,14 +2156,14 @@ namespace KanchokuWS
 
             // CtrlやAltなどのショートカットキーの変換をやるか、または Altキーが押されていなかった
             bool bShortcutConversion = Settings.ShortcutKeyConversionEnabled ||
-                (!ctrlKeyState.LeftKeyDown && !ctrlKeyState.RightKeyDown &&
+                (!ctrlKeyState.AnyKeyDown &&
                  (mod & (KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_LCTRL | KeyModifiers.MOD_RCTRL | KeyModifiers.MOD_ALT)) == 0);
 
             if (Settings.LoggingDecKeyInfo) {
-                logger.Info($"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), leftCtrl={ctrlKeyState.LeftKeyDown}, rightCtrl={ctrlKeyState.RightKeyDown}, shortcutConv={bShortcutConversion}");
+                logger.Info($"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), anyCtrl={ctrlKeyState.AnyKeyDown}, shortcutConv={bShortcutConversion}");
             }
 
-            if ((!ctrlKeyState.LeftKeyDown && !ctrlKeyState.RightKeyDown)                                       // Ctrlキーが押されていないか、
+            if ((!ctrlKeyState.AnyKeyDown)                                                                      // Ctrlキーが押されていないか、
                 || isCtrlKeyConversionEffectiveWindow()                                                         // Ctrl修飾を受け付けるWindowClassか
                                                                                                                 //|| deckey < DecoderKeys.STROKE_DECKEY_END                                                     // 通常のストロークキーは通す
                 || deckey < DecoderKeys.NORMAL_DECKEY_NUM                                                       // 通常のストロークキーは通す
@@ -2202,7 +2203,11 @@ namespace KanchokuWS
                             + $"ctrl={(combo.Value.modifier & KeyModifiers.MOD_CONTROL) != 0}, "
                             + $"mod={mod:x}H({mod})");
                     }
-                    uint _mod = combo.Value.modifier != 0 ? combo.Value.modifier : mod;
+                    uint _mod =
+                        combo.Value.modifier != 0 ? combo.Value.modifier :
+                        deckey >= DecoderKeys.FUNC_DECKEY_START || mod != 0 ? mod :
+                        ctrlKeyState.AnyKeyDown ? SendInputHandler.GetCurrentKeyModifiers() :            // NORMAL_DECKEY なら Alt,Ctrl,Shiftキー修飾を有効にする
+                        0;
                     int normDeckey = combo.Value.normalDecKey;
                     uint vk = 0;
                     if (bShortcutConversion) {

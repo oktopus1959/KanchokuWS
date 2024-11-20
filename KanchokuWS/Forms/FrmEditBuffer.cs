@@ -77,7 +77,7 @@ namespace KanchokuWS.Forms
         //------------------------------------------------------------------------------------
         private static string CARET = "▴"; // "⏐"; // "‸";
 
-        /// <summary>文字列を編集バッファのカーソル位置に挿入する。Abortの場合は true を返す</summary>
+        /// <summary>文字列を編集バッファのカーソル位置に挿入する。</summary>
         /// <param name="chars"></param>
         public void PutString(char[] chars, int numBS)
         {
