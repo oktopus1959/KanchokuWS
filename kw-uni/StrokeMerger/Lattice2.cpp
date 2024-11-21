@@ -94,7 +94,7 @@ namespace lattice2 {
     int HEAD_HIGH_FREQ_JOSHI_BONUS = 3000;
 
     // SingleHitの高頻度助詞が、マルチストロークに使われているケースのコスト
-    int SINGLE_HIT_HIGH_FREQ_JOSHI_KANJI_COST = 5000;
+    int SINGLE_HIT_HIGH_FREQ_JOSHI_KANJI_COST = 3000;
 
     // 孤立した小書きカタカナのコスト
     int ISOLATED_SMALL_KATAKANA_COST = 3000;
@@ -954,6 +954,8 @@ namespace lattice2 {
             //_LOG_INFOH(L"CALLED: clearAll={}", clearAll);
             _candidates.clear();
             _bestStack.clear();
+            _highFreqJoshiStroke.clear();
+            _rollOverStroke.clear();
             if (clearAll) _kanjiPreferredNextCands.clear();
         }
 
