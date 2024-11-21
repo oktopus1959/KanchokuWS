@@ -1821,6 +1821,24 @@ namespace KanchokuWS.Gui
             textBox_realtimeTrigramBonusFactor.Text = $"{Settings.RealtimeTrigramBonusFactor}";
             textBox_realtimeTrigramTier1Num.Text = $"{Settings.RealtimeTrigramTier1Num}";
             textBox_realtimeTrigramTier2Num.Text = $"{Settings.RealtimeTrigramTier2Num}";
+            comboBox_editBufferCaretChar.Text = $"{Settings.EditBufferCaretChar}";
+            if (comboBox_editBufferCaretChar.Text._isEmpty() && comboBox_editBufferCaretChar.Text._isEmpty()) {
+                selectComboBoxItem(comboBox_editBufferCaretChar, "▴");
+            }
+            textBox_editBufferFlushChar.Text = $"{Settings.EditBufferFlushChar}";
+        }
+
+        private void selectComboBoxItem(ComboBox cbx, string text)
+        {
+            if (text._notEmpty()) {
+                for (int i = 0; i < cbx.Items.Count; ++i) {
+                    if (cbx.Items[i].ToString()._equalsTo(text)) {
+                        cbx.SelectedIndex = i;
+                        return;
+                    }
+                }
+            }
+            cbx.Text = text;
         }
 
         private void setFusionStatusChecker()
@@ -1835,6 +1853,8 @@ namespace KanchokuWS.Gui
             checkerFusion.Add(textBox_realtimeTrigramBonusFactor);
             checkerFusion.Add(textBox_realtimeTrigramTier1Num);
             checkerFusion.Add(textBox_realtimeTrigramTier2Num);
+            checkerFusion.Add(comboBox_editBufferCaretChar);
+            checkerFusion.Add(textBox_editBufferFlushChar);
 
             checkerAll.Add(checkerFusion);
         }
@@ -1856,6 +1876,8 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("realtimeTrigramBonusFactor", textBox_realtimeTrigramBonusFactor.Text);
             Settings.SetUserIni("realtimeTrigramTier1Num", textBox_realtimeTrigramTier1Num.Text);
             Settings.SetUserIni("realtimeTrigramTier2Num", textBox_realtimeTrigramTier2Num.Text);
+            Settings.SetUserIni("editBufferCaretChar", comboBox_editBufferCaretChar.Text.Trim());
+            Settings.SetUserIni("editBufferFlushChar", textBox_editBufferFlushChar.Text.Trim());
 
             Settings.ReadIniFile(false);
             // 各種定義ファイルの再読み込み

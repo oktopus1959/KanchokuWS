@@ -120,9 +120,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="comboBox_deckeyCharsFile.ToolTip" xml:space="preserve">
     <value>漢直キーコードから英数字・記号への変換を定義するファイルを選択します。
 
@@ -1121,6 +1118,18 @@ OFF の場合は、"/" はたんに無視され、1文字単位であらゆる�
 ・「拡張修飾キーを有効にする」にチェックを入れる
 ・拡張修飾キー定義ファイルに次の設定を記述する：
       space=shiftB | none</value>
+  </data>
+  <data name="comboBox_editBufferCaretChar.ToolTip" xml:space="preserve">
+    <value>Ctrlキーの修飾なしで漢直(かな)モードと英字モードを切り替えるためのキーの指定
+
+使用するキーの仮想キーコードを16進数で指定します。
+仮想キーコードについては「windows 仮想キーコード 一覧」でググると見つかります。
+主なキーについては候補を用意してあるので、それを選択してください。
+
+「Ctrlキー修飾なしOFF」が設定された場合は、このキーは「漢直モードON」のための
+キーとなります。
+
+キーを使用しない場合は、ComboBoxの内容を削除して空白にしてください。</value>
   </data>
   <data name="textBox_autoBushuComp.ToolTip" xml:space="preserve">
     <value>自動部首合成の登録を行います。

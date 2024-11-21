@@ -522,6 +522,9 @@ public:
             } else if (cmd == _T("saveCandidateLog")) {
                 // 解候補ログをファイルに書き出す
                 WORD_LATTICE->saveCandidateLog();
+            } else if (cmd == _T("clearMultiStream")) {
+                // 融合ストリームのクリア
+                WORD_LATTICE->clearAll();
             } else if (cmd == _T("exchangeCodeTable")) {
                 // 主・副テーブルを切り替える
                 outParams->strokeTableNum = StrokeTableNode::ExchangeStrokeTable();

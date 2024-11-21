@@ -189,6 +189,9 @@ namespace KanchokuWS
         /// <summary>編集バッファのカレット文字</summary>
         public static string EditBufferCaretChar { get; set; } = "▴";
 
+        /// <summary>編集バッファをフラッシュさせる文字</summary>
+        public static string EditBufferFlushChar { get; set; } = "、。";
+
         //-------------------------------------------------------------------------------------
         // 各種ファイル
         //-------------------------------------------------------------------------------------
@@ -1576,8 +1579,10 @@ namespace KanchokuWS
             PreRewriteWaitTimeMsWhenTrainingMode  = GetString(PreRewriteWaitTimeMsWhenTrainingMode_PropName)._parseInt(100);  // かな入力練習モードのときの書き換え対象文字の出力待ち時間
 
             //------------------------------------------------------------------------------
-            // 配列融合
-            CommitMultiStreamElapsedTime = GetString("commitMultiStreamElapsedTime")._parseInt(0);          // 前回のデコーダ呼び出しから一定時間が経過したら、MulstStreamCommit を発行
+            // 配列融合・編集バッファ
+            CommitMultiStreamElapsedTime = GetString("commitMultiStreamElapsedTime")._parseInt(0);      // 前回のデコーダ呼び出しから一定時間が経過したら、MulstStreamCommit を発行
+            EditBufferCaretChar = "▴"; // GetString("editBufferCaretChar")._orElse("▴");                        // 編集バッファのカレット文字
+            EditBufferFlushChar = GetString("editBufferFlushChar")._orElse("、。");                     // 編集バッファをフラッシュさせる文字
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定
@@ -1712,7 +1717,6 @@ namespace KanchokuWS
             RealtimeTrigramBonusFactor = addDecoderSetting("realtimeTrigramBonusFactor", 100);  // Realtime 3gram のカウントからボーナス値を算出する際の係数
             RealtimeTrigramTier1Num = addDecoderSetting("realtimeTrigramTier1Num", 5);          // Realtime 3gram の Tier1 の数
             RealtimeTrigramTier2Num = addDecoderSetting("realtimeTrigramTier2Num", 10);         // Realtime 3gram の Tier2 の数
-            EditBufferCaretChar = addDecoderSetting("editBufferCaretChar", "▴");                // 編集バッファのカレット文字
             setDecoderSetting("mergerCandidateFile", MergerCandidateFile );                     // 解候補ログファイル
 
             // キー割当

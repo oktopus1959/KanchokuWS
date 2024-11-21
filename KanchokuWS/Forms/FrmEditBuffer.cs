@@ -75,7 +75,7 @@ namespace KanchokuWS.Forms
         }
 
         //------------------------------------------------------------------------------------
-        private static string CARET = "▴"; // "⏐"; // "‸";
+        //private static string CARET = "▴"; // "⏐"; // "‸";
 
         /// <summary>文字列を編集バッファのカーソル位置に挿入する。</summary>
         /// <param name="chars"></param>
@@ -92,7 +92,7 @@ namespace KanchokuWS.Forms
                 return;
             }
 
-            int prePos = editTextBox.Text._safeIndexOf(CARET[0]);
+            int prePos = editTextBox.Text._safeIndexOf(Settings.EditBufferCaretChar[0]);
             if (prePos < 0) prePos = editTextBox.Text.Length;
             int postPos = prePos + 1;
             logger.WarnH(() => $"ENTER: EditText={EditText}, pos={prePos}, str={str}, numBS={numBS}");
@@ -191,6 +191,10 @@ namespace KanchokuWS.Forms
                             }
                         }
                         preText += str[pos];
+                        if (pos == str.Length - 1 && Settings.EditBufferFlushChar._safeIndexOf(str[pos]) >= 0) {
+                            // 末尾のフラッシュ文字
+                            toFlush = true;
+                        }
                     }
                     ++pos;
                 }
@@ -212,7 +216,7 @@ namespace KanchokuWS.Forms
                 // フラッシュの後の余った入力は、SendInputする
                 SendInputHandler.Singleton.SendString(str._safeSubstring(pos)._toCharArray(), str.Length - pos, 0);
             }
-            logger.WarnH(() => $"LEAVE: EditText={EditText}, pos={editTextBox.Text._safeIndexOf(CARET[0])}");
+            logger.WarnH(() => $"LEAVE: EditText={EditText}, pos={editTextBox.Text._safeIndexOf(Settings.EditBufferCaretChar[0])}");
         }
 
         public void PutVkeyCombo(uint modifier, uint vkey)
@@ -261,7 +265,7 @@ namespace KanchokuWS.Forms
         private string makeEditText(string preText, string postText)
         {
             logger.WarnH(() => $"preText={preText}, preLen={preText.Length}, postText={postText}, postLen={postText}");
-            var text = preText + ((preText._notEmpty() || postText._notEmpty()) ? CARET : "") + postText;       // 空でないときだけカレットを入れる
+            var text = preText + ((preText._notEmpty() || postText._notEmpty()) ? Settings.EditBufferCaretChar : "") + postText;       // 空でないときだけカレットを入れる
             logger.WarnH(() => $"text={text}, len={text.Length}");
             return text;
         }
@@ -269,7 +273,7 @@ namespace KanchokuWS.Forms
         private string[] splitByCaret()
         {
             string[] result = new string[2];
-            int pos = editTextBox.Text._safeIndexOf(CARET[0]);
+            int pos = editTextBox.Text._safeIndexOf(Settings.EditBufferCaretChar[0]);
             if (pos < 0) {
                 result[0] = editTextBox.Text;
                 result[1] = "";
@@ -333,7 +337,7 @@ namespace KanchokuWS.Forms
         /// <summary>編集バッファをフラッシュして、アプリケーションに文字列を送出する</summary>
         public void FlushBuffer()
         {
-            string result = editTextBox.Text._safeReplace(CARET, "");
+            string result = editTextBox.Text._safeReplace(Settings.EditBufferCaretChar, "");
             editTextBox.Text = "";
             editTextBox.SelectionStart = 0;
             this.Hide();
@@ -343,6 +347,7 @@ namespace KanchokuWS.Forms
             var winClass = ActiveWindowHandler.Singleton.ActiveWinClassName;
             SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(result._toCharArray(), 0, winClass == "mintty" || winClass == "PuTTY");
             //this.ShowNonActive();
+            frmMain.ExecCmdDecoder("clearMultiStream", null);
             logger.WarnH($"CALLED");
         }
 

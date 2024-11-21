@@ -502,6 +502,10 @@ namespace KanchokuWS.Gui
             this.checkBox_convertJaComma = new System.Windows.Forms.CheckBox();
             this.checkBox_convertJaPeriod = new System.Windows.Forms.CheckBox();
             this.tabPage_fusion = new System.Windows.Forms.TabPage();
+            this.comboBox_editBufferCaretChar = new System.Windows.Forms.ComboBox();
+            this.label163 = new System.Windows.Forms.Label();
+            this.textBox_editBufferFlushChar = new System.Windows.Forms.TextBox();
+            this.label158 = new System.Windows.Forms.Label();
             this.button_showCandidates = new System.Windows.Forms.Button();
             this.label162 = new System.Windows.Forms.Label();
             this.button_reloadDict = new System.Windows.Forms.Button();
@@ -6244,6 +6248,10 @@ namespace KanchokuWS.Gui
             // 
             // tabPage_fusion
             // 
+            this.tabPage_fusion.Controls.Add(this.comboBox_editBufferCaretChar);
+            this.tabPage_fusion.Controls.Add(this.label163);
+            this.tabPage_fusion.Controls.Add(this.textBox_editBufferFlushChar);
+            this.tabPage_fusion.Controls.Add(this.label158);
             this.tabPage_fusion.Controls.Add(this.button_showCandidates);
             this.tabPage_fusion.Controls.Add(this.label162);
             this.tabPage_fusion.Controls.Add(this.button_reloadDict);
@@ -6268,6 +6276,47 @@ namespace KanchokuWS.Gui
             this.tabPage_fusion.TabIndex = 11;
             this.tabPage_fusion.Text = "配列融合";
             this.tabPage_fusion.UseVisualStyleBackColor = true;
+            // 
+            // comboBox_editBufferCaretChar
+            // 
+            this.comboBox_editBufferCaretChar.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.comboBox_editBufferCaretChar.FormattingEnabled = true;
+            this.comboBox_editBufferCaretChar.Items.AddRange(new object[] {
+            "▴",
+            "⏐",
+            "‸"});
+            this.comboBox_editBufferCaretChar.Location = new System.Drawing.Point(196, 217);
+            this.comboBox_editBufferCaretChar.Name = "comboBox_editBufferCaretChar";
+            this.comboBox_editBufferCaretChar.Size = new System.Drawing.Size(55, 20);
+            this.comboBox_editBufferCaretChar.TabIndex = 57;
+            this.toolTip1.SetToolTip(this.comboBox_editBufferCaretChar, resources.GetString("comboBox_editBufferCaretChar.ToolTip"));
+            // 
+            // label163
+            // 
+            this.label163.AutoSize = true;
+            this.label163.Location = new System.Drawing.Point(24, 219);
+            this.label163.Name = "label163";
+            this.label163.Size = new System.Drawing.Size(132, 15);
+            this.label163.TabIndex = 55;
+            this.label163.Text = "編集バッファのカレット文字";
+            // 
+            // textBox_editBufferFlushChar
+            // 
+            this.textBox_editBufferFlushChar.Font = new System.Drawing.Font("BIZ UDゴシック", 9F);
+            this.textBox_editBufferFlushChar.Location = new System.Drawing.Point(196, 239);
+            this.textBox_editBufferFlushChar.Name = "textBox_editBufferFlushChar";
+            this.textBox_editBufferFlushChar.Size = new System.Drawing.Size(175, 19);
+            this.textBox_editBufferFlushChar.TabIndex = 54;
+            this.textBox_editBufferFlushChar.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label158
+            // 
+            this.label158.AutoSize = true;
+            this.label158.Location = new System.Drawing.Point(24, 241);
+            this.label158.Name = "label158";
+            this.label158.Size = new System.Drawing.Size(166, 15);
+            this.label158.TabIndex = 53;
+            this.label158.Text = "編集バッファをフラッシュさせる文字";
             // 
             // button_showCandidates
             // 
@@ -7972,5 +8021,9 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Button button_reloadDict;
         private System.Windows.Forms.Label label162;
         private System.Windows.Forms.Button button_showCandidates;
+        private System.Windows.Forms.TextBox textBox_editBufferFlushChar;
+        private System.Windows.Forms.Label label158;
+        private System.Windows.Forms.Label label163;
+        private System.Windows.Forms.ComboBox comboBox_editBufferCaretChar;
     }
 }
