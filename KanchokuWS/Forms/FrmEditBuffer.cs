@@ -81,15 +81,16 @@ namespace KanchokuWS.Forms
         /// <param name="chars"></param>
         public void PutString(char[] chars, int numBS)
         {
-            if ((chars._isEmpty() || chars[0] == 0) && numBS <= 0) return;
+            var str = chars._toString();
 
-            if (editTextBox.Text._isEmpty() && (chars._isEmpty() || chars[0] == 0 || chars._safeLength() >= 2 && chars[0] == '!' && chars[1] == '{')) {
+            if (str._isEmpty() && numBS <= 0) return;
+
+            if (editTextBox.Text._isEmpty() && (str._isEmpty() || HandlerUtils.IsFKeySpec(str) || HandlerUtils.IsTernaryOperator(str))) {
                 // 何もせずに、呼び出し元に任せる
+                logger.WarnH(() => $"REDIRECT: SendStringViaClipboardIfNeeded({str}, {numBS}, true)");
                 SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(chars, numBS, true);
                 return;
             }
-
-            var str = chars._toString();
 
             int prePos = editTextBox.Text._safeIndexOf(CARET[0]);
             if (prePos < 0) prePos = editTextBox.Text.Length;

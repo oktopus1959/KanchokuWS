@@ -11,6 +11,16 @@ namespace KanchokuWS.Handler
     {
         private static System.Text.RegularExpressions.Regex reTernaryOperator = new System.Text.RegularExpressions.Regex(@"\(([^)]+)\)\?\(([^)]+)\):\(([^)]+)\)");
 
+        public static bool IsFKeySpec(string str)
+        {
+            return str._getFirst() == '!' && str._getSecond() == '{';
+        }
+
+        public static bool IsTernaryOperator(string str)
+        {
+            return str._getFirst() == '(' && str.Last() == ')' && str._reMatch(reTernaryOperator);
+        }
+
         /// <summary>
         /// (Q)?(A):(B) 形式だったら、Q に該当するウィンドウクラスか否かを判定し、当ならAを、否ならBを返す。<br/>
         /// (Q)?(A):(B) 形式でなければ、null を返す。
