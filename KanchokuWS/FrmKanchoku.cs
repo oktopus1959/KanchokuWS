@@ -891,7 +891,7 @@ namespace KanchokuWS
             if (Settings.LoggingDecKeyInfo) logger.Info($"CALLED: deckey={deckey:x}H({deckey}), mod={mod}H({mod})");
             toDeactivateDecoder = false;
             if (IsDecoderActive)
-                handleKeyDecoder(deckey, mod, false);
+                handleKeyDecoder(deckey, -1, mod, false);
             else
                 handleKeyDecoderDirectly(deckey, mod);
             if (toDeactivateDecoder) DeactivateDecoder();
@@ -1009,7 +1009,7 @@ namespace KanchokuWS
                                 rotateStrokeHelp(0);
                                 bHiraganaStrokeGuideMode = !bHiraganaStrokeGuideMode;
                                 if (bHiraganaStrokeGuideMode) {
-                                    InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0, rollOverStroke);   // やっぱり出力文字列をクリアしておく必要あり
+                                    InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, origDeckey, 0, rollOverStroke);   // やっぱり出力文字列をクリアしておく必要あり
                                                                                                         //ExecCmdDecoder("setHiraganaBlocker", null);       // こっちだと、以前のひらがなが出力文字列に残ったりして、それを拾ってしまう
                                 } else {
                                     //HandleDeckeyDecoder(decoderPtr, DecoderKeys.FULL_ESCAPE_DECKEY, 0, 0, ref decoderOutput); // こっちだと、見えなくなるだけで、ひらがな列が残ってしまう
@@ -1055,7 +1055,7 @@ namespace KanchokuWS
                             deckey = DecoderKeys.STROKE_SPACE_DECKEY;
                             if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
                                 // 第2打鍵待ちなら、スペースを出力
-                                InvokeDecoder(deckey, 0, rollOverStroke);
+                                InvokeDecoder(deckey, origDeckey, 0, rollOverStroke);
                             }
                             return true;
                         case DecoderKeys.POST_NORMAL_SHIFT_DECKEY:
@@ -1068,9 +1068,9 @@ namespace KanchokuWS
                             logger.Info(() => $"POST_PLANE_X_SHIFT_DECKEY=POST_NORMAL_SHIFT_DECKEY+{deckey - DecoderKeys.POST_NORMAL_SHIFT_DECKEY}, strokeCount={decoderOutput.GetStrokeCount()}");
                             if (IsDecoderActive && decoderOutput.GetStrokeCount() >= 1) {
                                 // 第2打鍵待ちなら、いったんBSを出力してからシフトされたコードを出力
-                                InvokeDecoder(DecoderKeys.BS_DECKEY, 0, rollOverStroke);
+                                InvokeDecoder(DecoderKeys.BS_DECKEY, -1, 0, rollOverStroke);
                                 deckey = (prevDeckey % DecoderKeys.PLANE_DECKEY_NUM) + (deckey - DecoderKeys.POST_NORMAL_SHIFT_DECKEY + 1) * DecoderKeys.PLANE_DECKEY_NUM;
-                                InvokeDecoder(deckey, 0, rollOverStroke);
+                                InvokeDecoder(deckey, origDeckey, 0, rollOverStroke);
                             }
                             return true;
                         case DecoderKeys.COPY_SELECTION_AND_SEND_TO_DICTIONARY_DECKEY:
@@ -1096,7 +1096,7 @@ namespace KanchokuWS
                         case DecoderKeys.MULTI_STREAM_SELECT_FIRST_DECKEY:
                         case DecoderKeys.MULTI_STREAM_COMMIT_DECKEY:
                             logger.Info(() => $"MULTI_STREAM_{(deckey == DecoderKeys.MULTI_STREAM_NEXT_CAND_DECKEY ? "NEXT" : deckey == DecoderKeys.MULTI_STREAM_PREV_CAND_DECKEY ? "PREV" : deckey == DecoderKeys.MULTI_STREAM_SELECT_FIRST_DECKEY ? "FIRST" : "COMMIT")}_DECKEY:{deckey}");
-                            return InvokeDecoder(deckey, mod, rollOverStroke);
+                            return InvokeDecoder(deckey, origDeckey, mod, rollOverStroke);
 
                         case DecoderKeys.DIRECT_SPACE_DECKEY:
                             logger.Info(() => $"DIRECT_SPACE_DECKEY:{deckey}, mode={mod:x}H");
@@ -1117,7 +1117,7 @@ namespace KanchokuWS
                     }
                     bPrevDtUpdate = true;
                     if (IsDecoderActive && (deckey < DecoderKeys.DECKEY_CTRL_A || deckey > DecoderKeys.DECKEY_CTRL_Z)) {
-                        return InvokeDecoder(deckey, mod, rollOverStroke);
+                        return InvokeDecoder(deckey, origDeckey, mod, rollOverStroke);
                     } else {
                         return sendVkeyFromDeckey(deckey, origDeckey, mod);
                     }
@@ -1125,13 +1125,14 @@ namespace KanchokuWS
                     // Decoder Inactive
                     if (Settings.LoggingDecKeyInfo) logger.Info("Decoder Inactive");
                     bPrevDtUpdate = true;
-                    if (deckey >= 0 && deckey < DecoderKeys.SPECIAL_DECKEY_ID_BASE /*deckey != DecoderKeys.UNDEFINED_DECKEY*/) {
-                        // DecoderKeyから仮想キーのComboに変換できるやつ
-                        return sendVkeyFromDeckey(deckey, origDeckey, mod);
-                    } else if (origDeckey >= 0) {
-                        return sendVkeyFromDeckey(origDeckey, -1, mod);
-                    }
-                    return false;
+                    //if (deckey >= 0 && deckey < DecoderKeys.SPECIAL_DECKEY_ID_BASE /*deckey != DecoderKeys.UNDEFINED_DECKEY*/) {
+                    //    // DecoderKeyから仮想キーのComboに変換できるやつ
+                    //    return sendVkeyFromDeckey(deckey, origDeckey, mod);
+                    //} else if (origDeckey >= 0) {
+                    //    return sendVkeyFromDeckey(origDeckey, -1, mod);
+                    //}
+                    //return false;
+                    return sendVkeyFromDeckey(deckey, origDeckey, mod);
                 }
             } finally {
                 prevFuncTotalCount = DeckeyTotalCount;
@@ -1151,8 +1152,8 @@ namespace KanchokuWS
                 ExecCmdDecoder("commitHistory", null);                  // 履歴のコミットと初期化
                 //InvokeDecoder(DecoderKeys.FULL_ESCAPE_DECKEY, 0);
                 //InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);
-                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, 0, false);      // これで各種モードがクリアされる
-                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, 0, false);      // 念のため2回呼ぶ
+                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, -1, 0, false);      // これで各種モードがクリアされる
+                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, -1, 0, false);      // 念のため2回呼ぶ
                 if (!isKatakana) {
                     // カタカナモードでなければ、テーブルの入れ替えを行う
                     if (bSecond && decoderOutput.strokeTableNum == 3) {
@@ -1176,8 +1177,8 @@ namespace KanchokuWS
                 ExecCmdDecoder("commitHistory", null);                  // 履歴のコミットと初期化
                 //InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // これで各種モードがクリアされる
                 //InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // 念のため2回呼ぶ
-                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, 0, false);      // これで各種モードがクリアされる
-                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, 0, false);      // 念のため2回呼ぶ
+                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, -1, 0, false);      // これで各種モードがクリアされる
+                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, -1, 0, false);      // 念のため2回呼ぶ
                 //if (toggleKatakana && !isKatakana) InvokeDecoder(DecoderKeys.TOGGLE_KATAKANA_CONVERSION_DECKEY, 0);
                 if (n == 1 && Settings.TableFile._notEmpty()) {
                     changeCodeTableAndCombinationPool("useCodeTable1");     // コードテーブル1に入れ替え
@@ -1196,7 +1197,7 @@ namespace KanchokuWS
         /// </summary>
         public void CommitMultStream()
         {
-            InvokeDecoder(DecoderKeys.MULTI_STREAM_COMMIT_DECKEY, 0, false);
+            InvokeDecoder(DecoderKeys.MULTI_STREAM_COMMIT_DECKEY, -1, 0, false);
         }
 
         private void changeCodeTableAndCombinationPool(string cmd)
@@ -1384,8 +1385,8 @@ namespace KanchokuWS
                 ExecCmdDecoder("commitHistory", null);                  // 履歴のコミットと初期化
                 //InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // これで各種モードがクリアされる
                 //InvokeDecoder(DecoderKeys.SOFT_ESCAPE_DECKEY, 0);       // 念のため2回呼ぶ
-                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, 0, false);      // これで各種モードがクリアされる
-                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, 0, false);      // 念のため2回呼ぶ
+                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, -1, 0, false);      // これで各種モードがクリアされる
+                InvokeDecoder(DecoderKeys.COMMIT_STATE_DECKEY, -1, 0, false);      // 念のため2回呼ぶ
                 frmVkb.DrawVirtualKeyboardChars();
                 logger.Info("LEAVE");
                 return;
@@ -1479,7 +1480,7 @@ namespace KanchokuWS
             CombinationKeyStroke.DeterminerLib.KeyCombinationPool.ChangeCurrentPoolByDecoderMode(IsDecoderActive);
             frmEditBuf.FlushBufferOnDeactivated();
             if (decoderPtr != IntPtr.Zero) {
-                handleKeyDecoder(DecoderKeys.DEACTIVE_DECKEY, 0, false);   // DecoderOff の処理をやる
+                handleKeyDecoder(DecoderKeys.DEACTIVE_DECKEY, -1, 0, false);   // DecoderOff の処理をやる
                 if (bModifiersOff) SendInputHandler.Singleton.UpCtrlAndShftKeys();                  // CtrlとShiftキーをUP状態に戻す
                 if (Settings.ShowEisuVkb) {
                     frmVkb.DrawEisuVkb();
@@ -1756,7 +1757,7 @@ namespace KanchokuWS
         /// </summary>
         /// <param name="deckey"></param>
         /// <returns></returns>
-        private bool InvokeDecoder(int deckey, uint mod, bool rollOverStroke)
+        private bool InvokeDecoder(int deckey, int origDeckey, uint mod, bool rollOverStroke)
         {
             if (IsDecoderActive) {
                 ++DeckeyTotalCount;
@@ -1794,7 +1795,7 @@ namespace KanchokuWS
                 // 入力標識の消去
                 frmMode.Vanish();
                 // 通常のストロークキーまたは機能キー(BSとか矢印キーとかCttrl-Hとか)
-                bool flag = handleKeyDecoder(deckey, mod, rollOverStroke);
+                bool flag = handleKeyDecoder(deckey, origDeckey, mod, rollOverStroke);
                 logger.InfoH(() => $"LEAVE: {flag}");
                 return flag;
             }
@@ -1846,7 +1847,7 @@ namespace KanchokuWS
         /// <summary>
         /// デコーダの呼び出し
         /// </summary>
-        private bool handleKeyDecoder(int deckey, uint mod, bool rollOverStroke)
+        private bool handleKeyDecoder(int deckey, int origDeckey, uint mod, bool rollOverStroke)
         {
             logger.InfoH(() => $"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}, rollOver={rollOverStroke}");
 
@@ -1954,8 +1955,8 @@ namespace KanchokuWS
 
                     // 他のVKey送出(もしあれば)
                     if (decoderOutput.IsDeckeyToVkey()) {
-                        logger.DebugH(() => $"sendVkeyFromDeckey: deckey={deckey}({deckey:x}), mod={mod:x}");
-                        sendKeyFlag = sendVkeyFromDeckey(deckey, -1, mod);
+                        logger.DebugH(() => $"sendVkeyFromDeckey: deckey={deckey}({deckey:x}), origDeckey={origDeckey}({origDeckey:x}), mod={mod:x}");
+                        sendKeyFlag = sendVkeyFromDeckey(deckey, origDeckey, mod);
                         //nPreKeys += 1;
                     }
 
@@ -2160,7 +2161,7 @@ namespace KanchokuWS
                  (mod & (KeyModifiers.MOD_CONTROL | KeyModifiers.MOD_LCTRL | KeyModifiers.MOD_RCTRL | KeyModifiers.MOD_ALT)) == 0);
 
             if (Settings.LoggingDecKeyInfo) {
-                logger.Info($"ENTER: deckey={deckey:x}H({deckey}), mod={mod:x}({mod}), anyCtrl={ctrlKeyState.AnyKeyDown}, shortcutConv={bShortcutConversion}");
+                logger.Info($"ENTER: deckey={deckey:x}H({deckey}), origDeckey={origDeckey:x}H({origDeckey}), mod={mod:x}({mod}), anyCtrl={ctrlKeyState.AnyKeyDown}, shortcutConv={bShortcutConversion}");
             }
 
             if ((!ctrlKeyState.AnyKeyDown)                                                                      // Ctrlキーが押されていないか、
@@ -2205,8 +2206,8 @@ namespace KanchokuWS
                     }
                     uint _mod =
                         combo.Value.modifier != 0 ? combo.Value.modifier :
-                        deckey >= DecoderKeys.FUNC_DECKEY_START || mod != 0 ? mod :
-                        ctrlKeyState.AnyKeyDown ? SendInputHandler.GetCurrentKeyModifiers() :            // NORMAL_DECKEY なら Alt,Ctrl,Shiftキー修飾を有効にする
+                        deckey >= DecoderKeys.SHIFT_DECKEY_START || mod != 0 ? mod :
+                        origDeckey >= DecoderKeys.FUNC_DECKEY_START ? SendInputHandler.GetCurrentKeyModifiers() :   // orig が FUNC_DECKEY なら Alt,Ctrl,Shiftキー修飾を有効にする
                         0;
                     int normDeckey = combo.Value.normalDecKey;
                     uint vk = 0;
