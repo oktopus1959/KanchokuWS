@@ -1969,7 +1969,8 @@ namespace KanchokuWS
                     var outString = decoderOutput.outString;
                     int outLen = outString._strlen();
                     int numBS = decoderOutput.numBackSpaces;
-                    if (outLen > 0 || numBS > 0) {
+                    bool bFlush = decoderOutput.IsFlushOutputString();
+                    if (outLen > 0 || numBS > 0 || bFlush) {
                         logger.DebugH("PATH-4");
                         // 送出文字列中に特殊機能キー(tabやleftArrowなど)が含まれているか
                         bool bFuncVkeyContained = isFuncVkeyContained(outString, outLen);
@@ -1978,7 +1979,7 @@ namespace KanchokuWS
                         /*if (Settings.LoggingDecKeyInfo)*/ logger.InfoH(() => $"outString={outString._toString()}, numBS={numBS}, leadLen={leadLen}, outStr={outStr._toString()}");
                         WriteStrokeLog(outStr._toString());
                         //SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(outStr, numBS - leadLen, bFuncVkeyContained);
-                        frmEditBuf.PutString(outStr, numBS - leadLen);
+                        frmEditBuf.PutString(outStr, numBS - leadLen, bFlush);
 #if false
                         if (bFuncVkeyContained) {
                             logger.DebugH("PATH-5");

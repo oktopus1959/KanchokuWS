@@ -79,11 +79,13 @@ namespace KanchokuWS.Forms
 
         /// <summary>文字列を編集バッファのカーソル位置に挿入する。</summary>
         /// <param name="chars"></param>
-        public void PutString(char[] chars, int numBS)
+        public void PutString(char[] chars, int numBS, bool bFlush = false)
         {
             var str = chars._toString();
 
-            if (str._isEmpty() && numBS <= 0) return;
+            //logger.WarnH(() => $"CALLED: str={str}, numBS={numBS}, bFlush={bFlush}");
+
+            if (str._isEmpty() && numBS <= 0 && !bFlush) return;
 
             if (editTextBox.Text._isEmpty() && (str._isEmpty() || HandlerUtils.IsFKeySpec(str) || HandlerUtils.IsTernaryOperator(str))) {
                 // 何もせずに、呼び出し元に任せる
@@ -201,7 +203,7 @@ namespace KanchokuWS.Forms
             }
 
             editTextBox.Text = makeEditText(preText, postText);
-            if (toFlush) FlushBuffer();
+            if (toFlush || bFlush) FlushBuffer();
             if (toAbort) {
                 ClearBuffer();
                 frmMain.ToDeactivateDecoder();

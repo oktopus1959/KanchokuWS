@@ -136,6 +136,8 @@ namespace KanchokuWS
         public const uint CurrentModeIsEisu = 0x1000;
         /// <summary>現在配列融合モードの入力中</summary>
         public const uint CurrentModeIsMultiStreamInput = 0x2000;
+        /// <summary>溜っている出力文字列をフラッシュする</summary>
+        public const uint FlushOutputString = 0x40000;
     }
 
     /// <summary> 拡張メソッド</summary>
@@ -186,6 +188,9 @@ namespace KanchokuWS
 
         /// <summary>デコーダが配列融合モードの入力中になっているか</summary>
         public static bool IsDecoderMultiStreamInput(this DecoderOutParams output) { return (output.resultFlags & ResultFlags.CurrentModeIsMultiStreamInput) != 0; }
+
+        /// <summary>溜っている出力文字列をフラッシュするか</summary>
+        public static bool IsFlushOutputString(this DecoderOutParams output) { return (output.resultFlags & ResultFlags.FlushOutputString) != 0; }
 
         /// <summary> 当文字の何打鍵目か</summary>
         /// <param name="output"></param>
