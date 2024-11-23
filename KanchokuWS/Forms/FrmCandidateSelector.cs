@@ -83,12 +83,12 @@ namespace KanchokuWS.Forms
         /// <summary> フォームのロード </summary>
         private void FrmCandidateSelector_Load(object sender, EventArgs e)
         {
-            logger.WarnH($"ENTER");
+            //logger.WarnH($"ENTER");
 
             this.Width = (int)(DgvNormalWidth + 2);
             this.Height = 0;
 
-            logger.WarnH($"LEAVE");
+            //logger.WarnH($"LEAVE");
         }
 
         /// <summary>フォームのクローズ</summary>
@@ -127,7 +127,7 @@ namespace KanchokuWS.Forms
         // 横列鍵盤用グリッドの初期化
         private void initializeHorizontalDgv(int cellWidth)
         {
-            logger.WarnH($"ENTER");
+            //logger.WarnH($"ENTER");
             var dgv = dgvHorizontal;
             dgv._defaultSetup(0, (int)DgvCellHeight);       // headerHeight=0 -> ヘッダーを表示しない
             dgv._setSelectionColorReadOnly();
@@ -140,19 +140,19 @@ namespace KanchokuWS.Forms
             //dgv.Rows.Add(nRow);
 
             renewHorizontalDgv();
-            logger.WarnH($"LEAVE");
+            //logger.WarnH($"LEAVE");
         }
 
         private void renewHorizontalDgv()
         {
             var dgv = dgvHorizontal;
-            logger.WarnH($"ENTER: dgv.Rows.Count={dgv.Rows.Count}, dgv.Columns.Count={dgv.Columns.Count}");
+            //logger.WarnH($"ENTER: dgv.Rows.Count={dgv.Rows.Count}, dgv.Columns.Count={dgv.Columns.Count}");
 
             int cellWidth = (int)DgvNormalWidth - 1;
             int cellHeight = (int)DgvCellHeight;
             dgv.RowTemplate.Height = cellHeight;
             if (dgv.Columns.Count <= 0) {
-                logger.WarnH($"LEAVE");
+                //logger.WarnH($"LEAVE");
                 return;
             }
 
@@ -164,7 +164,7 @@ namespace KanchokuWS.Forms
 
             if (dgv.Rows.Count == 0) dgv.Rows.Add(LongVkeyNum);
 
-            logger.WarnH($"LEAVE: dgv.Rows.Count={dgv.Rows.Count}, dgv.Top={dgv.Top}, dgv.Width={dgv.Width}, cellHeight={cellHeight}, cellWidth={cellWidth}");
+            //logger.WarnH($"LEAVE: dgv.Rows.Count={dgv.Rows.Count}, dgv.Top={dgv.Top}, dgv.Width={dgv.Width}, cellHeight={cellHeight}, cellWidth={cellWidth}");
                 
         }
 
@@ -206,11 +206,11 @@ namespace KanchokuWS.Forms
         {
             var decoderOutput = frmMain.DecoderOutput;
 
-            logger.WarnH(() => $"CALLED: layout={decoderOutput.layout}, faceString={decoderOutput.faceStrings._toString()}");
+            //logger.WarnH(() => $"CALLED: layout={decoderOutput.layout}, faceString={decoderOutput.faceStrings._toString()}");
 
             if (frmEditBuf.IsEmpty || decoderOutput.layout != (int)VkbLayout.MultiStreamCandidates || decoderOutput.faceStrings._isEmpty() || decoderOutput.faceStrings[0] == 0) {
                 this.Hide();
-                logger.WarnH("Hide");
+                //logger.WarnH("Hide");
                 return;
             }
 
@@ -221,7 +221,7 @@ namespace KanchokuWS.Forms
                 //logger.Info(decoderOutput.faceStrings.Skip(i*20).Take(20).Select(c => c.ToString())._join(""));
                 if (drawHorizontalCandidateCharsWithColor(decoderOutput, i, decoderOutput.faceStrings)) ++nRow;
             }
-            logger.WarnH($"nRow={nRow}");
+            //logger.WarnH($"nRow={nRow}");
             dgvHorizontal.CurrentCell = null;   // どのセルも選択されていない状態にする
             dgvHorizontal.Height = (int)(DgvCellHeight * nRow + 1);
             //changeFormHeight(dgvHorizontal.Top + dgvHorizontal.Height + 1);
@@ -238,7 +238,7 @@ namespace KanchokuWS.Forms
             int fY = frmEditBuf.Location.Y + frmEditBuf.Height + 4;
             int fW = dgvHorizontal.Width + 2;
             int fH = dgvHorizontal.Height + 2;
-            logger.WarnH(() => $"MoveWindow: fX={fX}, fY={fY}, fW={fW}, fH={fH}");
+            //logger.WarnH(() => $"MoveWindow: fX={fX}, fY={fY}, fW={fW}, fH={fH}");
             MoveWindow(this.Handle, fX, fY, fW, fH, true);
         }
 

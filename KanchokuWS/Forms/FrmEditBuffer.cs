@@ -60,7 +60,7 @@ namespace KanchokuWS.Forms
             //frmMain.MoveFormEditBuffer();
             //MoveWindow(this.Handle, this.Location.X, this.Location.Y, this.Width, this.Height, true);
             //ShowNonActive();
-            logger.WarnH($"MOVE: X={Location.X}, Y={Location.Y}, W={Size.Width}, H={Size.Height}");
+            logger.InfoH(() => $"MOVE: X={Location.X}, Y={Location.Y}, W={Size.Width}, H={Size.Height}");
         }
 
         /// <summary>フォームのクローズ</summary>
@@ -87,7 +87,7 @@ namespace KanchokuWS.Forms
 
             if (editTextBox.Text._isEmpty() && (str._isEmpty() || HandlerUtils.IsFKeySpec(str) || HandlerUtils.IsTernaryOperator(str))) {
                 // 何もせずに、呼び出し元に任せる
-                logger.WarnH(() => $"REDIRECT: SendStringViaClipboardIfNeeded({str}, {numBS}, true)");
+                //logger.InfoH(() => $"REDIRECT: SendStringViaClipboardIfNeeded({str}, {numBS}, true)");
                 SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(chars, numBS, true);
                 return;
             }
@@ -95,73 +95,73 @@ namespace KanchokuWS.Forms
             int prePos = editTextBox.Text._safeIndexOf(Settings.EditBufferCaretChar[0]);
             if (prePos < 0) prePos = editTextBox.Text.Length;
             int postPos = prePos + 1;
-            logger.WarnH(() => $"ENTER: EditText={EditText}, pos={prePos}, str={str}, numBS={numBS}");
+            //logger.InfoH(() => $"ENTER: EditText={EditText}, pos={prePos}, str={str}, numBS={numBS}");
             if (numBS > 0) {
                 prePos -= numBS;
                 if (prePos < 0) prePos = 0;
             }
-            //logger.WarnH(() => $"prePos={prePos}, postPos={postPos}");
+            //logger.InfoH(() => $"prePos={prePos}, postPos={postPos}");
             string preText = editTextBox.Text._safeSubstring(0, prePos);
             string postText = editTextBox.Text._safeSubstring(postPos);
-            //logger.WarnH(() => $"preText={preText}, postTest={postText}");
+            //logger.InfoH(() => $"preText={preText}, postTest={postText}");
 
             bool toFlush = false;
             bool toAbort = false;
 
             void handleFunctionalKey(string fkey)
             {
-                logger.WarnH($"fkey={fkey}");
+                //logger.InfoH($"fkey={fkey}");
                 switch (fkey) {
                     case "Left":
-                        logger.WarnH($"Left");
+                        logger.InfoH($"Left");
                         if (preText._notEmpty()) {
                             postText = preText._safeSubstring(-1) + postText;
                             preText = preText._safeSubstring(0, -1);
                         }
                         break;
                     case "Right":
-                        logger.WarnH($"Right");
+                        logger.InfoH($"Right");
                         if (postText._notEmpty()) {
                             preText = preText + postText._safeSubstring(0, 1);
                             postText = postText._safeSubstring(1);
                         }
                         break;
                     case "Home":
-                        logger.WarnH($"Home");
+                        logger.InfoH($"Home");
                         postText = preText + postText;
                         preText = "";
                         break;
                     case "End":
-                        logger.WarnH($"End");
+                        logger.InfoH($"End");
                         preText = preText + postText;
                         postText = "";
                         break;
                     case "BS":
                     case "BackSpace":
-                        logger.WarnH($"BS");
+                        logger.InfoH($"BS");
                         if (preText._notEmpty()) {
                             preText = preText._safeSubstring(0, -1);
                         }
                         break;
                     case "DEL":
                     case "Delete":
-                        logger.WarnH($"Delete");
+                        logger.InfoH($"Delete");
                         if (postText._notEmpty()) {
                             postText = postText._safeSubstring(1);
                         }
                         break;
                     case "Enter":
                     case "Flush":
-                        logger.WarnH($"Enter");
+                        logger.InfoH($"Enter");
                         toFlush = true;
                         break;
                     case "^U":
-                        logger.WarnH($"^U");
+                        logger.InfoH($"^U");
                         preText = "";
                         postText = "";
                         break;
                     case "Abort":
-                        logger.WarnH($"Abort");
+                        logger.InfoH($"Abort");
                         preText = "";
                         postText = "";
                         toAbort = true;
@@ -183,7 +183,7 @@ namespace KanchokuWS.Forms
                     } else {
                         if (str[pos] == '(' && str[str.Length - 1] == ')') {
                             var value = Handler.HandlerUtils.ParseTernaryOperator(str._safeSubstring(pos), "@");
-                            logger.WarnH($"value={value}");
+                            logger.InfoH($"value={value}");
                             if (value._notEmpty()) {
                                 str = value;
                                 pos = 0;
@@ -216,7 +216,7 @@ namespace KanchokuWS.Forms
                 // フラッシュの後の余った入力は、SendInputする
                 SendInputHandler.Singleton.SendString(str._safeSubstring(pos)._toCharArray(), str.Length - pos, 0);
             }
-            logger.WarnH(() => $"LEAVE: EditText={EditText}, pos={editTextBox.Text._safeIndexOf(Settings.EditBufferCaretChar[0])}");
+            logger.InfoH(() => $"LEAVE: EditText={EditText}, pos={editTextBox.Text._safeIndexOf(Settings.EditBufferCaretChar[0])}");
         }
 
         public void PutVkeyCombo(uint modifier, uint vkey)
@@ -227,31 +227,31 @@ namespace KanchokuWS.Forms
             }
             switch (vkey) {
                 case (uint)Keys.Left:
-                    logger.WarnH($"Left");
+                    logger.InfoH($"Left");
                     moveCaretLeft();
                     break;
                 case (uint)Keys.Right:
-                    logger.WarnH($"Right");
+                    logger.InfoH($"Right");
                     moveCaretRight();
                     break;
                 case (uint)Keys.Home:
-                    logger.WarnH($"Home");
+                    logger.InfoH($"Home");
                     moveCaretHome();
                     break;
                 case (uint)Keys.End:
-                    logger.WarnH($"End");
+                    logger.InfoH($"End");
                     moveCaretEnd();
                     break;
                 case (uint)Keys.Back:
-                    logger.WarnH($"Back");
+                    logger.InfoH($"Back");
                     backspace();
                     break;
                 case (uint)Keys.Delete:
-                    logger.WarnH($"Delete");
+                    logger.InfoH($"Delete");
                     delete();
                     break;
                 case (uint)Keys.Enter:
-                    logger.WarnH($"Enter");
+                    logger.InfoH($"Enter");
                     FlushBuffer();
                     break;
             }
@@ -264,9 +264,9 @@ namespace KanchokuWS.Forms
 
         private string makeEditText(string preText, string postText)
         {
-            logger.WarnH(() => $"preText={preText}, preLen={preText.Length}, postText={postText}, postLen={postText}");
+            //logger.InfoH(() => $"preText={preText}, preLen={preText.Length}, postText={postText}, postLen={postText}");
             var text = preText + ((preText._notEmpty() || postText._notEmpty()) ? Settings.EditBufferCaretChar : "") + postText;       // 空でないときだけカレットを入れる
-            logger.WarnH(() => $"text={text}, len={text.Length}");
+            //logger.InfoH(() => $"text={text}, len={text.Length}");
             return text;
         }
 
@@ -348,7 +348,7 @@ namespace KanchokuWS.Forms
             SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(result._toCharArray(), 0, winClass == "mintty" || winClass == "PuTTY");
             //this.ShowNonActive();
             frmMain.ExecCmdDecoder("clearMultiStream", null);
-            logger.WarnH($"CALLED");
+            //logger.InfoH($"CALLED");
         }
 
         /// <summary>Decoderの非活性化時に編集バッファをフラッシュして、アプリケーションに文字列を送出する</summary>
@@ -377,7 +377,7 @@ namespace KanchokuWS.Forms
             // 余裕を持たせて TextBox の幅を設定(上下左右にアンカーしているので、外側のフォームのサイズを変えればよい)
             this.Width = textWidth + 8;
             this.Height = textHeight + 7;
-            logger.WarnH($"Width={Size.Width}, Height={this.Size.Height}");
+            //logger.InfoH($"Width={Size.Width}, Height={this.Size.Height}");
         }
 
         //------------------------------------------------------------------------------------
@@ -469,7 +469,7 @@ namespace KanchokuWS.Forms
         {
             //if (bDiffWin) {
             //    var font = FontInfo.GetActiveWindowFont(1.0f);
-            //    logger.WarnH($"font.Name={font?.Name}, font.Size ={font.Size}");
+            //    logger.InfoH($"font.Name={font?.Name}, font.Size ={font.Size}");
             //    if (font != null) editTextBox.Font = font;
             //}
 
@@ -486,7 +486,7 @@ namespace KanchokuWS.Forms
             int fW = this.Size.Width;
             int fH = this.Size.Height;
 
-            if (bLog) logger.WarnH($"fW={fW}, fH={fH}, cX={cX}, cY={cY}, cW={cW}, cH={cH}");
+            if (bLog) logger.InfoH($"fW={fW}, fH={fH}, cX={cX}, cY={cY}, cW={cW}, cH={cH}");
 
             int fX = cX + (xOffset >= 0 ? cW : -fW) + xOffset;
             if (fX < 0) fX = cX + cW + Math.Abs(xOffset);
@@ -506,7 +506,7 @@ namespace KanchokuWS.Forms
                     fY = cY + cH;
                 }
             }
-            if (bLog) logger.WarnH($"MOVE: X={fX}, Y={fY}, W={fW}, H={fH}");
+            if (bLog) logger.InfoH($"MOVE: X={fX}, Y={fY}, W={fW}, H={fH}");
             MoveWindow(this.Handle, fX, fY, fW, fH, true);
 
             ShowNonActive();
@@ -514,10 +514,10 @@ namespace KanchokuWS.Forms
 
         public void MoveWindow()
         {
-            logger.WarnH($"MOVE before: X={Location.X}, Y={Location.Y}, W={Width}, H={Height}");
+            //logger.InfoH($"MOVE before: X={Location.X}, Y={Location.Y}, W={Width}, H={Height}");
             resetFormSize();
             MoveWindow(this.Handle, this.Location.X, this.Location.Y, this.Width, this.Height, true);
-            logger.WarnH($"MOVE after: X={Location.X}, Y={Location.Y}, W={Width}, H={Height}");
+            //logger.InfoH($"MOVE after: X={Location.X}, Y={Location.Y}, W={Width}, H={Height}");
         }
 
         //------------------------------------------------------------------------------------
@@ -525,10 +525,10 @@ namespace KanchokuWS.Forms
         //------------------------------------------------------------------------------------
         private void editTextBox_TextChanged(object sender, EventArgs e)
         {
-            //logger.WarnH($"text={EditText}");
+            //logger.InfoH($"text={EditText}");
             resetFormSize();
             //if (EditText._notEmpty()) ShowNonActive();
-            //logger.WarnH($"text={EditText}");
+            //logger.InfoH($"text={EditText}");
         }
     }
 }

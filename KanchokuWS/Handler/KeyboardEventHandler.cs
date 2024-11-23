@@ -916,7 +916,7 @@ namespace KanchokuWS.Handler
 
             bool result = true;
             if (bHandlerBusy) {
-                logger.WarnH("Handler Busy");
+                logger.WarnH($"Handler Busy: vkey={vkey}, bDecoderOn={bDecoderOn}, mod={mod:x}H, kanchokuCode={kanchokuCode}, normalDecKey={normalDecKey}, keyDownCount={keyDownCount}");
             } else {
                 bHandlerBusy = true;
                 ++keyDownCount;

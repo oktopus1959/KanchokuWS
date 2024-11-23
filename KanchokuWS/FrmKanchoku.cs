@@ -105,6 +105,7 @@ namespace KanchokuWS
         /// <summaryストロークログの表示</summary>
         public void WriteStrokeLog(int decKey, DateTime dt, bool bDown, bool bFirst, bool bTimer = false)
         {
+            //logger.WarnH(() => $"CALLED: decKey={decKey}, {(bDown ? "DOWN" : "UP")}");
             if (IsDecoderActive /*&& dlgStrokeLog != null*/) {
                 logger.Info("ENTER");
                 if (Settings.LoggingDecKeyInfo) logger.Info(() => $"decKey={decKey}");
@@ -302,7 +303,7 @@ namespace KanchokuWS
             frmEditBuf.Show();      // Show() を呼んでLoadを実行することで、ウィンドウの状態(サイズなど)が初期化される
             frmEditBuf.MoveWindow();
             frmEditBuf.Hide();
-            logger.WarnH($"EditBuf.Width={frmEditBuf.Width}, Height={frmEditBuf.Height}");
+            logger.InfoH($"EditBuf.Width={frmEditBuf.Width}, Height={frmEditBuf.Height}");
 
             frmCands = new FrmCandidateSelector(this, frmEditBuf);
             //frmCands.ShowNonActive();      // Show() を呼んでLoadを実行することで、ウィンドウの状態(サイズなど)が初期化される
@@ -1514,14 +1515,14 @@ namespace KanchokuWS
         /// <param name="bLog"></param>
         private void moveWindows(bool bDiffWin, bool bMoveMandatory, bool bLog)
         {
-            if (bLog) logger.WarnH($"ENTER: bDiffWin={bDiffWin}, bMoveMandatory={bMoveMandatory}, bLog={bLog}");
+            if (bLog) logger.InfoH($"ENTER: bDiffWin={bDiffWin}, bMoveMandatory={bMoveMandatory}, bLog={bLog}");
 
             if (ActiveWindowHandler.Singleton == null) return;  // まだ Singleton が生成される前に呼び出される可能性あり
 
             var activeWinClassName = ActiveWindowHandler.Singleton.ActiveWinClassName;
             var activeWinSettings = Settings.GetWinClassSettings(activeWinClassName);
             if (bLog || bFirstMove) {
-                if (bLog) logger.WarnH($"CALLED: diffWin={bDiffWin}, mandatory={bMoveMandatory}, firstMove={bFirstMove}");
+                if (bLog) logger.InfoH($"CALLED: diffWin={bDiffWin}, mandatory={bMoveMandatory}, firstMove={bFirstMove}");
                 ActiveWindowHandler.Singleton.LoggingCaretInfo(activeWinSettings);
             }
 
@@ -1531,7 +1532,7 @@ namespace KanchokuWS
             bool isValidCaretShape()
             {
                 bool result = activeWinCaretPos.Width > 0 || activeWinCaretPos.Height > 0;
-                if (bLog && !result) logger.WarnH("INVALID caret shape");
+                if (bLog && !result) logger.InfoH("INVALID caret shape");
                 return result;
             }
 
