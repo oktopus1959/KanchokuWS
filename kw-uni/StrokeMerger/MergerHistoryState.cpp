@@ -1243,6 +1243,8 @@ namespace {
         // FlushOutputString の処理
         void handleFlushOutputString() override {
             _LOG_DEBUGH(_T("CALLED: {}"), Name);
+            // 英数モードはキャンセルする
+            if (NextState()) NextState()->handleEisuCancel();
             handleFullEscape();
             STATE_COMMON->SetFlushOutputString();
             _LOG_DEBUGH(_T("LEAVE"));

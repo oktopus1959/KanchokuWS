@@ -222,6 +222,7 @@ namespace lattice2 {
             (all_pure_katakana(word) || contains_half_or_more_kanji(word))) {
             // 未だどこにも登録されていない2文字以上の素片で、全部カタカナか半分以上漢字を含むものは、ティア1として登録
             count = SETTINGS->realtimeTrigramTier1Num;
+            LOG_WARNH(L"TIER1 Ngram: {}", to_wstr(word));
         } else {
             ++count;
         }
