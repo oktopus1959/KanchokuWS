@@ -83,7 +83,7 @@ namespace KanchokuWS.Forms
         {
             var str = chars._toString();
 
-            //logger.WarnH(() => $"CALLED: str={str}, numBS={numBS}, bFlush={bFlush}");
+            logger.WarnH(() => $"CALLED: str={str}, numBS={numBS}, bFlush={bFlush}");
 
             if (str._isEmpty() && numBS <= 0 && !bFlush) return;
 
@@ -349,7 +349,7 @@ namespace KanchokuWS.Forms
             var winClass = ActiveWindowHandler.Singleton.ActiveWinClassName;
             SendInputHandler.Singleton.SendStringViaClipboardIfNeeded(result._toCharArray(), 0, winClass == "mintty" || winClass == "PuTTY");
             //this.ShowNonActive();
-            frmMain.ExecCmdDecoder("clearMultiStream", null);
+            frmMain.ExecCmdDecoder("clearMultiStream", result);
             //logger.InfoH($"CALLED");
         }
 
@@ -440,7 +440,7 @@ namespace KanchokuWS.Forms
         // 編集バッフ用フォントの更新
         public void RenewEditBufFont()
         {
-            if (renewFontInfo(editBufFontInfo, Settings.MiniBufVkbFontSpec)) {
+            if (renewFontInfo(editBufFontInfo, Settings.EditBufferFontSpec)) {
                 editTextBox.Font = editBufFontInfo.MyFont;
             }
         }

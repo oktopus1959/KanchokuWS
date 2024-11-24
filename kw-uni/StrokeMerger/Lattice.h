@@ -161,7 +161,7 @@ public:
 
     static void updateRealtimeNgram();
 
-    //static void updateRealtimeNgram(const MString& str);
+    static void updateRealtimeNgram(const MString& str);
 
     static void saveRealtimeCostFile();
 

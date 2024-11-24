@@ -154,6 +154,28 @@ namespace lattice2 {
         return utils::reMatch(item, L"[+\\-]?[0-9]+");
     }
 
+    inline bool all_hiragana(const MString& word) {
+        return std::all_of(word.begin(), word.end(), [](mchar_t x) { return utils::is_hiragana(x);});
+    }
+
+    inline bool all_pure_katakana(const MString& word) {
+        return std::all_of(word.begin(), word.end(), [](mchar_t x) { return utils::is_pure_katakana(x);});
+    }
+
+    inline bool all_kanji(const MString& word) {
+        return std::all_of(word.begin(), word.end(), [](mchar_t x) { return utils::is_kanji(x);});
+    }
+
+    inline int count_kanji(const MString& word) {
+        return (int)std::count_if(word.begin(), word.end(), [](mchar_t c) { return utils::is_kanji(c); });
+    }
+
+    inline bool contains_half_or_more_kanji(const MString& word) {
+        int len = (int)word.length();
+        int nHalf = len / 2 + (len % 2);
+        return count_kanji(word) >= nHalf;
+    }
+
     inline void _updateNgramCost(const MString& word, int sysCount, int usrCount, int rtmCount) {
         if (word.size() <= 2) {
             // 1-2 gram は正のコスト
@@ -194,7 +216,16 @@ namespace lattice2 {
 
     // オンラインでのNgram更新
     void _updateRealtimeNgramByWord(const MString& word) {
-        int count = realtimeNgram[word] += 1;
+        int count = realtimeNgram[word];
+        if (count == 0 && word.length() >= 2 &&
+            userNgram.find(word) == userNgram.end() && systemNgram.find(word) == systemNgram.end() &&
+            (all_pure_katakana(word) || contains_half_or_more_kanji(word))) {
+            // 未だどこにも登録されていない2文字以上の素片で、全部カタカナか半分以上漢字を含むものは、ティア1として登録
+            count = SETTINGS->realtimeTrigramTier1Num;
+        } else {
+            ++count;
+        }
+        realtimeNgram[word] = count;
         _updateNgramCost(word, 0, 0, count);
         realtimeNgram_updated = true;
     }
@@ -391,9 +422,9 @@ namespace lattice2 {
         }
     }
 
-    void updateRealtimeNgram() {
-        updateRealtimeNgram(OUTPUT_STACK->backStringUptoPunctWithFlag());
-    }
+    //void updateRealtimeNgram() {
+    //    updateRealtimeNgram(OUTPUT_STACK->backStringUptoPunctWithFlag());
+    //}
 
     // 2～4gramに対する利用者定義コストを計算
     int getUserWordCost(const MString& word) {
@@ -1659,14 +1690,15 @@ namespace lattice2 {
                 _kBestList.size(), totalStrokeCount, currentStrokeCount, kanjiPreferredNext, strokeBack, STATE_COMMON->IsRollOverStroke(), formatStringOfWordPieces(pieces));
             // endPos における空の k-best path リストを取得
 
-            if (pieces.size() == 1) {
-                auto s = pieces.front().getString();
-                if (s.size() == 1 && utils::is_punct(s[0])) {
-                    // 前回の句読点から末尾までの出力文字列に対して Ngram解析を行う
-                    _LOG_DETAIL(L"CALL lattice2::updateRealtimeNgram()");
-                    lattice2::updateRealtimeNgram();
-                }
-            }
+            //if (pieces.size() == 1) {
+            //    auto s = pieces.front().getString();
+            //    if (s.size() == 1 && utils::is_punct(s[0])) {
+            //        // 前回の句読点から末尾までの出力文字列に対して Ngram解析を行う
+            //        _LOG_DETAIL(L"CALL lattice2::updateRealtimeNgram()");
+            //        lattice2::updateRealtimeNgram();
+            //    }
+            //}
+            // フロントエンドから updateRealtimeNgram() を呼び出すので、ここではやる必要がない
 
             if (kanjiPreferredNext) {
                 _LOG_DETAIL(L"KANJI PREFERRED NEXT");
@@ -1755,12 +1787,12 @@ void Lattice2::reloadUserCostFile() {
 }
 
 void Lattice2::updateRealtimeNgram() {
-    lattice2::updateRealtimeNgram();
+    //lattice2::updateRealtimeNgram();
 }
 
-//void Lattice2::updateRealtimeNgram(const MString& str) {
-//    lattice2::updateRealtimeNgram(str);
-//}
+void Lattice2::updateRealtimeNgram(const MString& str) {
+    lattice2::updateRealtimeNgram(str);
+}
 
 void Lattice2::saveRealtimeCostFile() {
     lattice2::saveRealtimeCostFile();

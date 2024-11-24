@@ -524,7 +524,7 @@ public:
                 WORD_LATTICE->saveCandidateLog();
             } else if (cmd == _T("clearMultiStream")) {
                 // 融合ストリームのクリア
-                WORD_LATTICE->clearAll();
+                WORD_LATTICE->updateRealtimeNgram(items.size() >= 2 ? to_mstr(items[1]) : EMPTY_MSTR);
             } else if (cmd == _T("exchangeCodeTable")) {
                 // 主・副テーブルを切り替える
                 outParams->strokeTableNum = StrokeTableNode::ExchangeStrokeTable();
