@@ -1141,6 +1141,7 @@ namespace KanchokuWS.Gui
             textBox_verticalFont.Text = Settings.VerticalVkbFontSpec;
             textBox_horizontalFont.Text = Settings.HorizontalVkbFontSpec;
             textBox_minibufFont.Text = Settings.MiniBufVkbFontSpec;
+            textBox_editBufferFont.Text = Settings.EditBufferFontSpec;
             currentVerticalFontHeightFactort = $"{Settings.VerticalFontHeightFactor:f2}";
             textBox_verticalFontHeightFactor.Text = currentVerticalFontHeightFactort;
 
@@ -1183,6 +1184,7 @@ namespace KanchokuWS.Gui
             checkerFontColor.Add(textBox_verticalFont);
             checkerFontColor.Add(textBox_horizontalFont);
             checkerFontColor.Add(textBox_minibufFont);
+            checkerFontColor.Add(textBox_editBufferFont);
             checkerFontColor.Add(textBox_verticalFontHeightFactor);
 
             // 通常鍵盤背景色
@@ -1224,6 +1226,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("verticalFont", textBox_verticalFont.Text.Trim());
             Settings.SetUserIni("horizontalFont", textBox_horizontalFont.Text.Trim());
             Settings.SetUserIni("minibufFont", textBox_minibufFont.Text.Trim());
+            Settings.SetUserIni("editBufferFont", textBox_editBufferFont.Text.Trim());
             if (textBox_verticalFontHeightFactor.Text.Trim()._ne(currentVerticalFontHeightFactort)) {
                 Settings.SetUserIni("verticalFontHeightFactor", textBox_verticalFontHeightFactor.Text.Trim());
             }
@@ -2555,6 +2558,11 @@ namespace KanchokuWS.Gui
         private void button_minibufDlg_Click(object sender, EventArgs e)
         {
             textBox_minibufFont.Text = makeFontSpec(textBox_minibufFont.Text /*, false*/);
+        }
+
+        private void button_editBufferDlg_Click(object sender, EventArgs e)
+        {
+            textBox_editBufferFont.Text = makeFontSpec(textBox_editBufferFont.Text /*, false*/);
         }
 
         private void textBox_dateStringFormat_Enter(object sender, EventArgs e)

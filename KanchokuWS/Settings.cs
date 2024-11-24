@@ -347,6 +347,7 @@ namespace KanchokuWS
         public static string VerticalVkbFontSpec { get; private set; }
         public static string HorizontalVkbFontSpec { get; private set; }
         public static string MiniBufVkbFontSpec { get; private set; }
+        public static string EditBufferFontSpec { get; private set; }
         public static string SpecifiedVerticalFontHeightFactor { get; private set; }
         public static float VerticalFontHeightFactor { get; private set; }
 
@@ -1367,6 +1368,7 @@ namespace KanchokuWS
             VerticalVkbFontSpec = GetString("verticalFont", "@Meiryo | 9");
             HorizontalVkbFontSpec = GetString("horizontalFont", "Meiryo | 9");
             MiniBufVkbFontSpec = GetString("minibufFont", "Meiryo | 9");
+            EditBufferFontSpec = GetString("editBufferFont", "Meiryo | 10");
             SpecifiedVerticalFontHeightFactor = GetString("verticalFontHeightFactor");
             {
                 var factor = SpecifiedVerticalFontHeightFactor._parseDouble();
@@ -1570,9 +1572,9 @@ namespace KanchokuWS
 
             //------------------------------------------------------------------------------
             // 書き換えシステム
-            PreRewriteTargetChars  = GetString(PreRewriteTargetChars_PropName)._orElse("。、");                       // 遅延許容時間の適用対象となる前置書き換え対象文字集合
-            PreRewriteAllowedDelayTimeMs = GetString(PreRewriteAllowedDelayTimeMs_PropName)._parseInt(0);             // 指定の文字集合に対する前置書き換え時の遅延許容時間
-            PreRewriteAllowedDelayTimeMs2 = GetString(PreRewriteAllowedDelayTimeMs2_PropName)._parseInt(0);           // 上記以外の文字に対する前置書き換え時の遅延許容時間
+            PreRewriteTargetChars  = GetString(PreRewriteTargetChars_PropName, "。、");                           // 遅延許容時間の適用対象となる前置書き換え対象文字集合
+            PreRewriteAllowedDelayTimeMs = GetString(PreRewriteAllowedDelayTimeMs_PropName)._parseInt(0);         // 指定の文字集合に対する前置書き換え時の遅延許容時間
+            PreRewriteAllowedDelayTimeMs2 = GetString(PreRewriteAllowedDelayTimeMs2_PropName)._parseInt(0);       // 上記以外の文字に対する前置書き換え時の遅延許容時間
             PreRewriteAllowedDelayTimeMs3 =
                 GetString(PreRewriteAllowedDelayTimeMs3_PropName)._parseInt(3000)._max(PreRewriteAllowedDelayTimeMs2);// 漢字に対する前置書き換え時の遅延許容時間
             //PreRewriteCharsIgnoredWhenTrainingMode  = GetString("preRewriteCharsIgnoredWhenTrainingMode");          // かな入力練習モードのときに無視する前置書き換え対象文字
@@ -1580,9 +1582,9 @@ namespace KanchokuWS
 
             //------------------------------------------------------------------------------
             // 配列融合・編集バッファ
-            CommitMultiStreamElapsedTime = GetString("commitMultiStreamElapsedTime")._parseInt(0);      // 前回のデコーダ呼び出しから一定時間が経過したら、MulstStreamCommit を発行
-            EditBufferCaretChar = "▴"; // GetString("editBufferCaretChar")._orElse("▴");                        // 編集バッファのカレット文字
-            EditBufferFlushChar = GetString("editBufferFlushChar")._orElse("、。");                     // 編集バッファをフラッシュさせる文字
+            CommitMultiStreamElapsedTime = GetString("commitMultiStreamElapsedTime")._parseInt(0);    // 前回のデコーダ呼び出しから一定時間が経過したら、MulstStreamCommit を発行
+            EditBufferCaretChar = "▴"; // GetString("editBufferCaretChar", "▴");                      // 編集バッファのカレット文字
+            EditBufferFlushChar = GetString("editBufferFlushChar", "、。");                           // 編集バッファをフラッシュさせる文字
 
             //-------------------------------------------------------------------------------------
             // ClassName ごとの設定

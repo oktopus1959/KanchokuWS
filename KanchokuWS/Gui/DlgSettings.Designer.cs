@@ -222,8 +222,11 @@ namespace KanchokuWS.Gui
             this.label51 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.groupBox21 = new System.Windows.Forms.GroupBox();
+            this.button_editBufferDlg = new System.Windows.Forms.Button();
             this.textBox_verticalFontHeightFactor = new System.Windows.Forms.TextBox();
+            this.textBox_editBufferFont = new System.Windows.Forms.TextBox();
             this.label109 = new System.Windows.Forms.Label();
+            this.label164 = new System.Windows.Forms.Label();
             this.button_showPaddingsDesc = new System.Windows.Forms.Button();
             this.button_normalDlg = new System.Windows.Forms.Button();
             this.button_minibufDlg = new System.Windows.Forms.Button();
@@ -3033,8 +3036,11 @@ namespace KanchokuWS.Gui
             // 
             // groupBox21
             // 
+            this.groupBox21.Controls.Add(this.button_editBufferDlg);
             this.groupBox21.Controls.Add(this.textBox_verticalFontHeightFactor);
+            this.groupBox21.Controls.Add(this.textBox_editBufferFont);
             this.groupBox21.Controls.Add(this.label109);
+            this.groupBox21.Controls.Add(this.label164);
             this.groupBox21.Controls.Add(this.button_showPaddingsDesc);
             this.groupBox21.Controls.Add(this.button_normalDlg);
             this.groupBox21.Controls.Add(this.button_minibufDlg);
@@ -3053,14 +3059,25 @@ namespace KanchokuWS.Gui
             this.groupBox21.Controls.Add(this.textBox_normalFont);
             this.groupBox21.Location = new System.Drawing.Point(8, 4);
             this.groupBox21.Name = "groupBox21";
-            this.groupBox21.Size = new System.Drawing.Size(284, 178);
+            this.groupBox21.Size = new System.Drawing.Size(284, 216);
             this.groupBox21.TabIndex = 0;
             this.groupBox21.TabStop = false;
             this.groupBox21.Text = "仮想鍵盤フォント";
             // 
+            // button_editBufferDlg
+            // 
+            this.button_editBufferDlg.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button_editBufferDlg.Location = new System.Drawing.Point(231, 140);
+            this.button_editBufferDlg.Name = "button_editBufferDlg";
+            this.button_editBufferDlg.Size = new System.Drawing.Size(50, 23);
+            this.button_editBufferDlg.TabIndex = 20;
+            this.button_editBufferDlg.Text = "選択...";
+            this.button_editBufferDlg.UseVisualStyleBackColor = true;
+            this.button_editBufferDlg.Click += new System.EventHandler(this.button_editBufferDlg_Click);
+            // 
             // textBox_verticalFontHeightFactor
             // 
-            this.textBox_verticalFontHeightFactor.Location = new System.Drawing.Point(129, 150);
+            this.textBox_verticalFontHeightFactor.Location = new System.Drawing.Point(129, 176);
             this.textBox_verticalFontHeightFactor.Name = "textBox_verticalFontHeightFactor";
             this.textBox_verticalFontHeightFactor.Size = new System.Drawing.Size(44, 23);
             this.textBox_verticalFontHeightFactor.TabIndex = 10;
@@ -3068,18 +3085,36 @@ namespace KanchokuWS.Gui
             this.toolTip1.SetToolTip(this.textBox_verticalFontHeightFactor, "縦列鍵盤の高さの計算の調整率を設定します。\r\n\r\n縦列鍵盤の高さは、使用するフォントの幅から自動で計算しますが、\r\nMS  Gothic, 9pt 以外のフォント" +
         "の場合は、計算がずれる場合があります。\r\nそのような場合には、ここの値を調整してください。");
             // 
+            // textBox_editBufferFont
+            // 
+            this.textBox_editBufferFont.Location = new System.Drawing.Point(80, 140);
+            this.textBox_editBufferFont.Name = "textBox_editBufferFont";
+            this.textBox_editBufferFont.Size = new System.Drawing.Size(148, 23);
+            this.textBox_editBufferFont.TabIndex = 19;
+            this.toolTip1.SetToolTip(this.textBox_editBufferFont, "ミニバッファ(仮想鍵盤上部)に表示する文字のフォント\r\n\r\n以下のフォーマットでフォントを設定できます。\r\nフォント名とサイズについては、「選択...」ボタンをク" +
+        "リックして\r\nフォントダイアログから選択することもできます。\r\n\r\nフォント名 | サイズ(pt)\r\n");
+            // 
             // label109
             // 
             this.label109.AutoSize = true;
-            this.label109.Location = new System.Drawing.Point(14, 154);
+            this.label109.Location = new System.Drawing.Point(14, 180);
             this.label109.Name = "label109";
             this.label109.Size = new System.Drawing.Size(111, 15);
             this.label109.TabIndex = 20;
             this.label109.Text = "縦列鍵盤高さ調整率";
             // 
+            // label164
+            // 
+            this.label164.AutoSize = true;
+            this.label164.Location = new System.Drawing.Point(14, 145);
+            this.label164.Name = "label164";
+            this.label164.Size = new System.Drawing.Size(64, 15);
+            this.label164.TabIndex = 21;
+            this.label164.Text = "編集バッファ";
+            // 
             // button_showPaddingsDesc
             // 
-            this.button_showPaddingsDesc.Location = new System.Drawing.Point(214, 149);
+            this.button_showPaddingsDesc.Location = new System.Drawing.Point(214, 175);
             this.button_showPaddingsDesc.Name = "button_showPaddingsDesc";
             this.button_showPaddingsDesc.Size = new System.Drawing.Size(67, 23);
             this.button_showPaddingsDesc.TabIndex = 11;
@@ -3243,7 +3278,7 @@ namespace KanchokuWS.Gui
             this.groupBox3.Controls.Add(this.label35);
             this.groupBox3.Controls.Add(this.label34);
             this.groupBox3.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.groupBox3.Location = new System.Drawing.Point(8, 188);
+            this.groupBox3.Location = new System.Drawing.Point(8, 234);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(255, 152);
             this.groupBox3.TabIndex = 1;
@@ -8025,5 +8060,8 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label158;
         private System.Windows.Forms.Label label163;
         private System.Windows.Forms.ComboBox comboBox_editBufferCaretChar;
+        private System.Windows.Forms.Button button_editBufferDlg;
+        private System.Windows.Forms.TextBox textBox_editBufferFont;
+        private System.Windows.Forms.Label label164;
     }
 }
