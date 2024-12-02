@@ -203,7 +203,7 @@ namespace KanchokuWS.Forms
             }
 
             editTextBox.Text = makeEditText(preText, postText);
-            if (toFlush || bFlush || (preText == " " && postText._isEmpty())) FlushBuffer();
+            if (toFlush || bFlush || (preText._safeCount() == 1 && preText[0] > 0x20 && preText[0] <= 0x7f && !preText[0]._isAlphaNum() && postText._isEmpty())) FlushBuffer();
             if (toAbort) {
                 ClearBuffer();
                 frmMain.ToDeactivateDecoder();
