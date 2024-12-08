@@ -19,7 +19,7 @@ namespace Utils
         public const int LogLevelDebug = 7;
         public const int LogLevelTrace = 8;
 
-        private const int LogPromotedLevel = 3;
+        private const int LogPromotedLevel = 4;
 
         public static string LogFilename { get; set; }
 

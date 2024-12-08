@@ -934,9 +934,11 @@ namespace lattice2 {
 
         bool _prevBS = false;
 
+        // 次候補/前候補選択された時の元の先頭候補位置 (-1なら候補選択されていないことを示す)
         int _origFirstCand = -1;
 
-        int _selectedCandPos = -1;
+        // 次候補/前候補選択された時の選択候補位置
+        int _selectedCandPos = 0;
 
         // 次のストロークをスキップする候補文字列
         std::set<MString> _kanjiPreferredNextCands;
@@ -988,6 +990,7 @@ namespace lattice2 {
             _bestStack.clear();
             _highFreqJoshiStroke.clear();
             _rollOverStroke.clear();
+            _origFirstCand = -1;
             if (clearAll) _kanjiPreferredNextCands.clear();
         }
 
@@ -1458,8 +1461,8 @@ namespace lattice2 {
             //if (!_candidates.empty()) {
             //    if (isKanjiKatakanaConsecutive(_candidates.front())) selectFirst();
             //}
-            // 指定の打鍵回数分、解の先頭部分が同じなら、それらだけを残す
-            commitOnlyWithSameLeaderString();
+            // 指定の打鍵回数分、解の先頭部分が同じなら、それらだけを残す (ただし、候補の選択状態でない場合)
+            if (_origFirstCand < 0) commitOnlyWithSameLeaderString();
             _LOG_DETAIL(_T("LEAVE"));
         }
 
@@ -1526,7 +1529,7 @@ namespace lattice2 {
             _LOG_DETAIL(_T("LEAVE: _origFirstCand={}"), _origFirstCand);
         }
 
-        // 次候補を最優先候補にする
+        // 次候補を選択する (一時的に優先するだけなので、他の候補を削除したりはしない)
         void selectNext() {
             _LOG_DETAIL(_T("ENTER: _origFirstCand={}"), _origFirstCand);
             size_t nSameLen = getNumOfSameStrokeLen();
@@ -1539,7 +1542,7 @@ namespace lattice2 {
             _LOG_DETAIL(_T("LEAVE: _origFirstCand={}"), _origFirstCand);
         }
 
-        // 前候補を最優先候補にする
+        // 前候補を選択する (一時的に優先するだけなので、他の候補を削除したりはしない)
         void selectPrev() {
             _LOG_DETAIL(_T("ENTER: _origFirstCand={}"), _origFirstCand);
             size_t nSameLen = getNumOfSameStrokeLen();
@@ -1661,13 +1664,13 @@ namespace lattice2 {
             _kBestList.selectFirst();
         }
 
-        // 次候補を最優先候補にする
+        // 次候補を選択する
         void selectNext() override {
             _LOG_DETAIL(_T("CALLED"));
             _kBestList.selectNext();
         }
 
-        // 前候補を最優先候補にする
+        // 前候補を選択する
         void selectPrev() override {
             _LOG_DETAIL(_T("CALLED"));
             _kBestList.selectPrev();
@@ -1687,8 +1690,8 @@ namespace lattice2 {
             int currentStrokeCount = totalStrokeCount - _startStrokeCount + 1;
 
             //_LOG_DEBUGH(_T("ENTER: currentStrokeCount={}, pieces: {}\nkBest:\n{}"), currentStrokeCount, formatStringOfWordPieces(pieces), _kBestList.debugString());
-            _LOG_INFOH(_T("ENTER: _kBestList.size={}, totalStroke={}, currentStroke={}, kanjiPref={}, strokeBack={}, rollOver={}, pieces: {}"),
-                _kBestList.size(), totalStrokeCount, currentStrokeCount, kanjiPreferredNext, strokeBack, STATE_COMMON->IsRollOverStroke(), formatStringOfWordPieces(pieces));
+            _LOG_INFOH(_T("ENTER: _kBestList.size={}, _origFirstCand={}, totalStroke={}, currentStroke={}, kanjiPref={}, strokeBack={}, rollOver={}, pieces: {}"),
+                _kBestList.size(), _kBestList.origFirstCand(), totalStrokeCount, currentStrokeCount, kanjiPreferredNext, strokeBack, STATE_COMMON->IsRollOverStroke(), formatStringOfWordPieces(pieces));
             // endPos における空の k-best path リストを取得
 
             //if (pieces.size() == 1) {
@@ -1731,6 +1734,7 @@ namespace lattice2 {
             numBS = _prevOutputStr.size() - commonLen;
             _prevOutputStr = outStr;
             outStr = utils::safe_substr(outStr, commonLen);
+
             _LOG_INFOH(_T("LEAVE: OUTPUT: {}, numBS={}\n\n{}"), to_wstr(outStr), numBS, _kBestList.debugKBestString());
             if (IS_LOG_DEBUGH_ENABLED) {
                 while (_debugLogQueue.size() >= 10) _debugLogQueue.pop_front();

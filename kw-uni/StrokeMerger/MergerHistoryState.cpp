@@ -475,6 +475,7 @@ namespace {
                         }
                         [[fallthrough]];
                     case MULTI_STREAM_NEXT_CAND_DECKEY:
+                        // 漢直・かな配列の融合時の次候補選択
                         _LOG_DEBUGH(_T("MULTI_STREAM_NEXT_CAND: select next candidate"));
                         WORD_LATTICE->selectNext();
                         break;
