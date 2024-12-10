@@ -27,7 +27,9 @@ namespace {
 
     const wchar_t HAN_CHOON = 0xff70; // 'ー'
 
-    const wchar_t QUESTION_MARK = 0xff1f;   // '？'
+    const wchar_t QUESTION_MARK = L'？';   // '？'
+
+    const wchar_t EXCLAM_MARK = L'！';
 
     inline MString to_mstr(mchar_t x) {
         return x != 0 ? MString(1, x) : MString();
@@ -665,6 +667,10 @@ namespace utils
 
     inline bool is_punct_or_question(mchar_t ch) {
         return ch == TOTEN || ch == KUTEN || ch == QUESTION_MARK;
+    }
+
+    inline bool is_punct_or_commit_char(mchar_t ch) {
+        return ch == TOTEN || ch == KUTEN || ch == QUESTION_MARK || ch == EXCLAM_MARK;
     }
 
     inline bool is_hiragana_or_punct(mchar_t ch) {

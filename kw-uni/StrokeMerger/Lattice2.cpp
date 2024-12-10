@@ -549,14 +549,14 @@ namespace lattice2 {
 
     MString substringBetweenPunctuations(const MString& str) {
         int endPos = (int)(str.size());
-        // まず末尾の句点をスキップ
+        // まず末尾の句読点をスキップ
         for (; endPos > 0; --endPos) {
-            if (str[endPos - 1] != L'。') break;
+            if (!utils::is_punct_or_commit_char(str[endPos - 1])) break;
         }
-        // 前方に向かって句点を検索
+        // 前方に向かって句読点を検索
         int startPos = endPos - 1;
         for (; startPos > 0; --startPos) {
-            if (str[startPos - 1] == L'。') break;
+            if (utils::is_punct_or_commit_char(str[startPos - 1])) break;
         }
         return utils::safe_substr(str, startPos, endPos - startPos);
     }
