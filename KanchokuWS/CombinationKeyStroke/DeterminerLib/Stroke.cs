@@ -110,6 +110,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public void SetRollOver() { IsRollOver = true; }
 
+        public void ResetRollOver() { IsRollOver = false; }
+
         /// <summary>削除されるべきキーか</summary>
         public bool ToBeRemoved => _toBeRemoved;
         //public bool ToBeRemoved => _toBeRemoved || IsUsedForOneshot;

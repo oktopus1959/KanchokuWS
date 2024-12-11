@@ -254,7 +254,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public void Add(Stroke s)
         {
-            if (!IsComboListEmpty || !IsDownKeyListEmpty) s.SetRollOver();
+            //if (!IsComboListEmpty || !IsDownKeyListEmpty) s.SetRollOver(); // いずれ削除
+            if (!IsDownKeyListEmpty) s.SetRollOver();
             downKeyList.Add(s);
             unprocList.Add(s);
         }
@@ -273,8 +274,18 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             for (int i = 0; i < unprocList.Count; i++) {
                 if (unprocList[i].OrigDecoderKey == decKey) {
-                    unprocList.RemoveAt(i);
+                    removeUnprocKey(i);
                     break;
+                }
+            }
+        }
+
+        private void removeUnprocKey(int pos)
+        {
+            if (pos >= 0 && pos < unprocList.Count) {
+                unprocList.RemoveAt(pos);
+                if (pos < unprocList.Count) {
+                    unprocList[pos].ResetRollOver();
                 }
             }
         }
@@ -395,13 +406,13 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     logger.InfoH("combo NOT found. Return first key as is");
                     // 同時打鍵候補がないので、最初のキーをそのまま返す
                     result = Helper.MakeList(unprocList[0].OrigDecoderKey);
-                    unprocList.RemoveAt(0); // 最初のキーを削除
+                    removeUnprocKey(0); // 最初のキーを削除
                     if (unprocList._notEmpty()) {
                         // 2番目のキーのチェック
                         if (unprocList[0].IsJustSingleHit) {
                             logger.InfoH("second key is just SingleHit. Return second key as is");
                             result.Add(unprocList[0].OrigDecoderKey);
-                            unprocList.RemoveAt(0);
+                            removeUnprocKey(0);
                         } else if (unprocList[0].HasStringOrSingleHittable && unprocList[0].HasString /*unprocList[0].HasDecKeyList*/) {
                             logger.InfoH("second key is SingleHittable and HasString. Enable timer");
                             bTimer = true;
@@ -426,7 +437,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         // コンボがなくてもキーを削除しておく(たとえば月光でDを長押ししてKを押したような場合は、何も出力せず、Kも除去する)
                         // ただし、薙刀式で k→j→w とほぼ同時に押したときに w が除去されるのはまずいので、コンボが見つかったら、削除はしない
                         logger.InfoH("Remove first unproc key");
-                        unprocList.RemoveAt(0);
+                        removeUnprocKey(0);
                     }
                 } else {
                     // 

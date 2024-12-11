@@ -37,6 +37,7 @@ namespace KanchokuWS.Gui
                 }
             }
 
+#if false
             Settings.CombinationKeyMinTimeOnlyAfterSecond = false;
             Settings.UseCombinationKeyTimer1 = false;
             Settings.UseCombinationKeyTimer2 = false;
@@ -44,7 +45,9 @@ namespace KanchokuWS.Gui
             Settings.UseComboExtModKeyAsSingleHit = false;
             Settings.OnlyCharKeysComboShouldBeCoveringCombo = false;
             Settings.MultiStreamMode = false;
-
+#else
+            CombinationKeyStroke.DeterminerLib.KeyCombinationPool.ChangeCurrentPoolByDecoderMode(true);  // 前回の漢直用Poolに切り替え
+#endif
             var regex = new Regex(@"^\s*(\w+)(?:\(([^)]*)\)(?:\s*=\s*([^\s]+))?)?");
             var sb = new StringBuilder();
 
