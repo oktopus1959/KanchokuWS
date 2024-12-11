@@ -358,9 +358,9 @@ namespace lattice2 {
         }
     }
 
-    void loadCostFile(bool rtmyUserFile = false) {
-        _LOG_INFOH(L"ENTER: rtmyUserFile={}", rtmyUserFile);
-        if (!rtmyUserFile) {
+    void loadCostAndNgramFile(bool withNgramFile = false) {
+        _LOG_INFOH(L"ENTER: withNgramFile={}", withNgramFile);
+        if (!withNgramFile) {
             systemMaxFreq = _loadNgramFile(SYSTEM_NGRAM_FILE, systemNgram);
             realtimeMaxFreq = _loadNgramFile(REALTIME_NGRAM_FILE, realtimeNgram);
             _loadSystemCostFile();
@@ -370,7 +370,7 @@ namespace lattice2 {
         _LOG_INFOH(L"LEAVE");
     }
 
-    void saveRealtimeCostFile() {
+    void saveRealtimeNgramFile() {
         _LOG_INFOH(L"CALLED: realtimeNgram_updated={}", realtimeNgram_updated);
         auto path = utils::joinPath(SETTINGS->rootDir, REALTIME_NGRAM_FILE);
         if (realtimeNgram_updated) {
@@ -1779,16 +1779,16 @@ namespace lattice2 {
 std::unique_ptr<Lattice2> Lattice2::Singleton;
 
 void Lattice2::createLattice() {
-    lattice2::loadCostFile();
+    lattice2::loadCostAndNgramFile();
     Singleton.reset(new lattice2::LatticeImpl());
 }
 
 void Lattice2::reloadCostFile() {
-    lattice2::loadCostFile();
+    lattice2::loadCostAndNgramFile();
 }
 
 void Lattice2::reloadUserCostFile() {
-    lattice2::loadCostFile(true);
+    lattice2::loadCostAndNgramFile(true);
 }
 
 void Lattice2::updateRealtimeNgram() {
@@ -1799,6 +1799,6 @@ void Lattice2::updateRealtimeNgram(const MString& str) {
     lattice2::updateRealtimeNgram(str);
 }
 
-void Lattice2::saveRealtimeCostFile() {
-    lattice2::saveRealtimeCostFile();
+void Lattice2::saveRealtimeNgramFile() {
+    lattice2::saveRealtimeNgramFile();
 }

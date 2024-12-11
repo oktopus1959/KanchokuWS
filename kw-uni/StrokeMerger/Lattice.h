@@ -163,7 +163,7 @@ public:
 
     static void updateRealtimeNgram(const MString& str);
 
-    static void saveRealtimeCostFile();
+    static void saveRealtimeNgramFile();
 
     static std::unique_ptr<Lattice2> Singleton;
 

@@ -331,7 +331,7 @@ public:
             //HISTORY_DIC->WriteHistExcludeDic();
             //HISTORY_DIC->WriteNgramDic();
         }
-        Lattice2::saveRealtimeCostFile();
+        Lattice2::saveRealtimeNgramFile();
     }
 
     // コマンド実行
@@ -410,6 +410,9 @@ public:
             } else if (cmd == _T("saveMazegakiDic") && BUSHU_ASSOC_DIC) {
                 // 交ぜ書き辞書の保存
                 if (MAZEGAKI_DIC) MAZEGAKI_DIC->WriteMazegakiDic();
+            } else if (cmd == _T("saveRealtimeNgram")) {
+                // リアルタイムNgramファイルの保存
+                Lattice2::saveRealtimeNgramFile();
             } else if (cmd == _T("reloadCostFile")) {
                 // 単語コストファイルの読み込み
                 Lattice2::reloadCostFile();
