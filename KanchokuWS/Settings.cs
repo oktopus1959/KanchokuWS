@@ -1716,9 +1716,9 @@ namespace KanchokuWS
             CommitByPunctuation = addDecoderSetting("commitByPunctuation", true);               // 句読点でコミットする
             ChallengeNumForSameLeader = addDecoderSetting("challengeNumForSameLeader", 4);      // 解の先頭部分が同じならそれらだけを残すようにするための、チャレンジ打鍵数
             KanjiNoKanjiBonus = addDecoderSetting("kanjiNoKanjiBonus", 1500);                   // 「漢字+の+漢字」のような場合に与えるボーナス
-            RealtimeTrigramBonusFactor = addDecoderSetting("realtimeTrigramBonusFactor", 100);  // Realtime 3gram のカウントからボーナス値を算出する際の係数
-            RealtimeTrigramTier1Num = addDecoderSetting("realtimeTrigramTier1Num", 5);          // Realtime 3gram の Tier1 の数
-            RealtimeTrigramTier2Num = addDecoderSetting("realtimeTrigramTier2Num", 10);         // Realtime 3gram の Tier2 の数
+            RealtimeTrigramBonusFactor = addDecoderSetting("realtimeTrigramBonusFactor", 10);   // Realtime 3gram のカウントからボーナス値を算出する際の係数
+            RealtimeTrigramTier1Num = addDecoderSetting("realtimeTrigramTier1Num", 50);         // Realtime 3gram の Tier1 の数
+            RealtimeTrigramTier2Num = addDecoderSetting("realtimeTrigramTier2Num", 100);        // Realtime 3gram の Tier2 の数
             setDecoderSetting("mergerCandidateFile", MergerCandidateFile );                     // 解候補ログファイル
 
             // キー割当
