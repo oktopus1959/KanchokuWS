@@ -137,8 +137,8 @@ namespace lattice2 {
     std::map<MString, int> systemNgram;
     int systemMaxFreq = 0;
 
-    // システムで用意した単語コスト(3gram以上、sysCost < uesrCost のものだけ計上)
-    std::map<MString, int> systemWordCosts;
+    // システムで用意したカタカナ単語コスト(3gram以上、sysCost < uesrCost のものだけ計上)
+    std::map<MString, int> KatakanaWordCosts;
 
     // 利用者が入力した文字列から抽出したNgram統計
     std::map<MString, int> realtimeNgram;
@@ -260,27 +260,28 @@ namespace lattice2 {
             }
         }
         // 下記(SystemNgramに含まれないNgramを優先する)は悪影響が大き過ぎるので、止めておく(「い朝です」の「い朝」のボーナスが大きくなりすぎて、「ないからです」が出なくなる)
-        //for (auto iter = realtimeNgram.begin(); iter != realtimeNgram.end(); ++iter) {
-        //    const MString& word = iter->first;
-        //    int rtmCount = iter->second;
-        //    if (ngramCosts.find(word) == ngramCosts.end()) {
-        //        // 未登録
-        //        _updateNgramCost(word, 0, 0, rtmCount);
-        //    }
-        //}
-        for (auto iter = systemWordCosts.begin(); iter != systemWordCosts.end(); ++iter) {
+        // ⇒と思ったが、問題なさそうなので復活
+        for (auto iter = realtimeNgram.begin(); iter != realtimeNgram.end(); ++iter) {
             const MString& word = iter->first;
-            int sysCost = iter->second;
-            if (sysCost < ngramCosts[word]) {
+            int rtmCount = iter->second;
+            if (ngramCosts.find(word) == ngramCosts.end()) {
+                // 未登録
+                _updateNgramCost(word, 0, 0, rtmCount);
+            }
+        }
+        for (auto iter = KatakanaWordCosts.begin(); iter != KatakanaWordCosts.end(); ++iter) {
+            const MString& word = iter->first;
+            int cost = iter->second;
+            if (cost < ngramCosts[word]) {
                 // update
-                ngramCosts[word] = sysCost;
+                ngramCosts[word] = cost;
             }
         }
         _LOG_DETAIL(L"LEAVE: ngramCosts.size={}", ngramCosts.size());
     }
 
 #define SYSTEM_NGRAM_FILE L"mixed_all.ngram.txt"
-#define SYSTEM_COST_FILE  L"katakana.cost.txt"
+#define KATAKANA_COST_FILE  L"katakana.cost.txt"
 #define REALTIME_NGRAM_FILE L"realtime.ngram.txt"
 #define USER_COST_FILE    L"userword.cost.txt"
 
@@ -306,12 +307,12 @@ namespace lattice2 {
         return maxFreq;
     }
 
-    void _loadSystemCostFile() {
-        auto path = utils::joinPath(SETTINGS->rootDir, SYSTEM_COST_FILE);
+    void _loadKatakanaCostFile() {
+        auto path = utils::joinPath(SETTINGS->rootDir, KATAKANA_COST_FILE);
         _LOG_INFOH(_T("LOAD: {}"), path.c_str());
         utils::IfstreamReader reader(path);
         if (reader.success()) {
-            systemWordCosts.clear();
+            KatakanaWordCosts.clear();
             for (const auto& line : reader.getAllLines()) {
                 auto items = utils::split(utils::replace_all(utils::strip(utils::reReplace(line, L"#.*$", L"")), L"[ \t]+", L"\t"), '\t');
                 if (!items.empty() && !items[0].empty() && items[0][0] != L'#') {
@@ -319,7 +320,7 @@ namespace lattice2 {
                     if (word.size() >= 2) {
                         // bigram以上のみ
                         if (items.size() >= 2 && isDecimalString(items[1])) {
-                            systemWordCosts[word] = std::stoi(items[1]) - DEFAULT_WORD_BONUS;
+                            KatakanaWordCosts[word] = std::stoi(items[1]) - DEFAULT_WORD_BONUS;
                         }
                     }
                 }
@@ -363,7 +364,7 @@ namespace lattice2 {
         if (!withNgramFile) {
             systemMaxFreq = _loadNgramFile(SYSTEM_NGRAM_FILE, systemNgram);
             realtimeMaxFreq = _loadNgramFile(REALTIME_NGRAM_FILE, realtimeNgram);
-            _loadSystemCostFile();
+            _loadKatakanaCostFile();
         }
         _loadUserCostFile();
         makeInitialNgramCostMap();
@@ -659,10 +660,10 @@ namespace lattice2 {
                         //}
                         int len = 4;
                         auto word = utils::safe_substr(str, i, len);
+                        _LOG_DETAIL(L"len={}, extraWord={}", len, to_wstr(word));
                         int xCost = getExtraNgramCost(word);
-                        _LOG_DETAIL(L"len={}, extraWord={}, xCost={}", len, to_wstr(word), xCost);
                         if (xCost != 0) {
-                            // コスト定義があれば、利用者定義によるもの
+                            // コスト定義がある
                             cost += xCost;
                             _LOG_DETAIL(L"FOUND: extraWord={}, xCost={}, cost={}", to_wstr(word), xCost, cost);
                             //i += len - 1;
@@ -674,8 +675,8 @@ namespace lattice2 {
                         // 3文字連
                         int len = 3;
                         auto word = utils::safe_substr(str, i, len);
+                        _LOG_DETAIL(L"len={}, extraWord={}", len, to_wstr(word));
                         int xCost = getExtraNgramCost(word);
-                        _LOG_DETAIL(L"len={}, extraWord={}, xCost={}", len, to_wstr(word), xCost);
                         if (xCost != 0) {
                             // コスト定義がある
                             cost += xCost;
