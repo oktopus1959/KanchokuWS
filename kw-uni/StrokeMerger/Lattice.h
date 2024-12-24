@@ -163,6 +163,10 @@ public:
 
     static void updateRealtimeNgram(const MString& str);
 
+    static void raiseRealtimeNgram(const MString& str);
+
+    static void depressRealtimeNgram(const MString& str);
+
     static void saveRealtimeNgramFile();
 
     static std::unique_ptr<Lattice2> Singleton;

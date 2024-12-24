@@ -231,6 +231,24 @@ namespace lattice2 {
         realtimeNgram_updated = true;
     }
 
+    void _raiseRealtimeNgramByWord(const MString& word) {
+        const int count = SETTINGS->realtimeTrigramTier1Num;
+        if (word.length() >= 2 && realtimeNgram[word] < count) {
+            realtimeNgram[word] = count;
+        }
+        _updateNgramCost(word, 0, 0, count);
+        realtimeNgram_updated = true;
+    }
+
+    void _depressRealtimeNgramByWord(const MString& word) {
+        const int count = 1;
+        if (word.length() >= 2) {
+            realtimeNgram[word] = count;
+        }
+        _updateNgramCost(word, 0, 0, count);
+        realtimeNgram_updated = true;
+    }
+
     // ngramCosts の初期作成
     void makeInitialNgramCostMap() {
         ngramLogFactor = (int)((DEFAULT_MAX_COST - 50) / std::log(systemMaxFreq + userMaxFreq + realtimeMaxFreq * REALTIME_FREQ_BOOST_FACTOR));
@@ -350,7 +368,7 @@ namespace lattice2 {
                     } else {
                         if (items.size() >= 2 && isDecimalString(items[1])) {
                             userWordCosts[word] = std::stoi(items[1]);
-                        } else if (items.size() == 1) {
+                        } else {
                             userWordCosts[word] = -DEFAULT_WORD_BONUS;       // userword.cost のデフォルトは -DEFAULT_WORD_BONUS
                         }
                     }
@@ -421,6 +439,44 @@ namespace lattice2 {
 
             //if (pos + 3 >= strlen || !utils::is_japanese_char_except_nakaguro(str[pos + 3])) continue;
             //_updateRealtimeNgramByWord(str.substr(pos, 4));
+        }
+    }
+
+    void raiseRealtimeNgram(const MString& str) {
+        _LOG_DEBUGH(L"CALLED: str={}", to_wstr(str));
+        int strlen = (int)str.size();
+        for (int pos = 0; pos < strlen; ++pos) {
+            if (!utils::is_japanese_char_except_nakaguro(str[pos])) continue;
+
+            if (pos + 1 >= strlen || !utils::is_japanese_char_except_nakaguro(str[pos + 1])) continue;
+            // 2-gram
+            _raiseRealtimeNgramByWord(str.substr(pos, 2));
+
+            if (pos + 2 >= strlen || !utils::is_japanese_char_except_nakaguro(str[pos + 2])) continue;
+            // 3-gram
+            _raiseRealtimeNgramByWord(str.substr(pos, 3));
+
+            //if (pos + 3 >= strlen || !utils::is_japanese_char_except_nakaguro(str[pos + 3])) continue;
+            //_raiseRealtimeNgramByWord(str.substr(pos, 4));
+        }
+    }
+
+    void depressRealtimeNgram(const MString& str) {
+        _LOG_DEBUGH(L"CALLED: str={}", to_wstr(str));
+        int strlen = (int)str.size();
+        for (int pos = 0; pos < strlen; ++pos) {
+            if (!utils::is_japanese_char_except_nakaguro(str[pos])) continue;
+
+            if (pos + 1 >= strlen || !utils::is_japanese_char_except_nakaguro(str[pos + 1])) continue;
+            // 2-gram
+            _depressRealtimeNgramByWord(str.substr(pos, 2));
+
+            if (pos + 2 >= strlen || !utils::is_japanese_char_except_nakaguro(str[pos + 2])) continue;
+            // 3-gram
+            _depressRealtimeNgramByWord(str.substr(pos, 3));
+
+            //if (pos + 3 >= strlen || !utils::is_japanese_char_except_nakaguro(str[pos + 3])) continue;
+            //_depressRealtimeNgramByWord(str.substr(pos, 4));
         }
     }
 
@@ -1798,6 +1854,14 @@ void Lattice2::updateRealtimeNgram() {
 
 void Lattice2::updateRealtimeNgram(const MString& str) {
     lattice2::updateRealtimeNgram(str);
+}
+
+void Lattice2::raiseRealtimeNgram(const MString& str) {
+    lattice2::raiseRealtimeNgram(str);
+}
+
+void Lattice2::depressRealtimeNgram(const MString& str) {
+    lattice2::depressRealtimeNgram(str);
 }
 
 void Lattice2::saveRealtimeNgramFile() {

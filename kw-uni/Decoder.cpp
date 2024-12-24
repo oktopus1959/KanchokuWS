@@ -529,6 +529,12 @@ public:
                 // 融合ストリームのクリア
                 WORD_LATTICE->updateRealtimeNgram(items.size() >= 2 ? to_mstr(items[1]) : EMPTY_MSTR);
                 WORD_LATTICE->clearAll();
+            } else if (cmd == _T("raiseRealtimeNgram")) {
+                // リアルタイムNgramの蒿上げ
+                if (items.size() >= 2) WORD_LATTICE->raiseRealtimeNgram(to_mstr(items[1]));
+            } else if (cmd == _T("depressRealtimeNgram")) {
+                // リアルタイムNgramの抑制
+                if (items.size() >= 2) WORD_LATTICE->depressRealtimeNgram(to_mstr(items[1]));
             } else if (cmd == _T("exchangeCodeTable")) {
                 // 主・副テーブルを切り替える
                 outParams->strokeTableNum = StrokeTableNode::ExchangeStrokeTable();

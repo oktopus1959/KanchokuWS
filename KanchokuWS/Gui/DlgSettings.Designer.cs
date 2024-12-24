@@ -505,6 +505,12 @@ namespace KanchokuWS.Gui
             this.checkBox_convertJaComma = new System.Windows.Forms.CheckBox();
             this.checkBox_convertJaPeriod = new System.Windows.Forms.CheckBox();
             this.tabPage_fusion = new System.Windows.Forms.TabPage();
+            this.groupBox41 = new System.Windows.Forms.GroupBox();
+            this.label165 = new System.Windows.Forms.Label();
+            this.button_depressRealtimeNgram = new System.Windows.Forms.Button();
+            this.label166 = new System.Windows.Forms.Label();
+            this.textBox_realtimeNgram = new System.Windows.Forms.TextBox();
+            this.button_raiseRealtimeNgram = new System.Windows.Forms.Button();
             this.comboBox_editBufferCaretChar = new System.Windows.Forms.ComboBox();
             this.label163 = new System.Windows.Forms.Label();
             this.textBox_editBufferFlushChar = new System.Windows.Forms.TextBox();
@@ -647,6 +653,7 @@ namespace KanchokuWS.Gui
             this.groupBox37.SuspendLayout();
             this.groupBox27.SuspendLayout();
             this.tabPage_fusion.SuspendLayout();
+            this.groupBox41.SuspendLayout();
             this.tabPage_register.SuspendLayout();
             this.groupBox19.SuspendLayout();
             this.groupBox10.SuspendLayout();
@@ -6283,6 +6290,7 @@ namespace KanchokuWS.Gui
             // 
             // tabPage_fusion
             // 
+            this.tabPage_fusion.Controls.Add(this.groupBox41);
             this.tabPage_fusion.Controls.Add(this.comboBox_editBufferCaretChar);
             this.tabPage_fusion.Controls.Add(this.label163);
             this.tabPage_fusion.Controls.Add(this.textBox_editBufferFlushChar);
@@ -6311,6 +6319,77 @@ namespace KanchokuWS.Gui
             this.tabPage_fusion.TabIndex = 11;
             this.tabPage_fusion.Text = "配列融合";
             this.tabPage_fusion.UseVisualStyleBackColor = true;
+            // 
+            // groupBox41
+            // 
+            this.groupBox41.Controls.Add(this.label165);
+            this.groupBox41.Controls.Add(this.button_depressRealtimeNgram);
+            this.groupBox41.Controls.Add(this.label166);
+            this.groupBox41.Controls.Add(this.textBox_realtimeNgram);
+            this.groupBox41.Controls.Add(this.button_raiseRealtimeNgram);
+            this.groupBox41.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.groupBox41.Location = new System.Drawing.Point(414, 20);
+            this.groupBox41.Name = "groupBox41";
+            this.groupBox41.Size = new System.Drawing.Size(280, 74);
+            this.groupBox41.TabIndex = 58;
+            this.groupBox41.TabStop = false;
+            this.groupBox41.Text = "Ngramの登録・抑制";
+            // 
+            // label165
+            // 
+            this.label165.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label165.AutoSize = true;
+            this.label165.Location = new System.Drawing.Point(99, 51);
+            this.label165.Name = "label165";
+            this.label165.Size = new System.Drawing.Size(65, 15);
+            this.label165.TabIndex = 14;
+            this.label165.Text = "保存しました";
+            this.label165.Visible = false;
+            // 
+            // button_depressRealtimeNgram
+            // 
+            this.button_depressRealtimeNgram.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_depressRealtimeNgram.Location = new System.Drawing.Point(14, 47);
+            this.button_depressRealtimeNgram.Name = "button_depressRealtimeNgram";
+            this.button_depressRealtimeNgram.Size = new System.Drawing.Size(60, 21);
+            this.button_depressRealtimeNgram.TabIndex = 2;
+            this.button_depressRealtimeNgram.TabStop = false;
+            this.button_depressRealtimeNgram.Text = "抑制";
+            this.toolTip1.SetToolTip(this.button_depressRealtimeNgram, "デコーダが保持している自動部首合成辞書の内容をファイルに保存します。\r\nただし、利用者による登録がない場合は、保存は行いません。\r\n\r\n保存の際、現在のファイルを" +
+        " .1 という拡張子を付加して\r\nback フォルダに移動します。");
+            this.button_depressRealtimeNgram.UseVisualStyleBackColor = true;
+            this.button_depressRealtimeNgram.Click += new System.EventHandler(this.button_depressRealtimeNgram_Click);
+            // 
+            // label166
+            // 
+            this.label166.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label166.AutoSize = true;
+            this.label166.Location = new System.Drawing.Point(124, 51);
+            this.label166.Name = "label166";
+            this.label166.Size = new System.Drawing.Size(65, 15);
+            this.label166.TabIndex = 11;
+            this.label166.Text = "登録しました";
+            this.label166.Visible = false;
+            // 
+            // textBox_realtimeNgram
+            // 
+            this.textBox_realtimeNgram.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_realtimeNgram.Location = new System.Drawing.Point(16, 18);
+            this.textBox_realtimeNgram.Name = "textBox_realtimeNgram";
+            this.textBox_realtimeNgram.Size = new System.Drawing.Size(256, 23);
+            this.textBox_realtimeNgram.TabIndex = 0;
+            // 
+            // button_raiseRealtimeNgram
+            // 
+            this.button_raiseRealtimeNgram.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_raiseRealtimeNgram.Location = new System.Drawing.Point(205, 47);
+            this.button_raiseRealtimeNgram.Name = "button_raiseRealtimeNgram";
+            this.button_raiseRealtimeNgram.Size = new System.Drawing.Size(67, 21);
+            this.button_raiseRealtimeNgram.TabIndex = 1;
+            this.button_raiseRealtimeNgram.Text = "蒿上げ";
+            this.button_raiseRealtimeNgram.UseVisualStyleBackColor = true;
+            this.button_raiseRealtimeNgram.Click += new System.EventHandler(this.button_raiseRealtimeNgram_Click);
             // 
             // comboBox_editBufferCaretChar
             // 
@@ -7477,6 +7556,8 @@ namespace KanchokuWS.Gui
             this.groupBox27.PerformLayout();
             this.tabPage_fusion.ResumeLayout(false);
             this.tabPage_fusion.PerformLayout();
+            this.groupBox41.ResumeLayout(false);
+            this.groupBox41.PerformLayout();
             this.tabPage_register.ResumeLayout(false);
             this.tabPage_register.PerformLayout();
             this.groupBox19.ResumeLayout(false);
@@ -8063,5 +8144,11 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Button button_editBufferDlg;
         private System.Windows.Forms.TextBox textBox_editBufferFont;
         private System.Windows.Forms.Label label164;
+        private System.Windows.Forms.GroupBox groupBox41;
+        private System.Windows.Forms.Label label165;
+        private System.Windows.Forms.Button button_depressRealtimeNgram;
+        private System.Windows.Forms.Label label166;
+        private System.Windows.Forms.TextBox textBox_realtimeNgram;
+        private System.Windows.Forms.Button button_raiseRealtimeNgram;
     }
 }
