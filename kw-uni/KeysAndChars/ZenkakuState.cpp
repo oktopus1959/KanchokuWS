@@ -90,7 +90,7 @@ namespace {
 
          // Shiftキーで修飾されたキーを処理する
         void handleShiftKeys(int deckey) {
-            LOG_DEBUG(_T("CALLED: {}: deckey={:x}H({}), char={}"), Name, deckey, deckey);
+            LOG_DEBUG(_T("CALLED: {}: deckey={:x}H({})"), Name, deckey, deckey);
             STATE_COMMON->ClearOrigString();
             outputZenkakuCharFromDeckey(deckey);
         }

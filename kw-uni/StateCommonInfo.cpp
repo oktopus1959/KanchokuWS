@@ -104,7 +104,7 @@ void StateCommonInfo::ClearRunningStates() {
 void StateCommonInfo::CopyStrokeHelpToVkbFaces(wchar_t ch) {
     SetCenterString(ch);
     ClearFaces();
-    if (STROKE_HELP->copyStrokeHelpToVkbFacesStateCommon(ch, GetFaces())) {
+    if (STROKE_HELP->copyStrokeHelpToVkbFacesStateCommon(ch, GetFaces(), FacesSize())) {
         SetStrokeHelpVkbLayout();
     } else {
         ClearVkbLayout();

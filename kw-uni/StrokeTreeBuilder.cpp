@@ -1162,14 +1162,14 @@ namespace {
         // カラム0で予期しないLBRACEが発生
         void unexpectedLeftBraceAtColumn0Warning() {
             _LOG_DEBUGH(_T("lineNumber={}, nextPos={}"), lineNumber, nextPos);
-            handleWarning(std::format(_T("{} {} の {}行目の行頭にネストされた '{' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> {} ..."), \
+            handleWarning(std::format(_T("{} {} の {}行目の行頭にネストされた '{{' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> {} ..."), \
                 blockOrFile(), blockInfoStack.CurrentBlockName(), calcErrorLineNumber(), currentLine.substr(0, 50)));
         }
 
         // カラム0で予期しないRBRACEが発生
         void unexpectedRightBraceAtColumn0Warning() {
             _LOG_DEBUGH(_T("lineNumber={}, nextPos={}"), lineNumber, nextPos);
-            handleWarning(std::format(_T("{} {} の {}行目の行頭にまだネスト中の '}' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> {} ..."), \
+            handleWarning(std::format(_T("{} {} の {}行目の行頭にまだネスト中の '}}' があります。意図したものであれば無視してください (#ignoreWarning braceLevel を記述すると無視されます)：\r\n> {} ..."), \
                 blockOrFile(), blockInfoStack.CurrentBlockName(), calcErrorLineNumber(), currentLine.substr(0, 50)));
         }
 

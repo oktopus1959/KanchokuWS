@@ -348,7 +348,7 @@ namespace {
 
          // Shiftキーで修飾されたキー
         void handleShiftKeys(int deckey) {
-            _LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({}), char={}"), Name, deckey, deckey);
+            _LOG_DEBUGH(_T("CALLED: {}: deckey={:x}H({})"), Name, deckey, deckey);
             //handleKeyPostProc();
             //State::handleShiftKeys(deckey);
             handleStrokeKeys(UNSHIFT_DECKEY(deckey));
