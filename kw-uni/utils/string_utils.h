@@ -276,6 +276,19 @@ namespace {
         return result;
     }
 
+    String to_debug_wstr(const mchar_t* mstr, size_t len, bool bStopByNull = false) {
+        String result;
+        for (size_t i = 0; i < len; ++i) {
+            mchar_t m = mstr[i];
+            if (m == 0) {
+                if (bStopByNull) break;
+                m = L'□';   // 全角スペース
+            }
+            push_back_wstr(m, result);
+        }
+        return result;
+    }
+
     // cpyLen で指定された長さの文字列を wp 配列に追加する。末尾には 0 が付加される。wp は十分な長さを確保しておくこと。コピーした長さを返す。
     size_t append_wstr(StringRef ws, wchar_t* wp, size_t cpyLen) {
         const size_t maxlen = 1024;

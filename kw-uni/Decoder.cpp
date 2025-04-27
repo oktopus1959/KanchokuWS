@@ -92,6 +92,13 @@ private:
         }
     }
 
+    void copy_facestr(const mchar_t* faces, size_t numFaces) {
+        LOG_DEBUG(_T("Copy faces({}): {}"), numFaces, to_debug_wstr(faces, numFaces));
+        for (size_t i = 0; i < numFaces; ++i) {
+            set_facestr(faces[i], OutParams->faceStrings + i * 2);
+        }
+    }
+
 public:
     // コンストラクタ
     DecoderImpl() : OutParams(0)
@@ -868,26 +875,56 @@ public:
         clearKeyFaces();
         if (ROOT_STROKE_NODE && decKey1 >= 0) {
             StrokeTableNode* pn = dynamic_cast<StrokeTableNode*>(ROOT_STROKE_NODE->getNth(decKey1));
-            if (pn && decKey2 >= 0) pn = dynamic_cast<StrokeTableNode*>(pn->getNth(decKey2));
-            if (!pn && decKey1 >= COMBO_DECKEY_START && decKey1 < STACKLIKE_COMBO_DECKEY_START) {
-                // 通常の同時打鍵シフトでなく、StackLikeのほうが使われているケース
-                LOG_DEBUGH(_T("NEXT TRY (StackLike): decKey1={}, decKey2={}"), decKey1 + PLANE_DECKEY_NUM, decKey2);
-                pn = dynamic_cast<StrokeTableNode*>(ROOT_STROKE_NODE->getNth(decKey1 + PLANE_DECKEY_NUM));
-                if (pn && decKey2 >= 0) pn = dynamic_cast<StrokeTableNode*>(pn->getNth(decKey2));
+            LOG_DEBUGH(_T("StrokeTable {}FOUND for deckey1={}"), pn ? L"" : L"NOT ", decKey1);
+            if (pn && decKey2 >= 0) {
+                pn = dynamic_cast<StrokeTableNode*>(pn->getNth(decKey2));
+                LOG_DEBUGH(_T("StrokeTable {}FOUND for deckey2={}"), pn ? L"" : L"NOT ", decKey2);
             }
             if (pn) {
-                mchar_t* faces = STATE_COMMON->GetFaces();
-                size_t numFaces = STATE_COMMON->FacesSize();
-                pn->CopyChildrenFace(faces, numFaces);
-                for (size_t i = 0; i < numFaces; ++i) {
-                    //OutParams->faceStrings[i] = STATE_COMMON->faces[i];
-                    set_facestr(faces[i], OutParams->faceStrings + i * 2);
+                LOG_DEBUGH(_T("CALL copy_children_faces for deckey={}"), decKey1);
+                copy_children_faces(pn);
+            }
+            if (!isAnyNonNullFace()) {
+                int anotherDeckey = 0;
+                if (decKey1 >= COMBO_DECKEY_START && decKey1 < STACKLIKE_COMBO_DECKEY_START) {
+                    // 通常の同時打鍵シフトでなく、StackLikeのほうが使われているケース
+                    anotherDeckey = (decKey1 % PLANE_DECKEY_NUM) + STACKLIKE_COMBO_DECKEY_START;
+                } else if (decKey1 >= STACKLIKE_COMBO_DECKEY_START && decKey1 < COMBO_DECKEY_END) {
+                    anotherDeckey = (decKey1 % PLANE_DECKEY_NUM) + COMBO_DECKEY_START;
                 }
-            } else {
+                if (anotherDeckey > 0) {
+                    LOG_DEBUGH(_T("NEXT TRY (anotherDeckey): decKey1={}, decKey2={}"), anotherDeckey, decKey2);
+                    pn = dynamic_cast<StrokeTableNode*>(ROOT_STROKE_NODE->getNth(anotherDeckey));
+                    LOG_DEBUGH(_T("anotherDeckey StrokeTable {}FOUND for deckey1={}"), pn ? L"" : L"NOT ", decKey1);
+                    if (pn && decKey2 >= 0) {
+                        pn = dynamic_cast<StrokeTableNode*>(pn->getNth(decKey2));
+                        LOG_DEBUGH(_T("anotherDeckey StrokeTable {}FOUND for deckey2={}"), pn ? L"" : L"NOT ", decKey2);
+                    }
+                    if (pn) {
+                        LOG_DEBUGH(_T("CALL copy_children_faces for anotherDeckey deckey={}"), anotherDeckey);
+                        copy_children_faces(pn);
+                    }
+                }
+            }
+            if (!pn) {
                 LOG_DEBUGH(_T("StrokeTable NOT FOUND"));
             }
         }
         LOG_DEBUGH(_T("LEAVE: layout={}"), OutParams->layout);
+    }
+
+    bool isAnyNonNullFace() {
+        for (size_t i = 0; i < utils::array_length(OutParams->faceStrings); ++i) {
+            if (OutParams->faceStrings[i] != 0) return true;
+        }
+        return false;
+    }
+
+    void copy_children_faces(StrokeTableNode* pn) {
+        mchar_t* faces = STATE_COMMON->GetFaces();
+        size_t numFaces = STATE_COMMON->FacesSize();
+        pn->CopyChildrenFace(faces, numFaces);
+        copy_facestr(faces, numFaces);
     }
 
     // ひらがな50音図配列を作成する (あかさたなはまやらわ、ぁがざだばぱゃ)
