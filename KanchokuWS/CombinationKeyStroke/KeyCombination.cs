@@ -13,6 +13,11 @@ namespace KanchokuWS.CombinationKeyStroke
     /// </summary>
     class KeyCombination
     {
+        public static int MakeMutualComboHeadDecKey(int decKey)
+        {
+            return (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.COMBO_DECKEY_START;
+        }
+
         public static int MakeNonTerminalDuplicatableComboKey(int decKey)
         {
             return (decKey % DecoderKeys.PLANE_DECKEY_NUM) + DecoderKeys.PLANE_DECKEY_NUM;
@@ -126,14 +131,14 @@ namespace KanchokuWS.CombinationKeyStroke
             return DecKeyList._keyString()._orElse("(empty)");
         }
 
-        public string ComboKeysDebugString()
+        public string ComboKeysString()
         {
             return _comboKeyStr._orElse("(empty)");
         }
 
         public string DebugString()
         {
-            return ComboKeysDebugString() + "/" + DecKeysDebugString();
+            return ComboKeysString() + "/" + DecKeysDebugString();
         }
     }
 

@@ -142,6 +142,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 result.Add(list);
                 if (list.Count > 1) {
                     for (int i = list.Count - 1; i >= 0; --i) {
+                        // i番目を削除した削除したリスト
                         var subList = list.Take(i).ToList();
                         subList.AddRange(list.Skip(i + 1));
                         gatherSubList(subList, result);
@@ -185,15 +186,24 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 
         public bool IsUnprocListEmpty => unprocList.Count == 0;
 
+        public Stroke FirstUnprocKey => unprocList._getFirst();
+
+        public Stroke SecondUnprocKey => unprocList._getSecond();
+
+        public Stroke GetNthUnprocKey(int n) { return unprocList._getNth(n); }
+
+        public Stroke LastUnprocKey => unprocList._getLast();
+
         public bool IsDownKeyListEmpty => downKeyList.Count == 0;
-
-        public Stroke First => unprocList._getFirst();
-
-        public Stroke Last => unprocList._getLast();
 
         public KeyCombination GetKeyCombo()
         {
             return KeyCombinationPool.CurrentPool.GetEntry(unprocList);
+        }
+
+        public KeyCombination GetKeyComboMutual()
+        {
+            return KeyCombinationPool.CurrentPool.GetEntry(unprocList, false);
         }
 
         public bool IsTerminalCombo()
@@ -309,7 +319,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                     $"combo={(keyCombo == null ? "(none)" : "FOUND")}, decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())}, " +
                     $"Terminal={keyCombo?.IsTerminal ?? false}, isComboBlocked={keyCombo?.IsComboBlocked ?? false}, isStackLike={keyCombo?.IsStackLikeCombo ?? false}" +
                     $"OnlyCharKeysComboShouldBeCoveringCombo={Settings.OnlyCharKeysComboShouldBeCoveringCombo}, ContainsTwoCharacterKeys={keyCombo?.ContainsTwoCharacterKeys ?? false}" +
-                    $"comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
+                    $"comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysString())}");
                 if (keyCombo != null && keyCombo.DecKeyList != null && (keyCombo.IsTerminal || keyCombo.IsComboBlocked) &&
                     !((Settings.OnlyCharKeysComboShouldBeCoveringCombo || keyCombo.IsStackLikeCombo) && keyCombo.ContainsTwoCharacterKeys)) {
                     logger.InfoH("COMBO CHECK PASSED");
@@ -640,7 +650,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                             bool bEffectiveComboFound = keyCombo.DecKeyList != null && (keyCombo.HasDecoderOutput || keyCombo.IsComboBlocked) &&
                                 (!((Settings.OnlyCharKeysComboShouldBeCoveringCombo && keyCombo.ContainsTwoCharacterKeys) || keyCombo.IsStackLikeCombo) || isTailKeyUp);
                             if (Logger.IsInfoEnabled) {
-                                logger.InfoH(() => $"EFFECTIVE COMBO: {bEffectiveComboFound}: comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysDebugString())}");
+                                logger.InfoH(() => $"EFFECTIVE COMBO: {bEffectiveComboFound}: comboKeyList={(keyCombo == null ? "(none)" : keyCombo.ComboKeysString())}");
                                 logger.InfoH(() => $"    keyCombo.decKeyList={(keyCombo == null ? "(none)" : keyCombo.DecKeysDebugString())} && " +
                                     $" (HasDecoderOutput={keyCombo.HasDecoderOutput} || IsComboBlocked={keyCombo.IsComboBlocked}) ");
                                 logger.InfoH(() => $" && !((OnlyCharKeysComboShouldBeCoveringCombo={!Settings.OnlyCharKeysComboShouldBeCoveringCombo} || " +

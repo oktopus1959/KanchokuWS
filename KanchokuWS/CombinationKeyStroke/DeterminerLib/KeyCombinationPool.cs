@@ -371,13 +371,15 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                         // 存在していなかった部分キーを追加
                         if (i < 500 && Settings.LoggingTableFileInfo) logger.DebugH($"Add non terminal subkey: {subkey}");
                         List<int> keyList = null;
+                        bool hasString = false;
                         if (bEisu && keylen == 1) {
                             // 英数モードの場合は、1文字キーを単打可能に設定する
                             // keyListが空でなければ hasStr==trueになる。
                             // 薙刀式で HJ をImeOnに割り当てている場に H, J を単打できるようにするために必要
                             keyList = subkey._decodeKeyStr();
+                            hasString = true;
                         }
-                        keyCombo = new KeyCombination(keyList, null, shiftKind, keyList._notEmpty(), false, false, false);
+                        keyCombo = new KeyCombination(keyList, subkey, shiftKind, hasString, false, false, false);
                         keyComboDict.Add(subkey, keyCombo, true);
                     }
                     keyCombo.SetNonTerminal();

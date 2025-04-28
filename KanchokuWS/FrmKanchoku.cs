@@ -1114,14 +1114,15 @@ namespace KanchokuWS
         /// </summary>
         private bool rotateStrokeHelp(int direction)
         {
-            logger.Info(() => $"CALLED: IsDecoderActive={IsDecoderActive}");
             if (IsDecoderActive) {
+                logger.Info(() => $"ENTER");
                 // 入力標識の消去
                 frmMode.Vanish();
                 // 仮想鍵盤のヘルプ表示の切り替え(モード標識表示時なら一時的に仮想鍵盤表示)
                 int effectiveCnt = Settings.VirtualKeyboardShowStrokeCountEffective;
                 Settings.VirtualKeyboardShowStrokeCountTemp = 1;
                 frmVkb.RotateStrokeTable(effectiveCnt != 1 ? 0 : direction);
+                logger.Info(() => $"LEAVE");
                 return true;
             }
             return false;

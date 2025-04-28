@@ -898,7 +898,7 @@ namespace KanchokuWS
                     string[] nextTable = deckeysStr._notEmpty() ? makeCharOrKeys("makeNextStrokeTable", deckeysStr) : null;
                     if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"nextTable={nextTable._join(":")}");
                     if (nextTable != null) {
-                        tblDef = new StrokeTableDef() { CharOrKeys = nextTable };
+                        tblDef = new StrokeTableDef() { CharOrKeys = nextTable, ShiftPlane = true };
                     }
                     else if (tableNum == 1) {
                         string[] shiftPlaneTbl = StrokeHelpShiftPlane > 0 ? shiftPlaneStrokeTables1._getNth(StrokeHelpShiftPlane) : null;
@@ -1003,21 +1003,25 @@ namespace KanchokuWS
         public void RotateStrokeTable(int delta = 1)
         {
             if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() =>
-                $"CALLED: delta={delta}, IsCurrentStrokeTablePrimary()={frmMain.DecoderOutput.IsCurrentStrokeTablePrimary()}, " +
+                $"ENTER: delta={delta}, IsCurrentStrokeTablePrimary()={frmMain.DecoderOutput.IsCurrentStrokeTablePrimary()}, " +
                 $"StrokeTables1.Count={StrokeTables1?.Count},StrokeTables2.Count={StrokeTables2?.Count},StrokeTables3.Count={StrokeTables3?.Count}");
             if (frmMain.DecoderOutput.strokeTableNum == 1 && StrokeTables1._notEmpty()) {
                 if (delta < 0) delta = StrokeTables1.Count - ((-delta) % StrokeTables1.Count);
                 selectedTable1 = (selectedTable1 + delta) % StrokeTables1.Count;
-                DrawVirtualKeyboardChars();
+                //DrawVirtualKeyboardChars();
+                DrawInitialVkb();
             } else if (frmMain.DecoderOutput.strokeTableNum == 2 && StrokeTables2._notEmpty()) {
                 if (delta < 0) delta = StrokeTables2.Count - ((-delta) % StrokeTables2.Count);
                 selectedTable2 = (selectedTable2 + delta) % StrokeTables2.Count;
-                DrawVirtualKeyboardChars();
+                //DrawVirtualKeyboardChars();
+                DrawInitialVkb();
             } else if (frmMain.DecoderOutput.strokeTableNum == 3 && StrokeTables3._notEmpty()) {
                 if (delta < 0) delta = StrokeTables3.Count - ((-delta) % StrokeTables3.Count);
                 selectedTable3 = (selectedTable3 + delta) % StrokeTables3.Count;
-                DrawVirtualKeyboardChars();
+                //DrawVirtualKeyboardChars();
+                DrawInitialVkb();
             }
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info("LEAVE");
         }
 
         // ASCII文字は 0.5文字としてカウント
@@ -1035,7 +1039,7 @@ namespace KanchokuWS
 
             if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() =>
                 $"CALLED: layout={decoderOutput.layout}, center={CommonState.CenterString}, strokeCount={decoderOutput.strokeCount}, " +
-                $"topString={decoderOutput.topString}, nextDeckey={decoderOutput.nextStrokeDeckey}, lastDeckey={lastDeckey}");
+                $"topString={decoderOutput.topString._toString()}, nextDeckey={decoderOutput.nextStrokeDeckey}, lastDeckey={lastDeckey}");
 
             if (decoderOutput.topString._isEmpty()) return;
 

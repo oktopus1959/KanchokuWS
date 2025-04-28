@@ -341,7 +341,7 @@ namespace KanchokuWS.CombinationKeyStroke
                         if (strokeList.DetectKeyRepeat(stroke)) {
                             // キーリピートが発生した場合
                             // キーリピート時は、リピートの終わりに1回だけ KeyUp が発生するので、そこで strokeListのUplistがクリアされる
-                            logger.InfoH("key repeatable detected");
+                            logger.InfoH($"key repeatable detected: strokeList={strokeList.ToDebugString()}");
                             bAutoRepeated = true;
                             if (!bDecoderOn) {
                                 // DecoderがOFFのときはキーリピート扱いとする
@@ -351,19 +351,27 @@ namespace KanchokuWS.CombinationKeyStroke
                                 // キーリピートが可能なキー
                                 logger.InfoH("non terminal and repeatable key");
                                 result = Helper.MakeList(decKey);
-                            } else if ((stroke.IsComboShift || strokeList.Count == 2 && strokeList.First.IsComboShift) && handleComboKeyRepeat != null) {
+                            } else if ((stroke.IsComboShift || strokeList.Count == 2 && strokeList.FirstUnprocKey.IsComboShift) && handleComboKeyRepeat != null) {
                                 // 同時打鍵シフトキーの場合は、リピートハンドラを呼び出すだけで、キーリピートは行わない(つまりシフト扱い)
                                 List<int> list = new List<int>();
                                 if (strokeList.Count == 1) {
                                     logger.InfoH(() => $"Call ComboKeyRepeat Handler: {stroke.ComboShiftDecKey}");
                                     list.Add(stroke.ComboShiftDecKey);
                                 } else if (strokeList.Count == 2) {
-                                    var keyCombo = strokeList.GetKeyCombo();
+                                    var keyCombo = strokeList.GetKeyComboMutual();
                                     if (keyCombo != null) {
                                         logger.InfoH(() => $"Call ComboKeyRepeat Handler: {keyCombo.DecKeysDebugString()}");
                                         if (keyCombo.DecKeyList._safeCount() >= 2) {
                                             list.Add(keyCombo.DecKeyList[0]);
                                             list.Add(KeyCombination.MakeNonTerminalDuplicatableComboKey(keyCombo.DecKeyList[1]));
+                                        } else {
+                                            var keys = keyCombo.ComboKeysString()._decodeKeyStr();
+                                            if (keys._notEmpty()) {
+                                                list.Add(KeyCombination.MakeMutualComboHeadDecKey(keys._getFirst()));
+                                                if (keys._safeCount() >= 2) {
+                                                    list.Add(KeyCombination.MakeNonTerminalDuplicatableComboKey(keys._getSecond()));
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -413,7 +421,7 @@ namespace KanchokuWS.CombinationKeyStroke
                                             // タイマーが有効であるか、または同時打鍵シフトの2打鍵めの非シフト文字キーであって、同時打鍵組合せが終端文字であり、
                                             // かつ、先頭が文字キーでないか文字キーのみの同時打鍵組合せの場合が被覆Comboではない、だったらタイマーを起動する
                                             if (Settings.UseCombinationKeyTimer2 && !stroke.IsComboShift && !DecoderKeys.IsSpaceOrFuncKey(decKey) && strokeList.IsTerminalCombo() &&
-                                                (DecoderKeys.IsSpaceOrFuncKey(strokeList.First.OrigDecoderKey) || !Settings.OnlyCharKeysComboShouldBeCoveringCombo)) {
+                                                (DecoderKeys.IsSpaceOrFuncKey(strokeList.FirstUnprocKey.OrigDecoderKey) || !Settings.OnlyCharKeysComboShouldBeCoveringCombo)) {
                                                 startTimer(Settings.CombinationKeyMinOverlappingTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
                                             }
                                         }
@@ -470,7 +478,7 @@ namespace KanchokuWS.CombinationKeyStroke
             logger.Info(() =>
                 $"\nCALLED: decKey={decKey}, DecoderOn={bDecoderOn}, bTimer={bTimer}, lastRepeatedDecKey={lastRepeatedDecKey}, " +
                 $"bAutoRepeated={bAutoRepeated}, lastRepeatedDecKey={lastRepeatedDecKey}, strokeList={strokeList.ToDebugString()}");
-            bool bSameLastKey = !strokeList.IsUnprocListEmpty && strokeList.Last.OrigDecoderKey == decKey;
+            bool bSameLastKey = !strokeList.IsUnprocListEmpty && strokeList.LastUnprocKey.OrigDecoderKey == decKey;
             bool bComboShiftKeyRepeated = bDecoderOn && bAutoRepeated && KeyCombinationPool.IsComboShift(decKey) && lastRepeatedDecKey == decKey && strokeList.DetectKeyRepeat(decKey);
 
             bAutoRepeated = false;
