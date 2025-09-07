@@ -214,6 +214,8 @@ namespace KanchokuWS
 
             IMEHandler.MainWnd = this.Handle;
 
+            this.notifyIcon1.Text = "漢直WS " + Settings.Version;
+
             // kanchoku.user.ini が存在しなければ、初期状態で作成しておく
             if (!UserKanchokuIni.Singleton.IsIniFileExist) {
                 logger.WriteInfo("kanchoku.user.ini not found. Create.");
@@ -272,7 +274,7 @@ namespace KanchokuWS
             // デバッグ用テーブルファイルの出力
             if (Settings.OutputDebugTableFiles) dumpDebugTableFiles();
 
-            //Text = "漢直窓S";
+            //Text = "漢直WS";
 
             // 仮想鍵盤フォームを隠す
             if (!Settings.ShowEisuVkb || Settings.SplashWindowShowDuration > 0) frmVkb.Hide();
@@ -500,7 +502,7 @@ namespace KanchokuWS
             DeactivateDecoderWithModifiersOff();
 
             logger.Info($"ConfirmOnClose={Settings.ConfirmOnClose}");
-            if (!Settings.ConfirmOnClose || SystemHelper.OKCancelDialog("漢直窓Sを終了します。\r\nよろしいですか。")) {
+            if (!Settings.ConfirmOnClose || SystemHelper.OKCancelDialog("漢直WSを終了します。\r\nよろしいですか。")) {
                 logger.Info("CLOSING...");
                 Close();
             }
@@ -520,8 +522,8 @@ namespace KanchokuWS
 
             logger.Info($"bNoSave={bNoSave}, ConfirmOnRestart={Settings.ConfirmOnRestart}");
             var msg = bNoSave ?
-                "漢直窓Sを再起動します。\r\nデコーダが保持している辞書内容はファイルに保存されません。\r\nよろしいですか。" :
-                "漢直窓Sを再起動します。\r\nデコーダが保持している辞書内容をファイルに書き出すので、\r\nユーザーが直接辞書ファイルに加えた変更は失われます。\r\nよろしいですか。";
+                "漢直WSを再起動します。\r\nデコーダが保持している辞書内容はファイルに保存されません。\r\nよろしいですか。" :
+                "漢直WSを再起動します。\r\nデコーダが保持している辞書内容をファイルに書き出すので、\r\nユーザーが直接辞書ファイルに加えた変更は失われます。\r\nよろしいですか。";
             if (!Settings.ConfirmOnRestart || SystemHelper.OKCancelDialog(msg)) {
                 logger.Info("RESTARTING...");
                 bRestart = true;
@@ -1297,7 +1299,7 @@ namespace KanchokuWS
                 frmVkb.StrokeHelpShiftPlane = 0;
                 frmVkb.DecKeysForNextTableStrokeHelp.Clear();
                 frmVkb.DrawInitialVkb();
-                //Text = "漢直窓S - ON";
+                //Text = "漢直WS - ON";
                 notifyIcon1.Icon = Properties.Resources.kanmini1;
                 // 仮想鍵盤を移動させる
                 MoveFormVirtualKeyboard();

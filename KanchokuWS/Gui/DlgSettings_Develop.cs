@@ -187,7 +187,7 @@ namespace KanchokuWS.Gui
             dgvAbout.Rows[iRow].Cells[0].Value = "アプリケーション名／バージョン";
             dgvAbout.Rows[iRow++].Cells[1].Value = $"KanchokuWS Ver.{Settings.Version}";
             dgvAbout.Rows[iRow].Cells[0].Value = "別名";
-            dgvAbout.Rows[iRow++].Cells[1].Value = "漢直窓S (KanchokuWin Spoiler / 漢直WS)";
+            dgvAbout.Rows[iRow++].Cells[1].Value = "漢直WS (KanchokuWin Spoiler)";
             dgvAbout.Rows[iRow].Cells[0].Value = "プログラムパス";
             dgvAbout.Rows[iRow++].Cells[1].Value = SystemHelper.GetExePath();
             dgvAbout.Rows[iRow].Cells[0].Value = "ルートフォルダ";
