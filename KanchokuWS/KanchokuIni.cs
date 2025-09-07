@@ -18,6 +18,8 @@ namespace KanchokuWS
 
         public string IniFilePath { get { return m_ini?.IniFilePath; } }
 
+        public bool IsUserIniAbsent { get; set; } = false;
+
         public bool IsIniFileExist => Helper.FileExists(IniFilePath);
 
         public string KanchokuDir => IniFilePath._getDirPath();

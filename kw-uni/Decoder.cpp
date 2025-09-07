@@ -255,38 +255,41 @@ public:
 
     // テーブルファイルを読み込んでストローク木を作成する
     void createStrokeTrees(bool bForceSecondary = false) {
-        // テーブルファイル名
-        if (!SETTINGS->tableFile.empty()) {
-            // 主テーブルファイルの構築
-            createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile1.tbl")), [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree(file, lines);});
-        }
+        // 主テーブルファイルの構築
+        auto tableFile1 = SETTINGS->tableFile.empty() ? L"" : utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile1.tbl"));
+        createStrokeTree(tableFile1, [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree(file, lines);});
 
-        if (bForceSecondary || !SETTINGS->tableFile2.empty()) {
-            // 副テーブルファイルの構築
-            createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile2.tbl")), [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree2(file, lines);});
-        }
+        // 副テーブルファイルの構築
+        auto tableFile2 = !bForceSecondary && SETTINGS->tableFile2.empty() ? L"" : utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile2.tbl"));
+        createStrokeTree(tableFile2, [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree2(file, lines);});
 
-        if (!SETTINGS->tableFile3.empty()) {
-            // 第3テーブルファイルの構築
-            createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile3.tbl")), [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree3(file, lines);});
-        }
+        // 第3テーブルファイルの構築
+        auto tableFile3 = SETTINGS->tableFile3.empty() ? L"" : utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile3.tbl"));
+        createStrokeTree(tableFile3, [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree3(file, lines);});
     }
 
     // テーブルファイルを読み込んでストローク木を作成する
     void createStrokeTree(const String& tableFile, void(*treeCreator)(const String&, std::vector<String>&)) {
         LOG_DEBUGH(_T("ENTER: tableFile={}"), tableFile);
 
-        utils::IfstreamReader reader(tableFile);
-        if (reader.success()) {
-            //auto lines = utils::IfstreamReader(tableFile).getAllLines();
-            auto lines = reader.getAllLines();
-            // ストロークノード木の構築
-            treeCreator(tableFile, lines);
-            LOG_DEBUGH(_T("close table file: {}"), tableFile);
+        if (tableFile.empty()) {
+            std::vector<String> emptyLines;
+            LOG_DEBUGH(_T("No table file specified"));
+            treeCreator(tableFile, emptyLines);
+            LOG_DEBUGH(_T("empty table file created"));
         } else {
-            // エラー
-            LOG_ERROR(_T("Can't read table file: {}"), tableFile);
-            ERROR_HANDLER->Error(std::format(_T("テーブルファイル({})が開けません"), tableFile));
+            utils::IfstreamReader reader(tableFile);
+            if (reader.success()) {
+                //auto lines = utils::IfstreamReader(tableFile).getAllLines();
+                auto lines = reader.getAllLines();
+                // ストロークノード木の構築
+                treeCreator(tableFile, lines);
+                LOG_DEBUGH(_T("close table file: {}"), tableFile);
+            } else {
+                // エラー
+                LOG_ERROR(_T("Can't read table file: {}"), tableFile);
+                ERROR_HANDLER->Error(std::format(_T("テーブルファイル({})が開けません"), tableFile));
+            }
         }
 
         LOG_DEBUGH(_T("LEAVE"));
