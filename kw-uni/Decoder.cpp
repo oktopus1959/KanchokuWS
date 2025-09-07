@@ -256,22 +256,19 @@ public:
     // テーブルファイルを読み込んでストローク木を作成する
     void createStrokeTrees(bool bForceSecondary = false) {
         // テーブルファイル名
-        if (SETTINGS->tableFile.empty()) {
-            // エラー
-            //ERROR_HANDLER->Error(_T("「tableFile=(ファイル名)」の設定がまちがっているようです"));
-        } else {
+        if (!SETTINGS->tableFile.empty()) {
             // 主テーブルファイルの構築
             createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile1.tbl")), [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree(file, lines);});
+        }
 
-            if (bForceSecondary || !SETTINGS->tableFile2.empty()) {
-                // 副テーブルファイルの構築
-                createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile2.tbl")), [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree2(file, lines);});
-            }
+        if (bForceSecondary || !SETTINGS->tableFile2.empty()) {
+            // 副テーブルファイルの構築
+            createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile2.tbl")), [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree2(file, lines);});
+        }
 
-            if (!SETTINGS->tableFile3.empty()) {
-                // 第3テーブルファイルの構築
-                createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile3.tbl")), [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree3(file, lines);});
-            }
+        if (!SETTINGS->tableFile3.empty()) {
+            // 第3テーブルファイルの構築
+            createStrokeTree(utils::joinPath(SETTINGS->rootDir, _T("tmp\\tableFile3.tbl")), [](const String& file, std::vector<String>& lines) {StrokeTableNode::CreateStrokeTree3(file, lines);});
         }
     }
 
