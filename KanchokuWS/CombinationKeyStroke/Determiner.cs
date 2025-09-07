@@ -330,10 +330,10 @@ namespace KanchokuWS.CombinationKeyStroke
                         // デコーダが英数モードだったので、そのまま返す
                         logger.InfoH("decoder is EISU mode");
                         result = Helper.MakeList(decKey);
-                    } else if (combo?.IsTerminal == true && KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
-                        // 終端、かつキーリピートが可能なキーだった(BackSpaceとか)ので、それを返す
-                        logger.InfoH("terminal and repeatable key");
-                        result = Helper.MakeList(decKey);
+                    //} else if (combo?.IsTerminal == true && KeyCombinationPool.CurrentPool.IsRepeatableKey(decKey)) {
+                    //    // 終端、かつキーリピートが可能なキーだった(BackSpaceとか)ので、それを返す
+                    //    logger.InfoH("terminal and repeatable key");
+                    //    result = Helper.MakeList(decKey);
                     } else {
                         logger.InfoH(() => stroke.DebugString());
 
