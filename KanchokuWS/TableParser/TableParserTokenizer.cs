@@ -714,6 +714,10 @@ namespace KanchokuWS.TableParser
                     ArrowIndex = placeHolders.Get(s._safeSubstring(1));
                 } else {
                     ArrowIndex = s._parseInt(-1);
+                    if (ArrowIndex < 0 && s.Length == 1) {
+                        // 1文字の場合は、プレースホルダを優先
+                        ArrowIndex = placeHolders.Get(s);
+                    }
                 }
                 if (ArrowIndex < 0 || ArrowIndex >= DecoderKeys.PLANE_DECKEY_NUM) ParseError($"parseArrowBundle: arrowIndex is out of range: {ArrowIndex}");
             }
