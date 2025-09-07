@@ -16,7 +16,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.8.6";
+        public static string Version => "1.2.8.8";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
@@ -1533,7 +1533,8 @@ namespace KanchokuWS
             //}
             setDecoderSetting("charsDefFile", TempCharsDefFile);
             EasyCharsFile = addDecoderSetting("easyCharsFile", "easy_chars.txt");
-            TableFile = addDecoderSetting("tableFile", $"{TableFileDir}\\漢直系\\tutr.tbl");
+            //TableFile = addDecoderSetting("tableFile", $"{TableFileDir}\\漢直系\\tutr.tbl");
+            TableFile = addDecoderSetting("tableFile", "");
             TableFile2 = addDecoderSetting("tableFile2", "");
 #if DEBUG
 #else
