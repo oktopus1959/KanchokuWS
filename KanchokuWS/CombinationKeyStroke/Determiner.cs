@@ -191,7 +191,7 @@ namespace KanchokuWS.CombinationKeyStroke
         /// <param name="tableFile3">第3テーブルファイル名</param>
         public void Initialize(string tableFile, string tableFile2, string tableFile3, bool bTest = false)
         {
-            logger.Info("ENTER");
+            logger.Info($"ENTER: tableFile={tableFile}, tableFile2={tableFile2}, tableFile3={tableFile3}");
             Settings.ClearSpecificDecoderSettings();
             KeyCombinationPool.Initialize();
             Clear();
