@@ -12,11 +12,11 @@ namespace KanchokuWS
 {
     public static class Settings
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.8.8";
+        public static string Version => "1.2.8.9";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------

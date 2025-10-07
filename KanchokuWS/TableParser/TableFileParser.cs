@@ -1429,7 +1429,9 @@ namespace KanchokuWS.TableParser
             Settings.LoggingTableFileInfo = false;
             if (bLogging) logger.Info("ENTER");
             for (int idx = 0; idx < DecoderKeys.NORMAL_DECKEY_NUM; ++idx) {
-                AddFunctionNode(idx, "^");
+                if (idx != DecoderKeys.SELF_DECKEY) {
+                    AddFunctionNode(idx, "^");
+                }
             }
             if (bLogging) logger.Info("LEAVE");
             Settings.LoggingTableFileInfo = bLogging;

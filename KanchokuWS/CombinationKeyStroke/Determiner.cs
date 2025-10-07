@@ -21,7 +21,7 @@ namespace KanchokuWS.CombinationKeyStroke
     /// </summary>
     class Determiner : IDisposable
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         // FrmKanchoku
         FrmKanchoku frmMain;
@@ -396,12 +396,27 @@ namespace KanchokuWS.CombinationKeyStroke
                                 // 打鍵リストに追加して同時打鍵判定を行う
                                 strokeList.Add(stroke);
                                 if (strokeList.Count == 1) {
+                                    logger.InfoH("COMBO: Count=1");
                                     // 第1打鍵の場合
                                     if (!stroke.IsComboShift) {
                                         logger.InfoH(() => $"UseCombinationKeyTimer1={Settings.UseCombinationKeyTimer1}");
                                         // 非同時打鍵キーの第1打鍵ならタイマーを起動する
                                         if (Settings.UseCombinationKeyTimer1) {
                                             startTimer(Settings.CombinationKeyMaxAllowedLeadTimeMs, Stroke.ModuloizeKey(decKey), bDecoderOn);
+                                        }
+                                    } else {
+                                        // 英数モードにおける特殊な単打Comboか
+                                        var strkList = new StrokeList();
+                                        strkList.Add(stroke);
+                                        strkList.Add(new Stroke(DecoderKeys.SELF_DECKEY, bDecoderOn, dt));
+                                        var sglCombo = strkList.GetKeyCombo();
+                                        logger.InfoH(() => $"Check single combo: {(sglCombo == null ? "null" : sglCombo.DecKeysDebugString())}, IsTerminal={sglCombo?.IsTerminal}, IsSubKey={sglCombo?.IsSubKey}");
+                                        if (sglCombo != null && sglCombo.IsTerminal && !sglCombo.IsSubKey && sglCombo.DecKeyList._notEmpty()) {
+                                            // 英数モードにおける特殊な単打Combo
+                                            logger.InfoH(() => $"Single Combo Found: {sglCombo.DecKeysDebugString()}");
+                                            result = new List<int>(sglCombo.DecKeyList);
+                                            bUnconditional = true;
+                                            strokeList.Clear();
                                         }
                                     }
                                 } else if (frmMain?.IsDecoderWaitingFirstStroke() == true && strokeList.IsComboBlocker()) {

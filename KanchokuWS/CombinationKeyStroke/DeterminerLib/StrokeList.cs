@@ -9,7 +9,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
 {
     class StrokeList
     {
-        private static Logger logger = Logger.GetLogger(true);
+        private static Logger logger = Logger.GetLogger();
 
         /// <summary>
         /// 押下中のキーのストロークリスト

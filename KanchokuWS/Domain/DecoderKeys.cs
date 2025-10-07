@@ -130,6 +130,7 @@ namespace KanchokuWS
         public const int DECKEY_STROKE_46 = 46;
         public const int DECKEY_STROKE_47 = 47;
         public const int DECKEY_STROKE_48 = 48;
+        public const int SELF_DECKEY = 49;                          // 単打を自身の同時打鍵として扱う
 
         // Ctrl-A
         public const int DECKEY_CTRL_A = CTRL_DECKEY_START;
