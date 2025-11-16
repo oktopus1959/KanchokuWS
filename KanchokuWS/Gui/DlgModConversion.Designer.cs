@@ -49,6 +49,7 @@ namespace KanchokuWS.Gui
             this.groupBox_help = new System.Windows.Forms.GroupBox();
             this.panel_shiftPlaneHint = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
+            this.button_openFAQ = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_extModifier)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_singleHit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_shiftPlane)).BeginInit();
@@ -59,7 +60,7 @@ namespace KanchokuWS.Gui
             // buttonOK
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOK.Location = new System.Drawing.Point(538, 415);
+            this.buttonOK.Location = new System.Drawing.Point(598, 415);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 10;
@@ -71,9 +72,9 @@ namespace KanchokuWS.Gui
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.Location = new System.Drawing.Point(427, 415);
+            this.buttonCancel.Location = new System.Drawing.Point(507, 415);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(76, 23);
+            this.buttonCancel.Size = new System.Drawing.Size(63, 23);
             this.buttonCancel.TabIndex = 9;
             this.buttonCancel.Text = "閉じる(&C)";
             this.toolTip1.SetToolTip(this.buttonCancel, "ダイアログを閉じます。\r\n\r\nファイルへの書き出しは行いませんが、ダイアログを閉じても修正結果は\r\nメモリ上に残るので、再度開いたときは前回の修正結果が表示されま" +
@@ -121,7 +122,7 @@ namespace KanchokuWS.Gui
             this.dataGridView_extModifier.Location = new System.Drawing.Point(13, 31);
             this.dataGridView_extModifier.Name = "dataGridView_extModifier";
             this.dataGridView_extModifier.RowTemplate.Height = 21;
-            this.dataGridView_extModifier.Size = new System.Drawing.Size(600, 378);
+            this.dataGridView_extModifier.Size = new System.Drawing.Size(660, 378);
             this.dataGridView_extModifier.TabIndex = 4;
             this.dataGridView_extModifier.TabStop = false;
             this.dataGridView_extModifier.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView_extModifier_CellMouseClick);
@@ -140,7 +141,7 @@ namespace KanchokuWS.Gui
             "通常シフト",
             "拡張シフトA",
             "拡張シフトB"});
-            this.comboBox_shiftPlaneOn.Location = new System.Drawing.Point(319, 5);
+            this.comboBox_shiftPlaneOn.Location = new System.Drawing.Point(379, 5);
             this.comboBox_shiftPlaneOn.Name = "comboBox_shiftPlaneOn";
             this.comboBox_shiftPlaneOn.Size = new System.Drawing.Size(88, 20);
             this.comboBox_shiftPlaneOn.TabIndex = 1;
@@ -151,7 +152,7 @@ namespace KanchokuWS.Gui
             // 
             this.label_shiftPlaneOn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label_shiftPlaneOn.AutoSize = true;
-            this.label_shiftPlaneOn.Location = new System.Drawing.Point(222, 9);
+            this.label_shiftPlaneOn.Location = new System.Drawing.Point(282, 9);
             this.label_shiftPlaneOn.Name = "label_shiftPlaneOn";
             this.label_shiftPlaneOn.Size = new System.Drawing.Size(95, 12);
             this.label_shiftPlaneOn.TabIndex = 12;
@@ -167,7 +168,7 @@ namespace KanchokuWS.Gui
             "通常シフト",
             "拡張シフトA",
             "拡張シフトB"});
-            this.comboBox_shiftPlaneOff.Location = new System.Drawing.Point(525, 5);
+            this.comboBox_shiftPlaneOff.Location = new System.Drawing.Point(585, 5);
             this.comboBox_shiftPlaneOff.Name = "comboBox_shiftPlaneOff";
             this.comboBox_shiftPlaneOff.Size = new System.Drawing.Size(88, 20);
             this.comboBox_shiftPlaneOff.TabIndex = 2;
@@ -178,7 +179,7 @@ namespace KanchokuWS.Gui
             // 
             this.label_shiftPlaneOff.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label_shiftPlaneOff.AutoSize = true;
-            this.label_shiftPlaneOff.Location = new System.Drawing.Point(422, 9);
+            this.label_shiftPlaneOff.Location = new System.Drawing.Point(482, 9);
             this.label_shiftPlaneOff.Name = "label_shiftPlaneOff";
             this.label_shiftPlaneOff.Size = new System.Drawing.Size(101, 12);
             this.label_shiftPlaneOff.TabIndex = 14;
@@ -221,7 +222,7 @@ namespace KanchokuWS.Gui
             this.dataGridView_singleHit.Location = new System.Drawing.Point(13, 31);
             this.dataGridView_singleHit.Name = "dataGridView_singleHit";
             this.dataGridView_singleHit.RowTemplate.Height = 21;
-            this.dataGridView_singleHit.Size = new System.Drawing.Size(600, 378);
+            this.dataGridView_singleHit.Size = new System.Drawing.Size(660, 378);
             this.dataGridView_singleHit.TabIndex = 3;
             this.dataGridView_singleHit.TabStop = false;
             this.dataGridView_singleHit.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView_singleHit_CellMouseClick);
@@ -239,7 +240,7 @@ namespace KanchokuWS.Gui
             this.dataGridView_shiftPlane.Location = new System.Drawing.Point(13, 31);
             this.dataGridView_shiftPlane.Name = "dataGridView_shiftPlane";
             this.dataGridView_shiftPlane.RowTemplate.Height = 21;
-            this.dataGridView_shiftPlane.Size = new System.Drawing.Size(600, 378);
+            this.dataGridView_shiftPlane.Size = new System.Drawing.Size(660, 378);
             this.dataGridView_shiftPlane.TabIndex = 5;
             this.dataGridView_shiftPlane.TabStop = false;
             this.dataGridView_shiftPlane.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView_shiftPlane_CellMouseClick);
@@ -268,7 +269,7 @@ namespace KanchokuWS.Gui
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 12);
+            this.label1.Location = new System.Drawing.Point(8, 12);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(45, 12);
             this.label1.TabIndex = 0;
@@ -279,9 +280,9 @@ namespace KanchokuWS.Gui
             // 
             this.groupBox_help.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox_help.Controls.Add(this.label1);
-            this.groupBox_help.Location = new System.Drawing.Point(322, 408);
+            this.groupBox_help.Location = new System.Drawing.Point(353, 410);
             this.groupBox_help.Name = "groupBox_help";
-            this.groupBox_help.Size = new System.Drawing.Size(52, 30);
+            this.groupBox_help.Size = new System.Drawing.Size(58, 28);
             this.groupBox_help.TabIndex = 15;
             this.groupBox_help.TabStop = false;
             // 
@@ -302,11 +303,24 @@ namespace KanchokuWS.Gui
             this.label3.TabIndex = 1;
             this.label3.Text = "キー名の末尾に (＊) が付いているものは、\r\n何らかの被修飾キーが定義されていることを\r\n示しています。";
             // 
+            // button_openFAQ
+            // 
+            this.button_openFAQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button_openFAQ.Location = new System.Drawing.Point(422, 415);
+            this.button_openFAQ.Name = "button_openFAQ";
+            this.button_openFAQ.Size = new System.Drawing.Size(56, 23);
+            this.button_openFAQ.TabIndex = 18;
+            this.button_openFAQ.Text = "FAQ(&F)";
+            this.toolTip1.SetToolTip(this.button_openFAQ, "「FAQ キーアサイン編」を開きます。\r\n");
+            this.button_openFAQ.UseVisualStyleBackColor = true;
+            this.button_openFAQ.Click += new System.EventHandler(this.button_openFAQ_Click);
+            // 
             // DlgModConversion
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(624, 441);
+            this.ClientSize = new System.Drawing.Size(684, 441);
+            this.Controls.Add(this.button_openFAQ);
             this.Controls.Add(this.panel_shiftPlaneHint);
             this.Controls.Add(this.radioButton_shiftPlane);
             this.Controls.Add(this.dataGridView_singleHit);
@@ -362,5 +376,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel_shiftPlaneHint;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button button_openFAQ;
     }
 }

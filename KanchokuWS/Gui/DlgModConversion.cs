@@ -627,5 +627,10 @@ namespace KanchokuWS.Gui
                 Settings.AssignedKeyOrFuncDescColWidth = dataGridView_extModifier.Columns[3].Width;
             }
         }
+
+        private void button_openFAQ_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(Settings.FaqKeyAssignUrl);
+        }
     }
 }

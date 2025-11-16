@@ -53,6 +53,7 @@ namespace KanchokuWS
         public static string ManualUrl => "https://github.com/oktopus1959/KanchokuWS/blob/main/MANUAL.md#top";
         public static string FaqUrl => "https://github.com/oktopus1959/KanchokuWS/blob/main/FAQ.md#faq-home";
         public static string FaqBasicUrl => "https://github.com/oktopus1959/KanchokuWS/blob/main/FAQ/FAQ-基本.md#faq-home";
+        public static string FaqKeyAssignUrl => "https://github.com/oktopus1959/KanchokuWS/blob/main/FAQ/FAQ-キーアサイン.md#faq-home";
         public static string KeyboardUrl => "https://github.com/oktopus1959/KanchokuWS/blob/main/KEYBOARD.md#top";
 
         //-------------------------------------------------------------------------------------
