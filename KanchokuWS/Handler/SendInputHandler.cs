@@ -41,17 +41,6 @@ namespace KanchokuWS.Handler
         {
         }
 
-        /// <summary>
-        /// 機能キー名の別名定義
-        /// </summary>
-        private Dictionary<string, string> functionalKeyAliases = new Dictionary<string, string>();
-
-        public void AddFunctionalKeyAlias(string alias, string name)
-        {
-            logger.Info(() => $"CALLED: alias={alias}, keyname={name}");
-            functionalKeyAliases._safeAdd(alias, name);
-        }
-
         // cf. http://pgcenter.web.fc2.com/contents/csharp_sendinput.html
         // cf. https://www.pinvoke.net/default.aspx/user32.sendinput
 
@@ -551,173 +540,89 @@ namespace KanchokuWS.Handler
             sendInput(info);
         }
 
-        private int sendFuncKeyInputs(string str, int pos, int strLen)
+        /// <summary>
+        /// 機能キーの送出
+        /// </summary>
+        /// <param name="funcInfo"></param>
+        /// <returns>機能キー記述子の末尾位置</returns>
+        private int sendFuncKeyInputs(FunctionalKeyInfo funcInfo)
         {
-            logger.DebugH(() => $"CALLED: str={str}, pos={pos}, strLen={strLen}");
+            logger.Info(() => $"CALLED: funcInfo={funcInfo}");
 
-            bool bLCtrl = false;
-            bool bRCtrl = false;
-            bool bLShift = false;
-            bool bRShift = false;
-            bool bLAlt = false;
-            bool bRAlt = false;
-            bool bRight = false;
-            bool bRepeatCnt = false;
-            int repeatCount = 0;
-            var sb = new StringBuilder();
-            while (pos < strLen) {
-                var ch = str[pos];
-                if (ch == '}') break;
-                if (bRepeatCnt) {
-                    if (ch >= '0' && ch <= '9') {
-                        repeatCount = repeatCount * 10 + (ch - '0');
-                    }
-                } else {
-                    if (ch == '<') {
-                        bRight = false;
-                    } else if (ch == '>') {
-                        bRight = true;
-                    } else if (ch == '^') {
-                        // Ctrl
-                        if (bRight) {
-                            bRCtrl = true;
-                        } else {
-                            bLCtrl = true;
-                        }
-                        bRight = false;
-                    } else if (ch == '+') {
-                        // Shift
-                        if (bRight) {
-                            bRShift = true;
-                        } else {
-                            bLShift = true;
-                        }
-                        bRight = false;
-                    } else if (ch == '!') {
-                        // Alt
-                        if (bRight) {
-                            bRAlt = true;
-                        } else {
-                            bLAlt = true;
-                        }
-                        bRight = false;
-                    } else if (ch == ' ' || ch == ',' || ch == ':') {
-                        bRepeatCnt = true;
-                    } else {
-                        sb.Append(ch);
-                    }
-                }
-                ++pos;
-            }
+            string name = funcInfo.Name;
+            uint vkey = funcInfo.VKey;
+            int endPos = funcInfo.NextPos - 1;
+            if (name._isEmpty() || vkey == 0) return endPos;
+
+            int repeatCount = funcInfo.RepeatCount;
             if (repeatCount == 0) repeatCount = 1;
+            bool bRight = funcInfo.IsRight;
+            bool bCtrl = funcInfo.Modifier == FunctionalKeyInfo.Ctrl;
+            bool bShift = funcInfo.Modifier == FunctionalKeyInfo.Shift;
+            bool bAlt = funcInfo.Modifier == FunctionalKeyInfo.Alt;
 
             var info = new InputInfo(repeatCount + 5);
             INPUT[] inputs = info.Inputs;
             int idx = info.Index;
 
-            if (sb.Length > 0) {
-                string name = sb.ToString();
-                name = functionalKeyAliases._safeGet(name, name);
-                logger.Info(() => $"alias={sb}, key={name}");
-                uint vkey = DecoderKeyVsVKey.GetFuncVkeyByName(name);
-                //logger.DebugH(() => $"vkey={vkey:x} by FuncKey");
-                if (vkey == 0) vkey = AlphabetVKeys.GetAlphabetVkeyByName(name);
-                //logger.DebugH(() => $"vkey={vkey:x} by Alphabet");
-                if (vkey > 0) {
-                    if (bLCtrl) {
-                        // 左Ctrl下げ
-                        setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-                    }
-                    if (bRCtrl) {
-                        // 右Ctrl下げ
-                        setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-                    }
-                    if (bLShift) {
-                        // 左Shift下げ
-                        setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-                    }
-                    if (bRShift) {
-                        // 右Shift下げ
-                        setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-                    }
-                    if (bLAlt) {
-                        // 左Alt下げ
-                        setLeftAltInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-                    }
-                    if (bRAlt) {
-                        // 右Alt下げ
-                        setRightAltInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
-                    }
-                    // キー送出
-                    for (int i = 0; i < repeatCount; ++i) {
-                        idx = setVkeyInputs((ushort)vkey, inputs, idx);
-                    }
-                    if (bLAlt) {
-                        // 左Alt戻し
-                        setLeftAltInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-                    }
-                    if (bRAlt) {
-                        // 右Alt戻し
-                        setRightAltInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-                    }
-                    if (bLShift) {
-                        // 左Shift戻し
-                        setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-                    }
-                    if (bRShift) {
-                        // 右Shift戻し
-                        setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-                    }
-                    if (bLCtrl) {
-                        // 左Ctrl戻し
-                        setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-                    }
-                    if (bRCtrl) {
-                        // 右Ctrl戻し
-                        setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
-                    }
-                }
+            if (bCtrl && !bRight) {
+                // 左Ctrl下げ
+                setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
             }
+            if (bCtrl && bRight) {
+                // 右Ctrl下げ
+                setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            }
+            if (bShift && !bRight) {
+                // 左Shift下げ
+                setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            }
+            if (bShift && bRight) {
+                // 右Shift下げ
+                setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            }
+            if (bAlt && !bRight) {
+                // 左Alt下げ
+                setLeftAltInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            }
+            if (bAlt && bRight) {
+                // 右Alt下げ
+                setRightAltInput(ref inputs[idx++], KEYEVENTF_KEYDOWN);
+            }
+            // キー送出
+            for (int i = 0; i < repeatCount; ++i) {
+                idx = setVkeyInputs((ushort)vkey, inputs, idx);
+            }
+            if (bAlt && !bRight) {
+                // 左Alt戻し
+                setLeftAltInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            }
+            if (bAlt && bRight) {
+                // 右Alt戻し
+                setRightAltInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            }
+            if (bShift && !bRight) {
+                // 左Shift戻し
+                setLeftShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            }
+            if (bShift && bRight) {
+                // 右Shift戻し
+                setRightShiftInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            }
+            if (bCtrl && !bRight) {
+                // 左Ctrl戻し
+                setLeftCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            }
+            if (bCtrl && bRight) {
+                // 右Ctrl戻し
+                setRightCtrlInput(ref inputs[idx++], KEYEVENTF_KEYUP);
+            }
+
             //logger.DebugH(() => $"LEAVE: idx={idx}");
             info.Index = idx;
             sendInput(info);
 
-            return pos;
-        }
-
-        private static System.Text.RegularExpressions.Regex reThreeTerms = new System.Text.RegularExpressions.Regex(@"\(([^)]+)\)\?\(([^)]+)\):\(([^)]+)\)");
-
-        /// <summary>(Q)?(A):(B) 形式だったら、Q に該当するウィンドウクラスか否かを判定し、当ならAを、否ならBを返す</summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        private string extractSubString(string str)
-        {
-            //logger.DebugH(() => $"CALLED: str={str}, actWinName={ActiveWinClassName._toLower()}");
-            var resultStr = str;
-            if (str._getFirst() == '(' && str.Last() == ')') {
-                var items = str._reScan(reThreeTerms);
-                //logger.DebugH(() => $"items={items._join(" | ")}, actWinName={ActiveWinClassName._toLower()}");
-                if (items._safeCount() == 4) {
-                    string activeWinClassName = ActiveWindowHandler.Singleton?.ActiveWinClassName._toLower();
-                    var names = items[1]._toLower()._split('|');
-                    bool checkFunc()
-                    {
-                        if (activeWinClassName._notEmpty() && names._notEmpty()) {
-                            foreach (var name in names) {
-                                if (name._notEmpty()) {
-                                    //logger.DebugH(() => $"name={name}");
-                                    if (activeWinClassName.StartsWith(name)) return true;
-                                    if (name.Last() == '$' && name.Length == activeWinClassName.Length + 1 && name.StartsWith(activeWinClassName)) return true;
-                                }
-                            }
-                        }
-                        return false;
-                    }
-                    resultStr = checkFunc() ? items[2] : items[3];
-                }
-            }
-            //logger.DebugH(() => $"RESULT: {resultStr}");
-            return resultStr;
+            return endPos;
         }
 
         private void sendInputsVkey(uint vkey, int num, bool bMoveVkbAtOnce = false)
@@ -896,9 +801,9 @@ namespace KanchokuWS.Handler
             int strLen = str._safeCount();
             char prevUniChar = '\0';
             for (int i = 0; i < strLen; ++i) {
-                if (str[i] == '!' && (i + 1) < strLen && str[i + 1] == '{') {     // "!{"
-                    i += 2;
-                    i = sendFuncKeyInputs(str, i, strLen);
+                var funcInfo = FunctionalDescParser.Parse(str, i);
+                if (funcInfo != null) {
+                    i = sendFuncKeyInputs(funcInfo);
                 } else {
                     string faceStr = null;
                     logger.DebugH(() => $"ImeEnabled={IMEHandler.ImeEnabled}, ImeSendInputInRoman={Settings.ImeSendInputInRoman}, ImeSendInputInKana={Settings.ImeSendInputInKana}");
@@ -969,7 +874,9 @@ namespace KanchokuWS.Handler
             // 文字列
             if (strLen > 0) {
                 if (numBS > 0) waitAfterBS();
-                sendStringInputs(extractSubString(str._toString()));
+                var s = str._toString();
+                var v = TernaryOperatorParser.Parse(s);
+                sendStringInputs(v._notEmpty() ? v : s);
             }
 
             // Ctrl戻し

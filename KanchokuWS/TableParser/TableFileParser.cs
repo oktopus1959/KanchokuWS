@@ -7,6 +7,7 @@ using Utils;
 using KanchokuWS.Domain;
 using KanchokuWS.CombinationKeyStroke;
 using KanchokuWS.CombinationKeyStroke.DeterminerLib;
+using KanchokuWS.Handler;
 
 namespace KanchokuWS.TableParser
 {
@@ -510,7 +511,7 @@ namespace KanchokuWS.TableParser
                 // 初めての文字ならストロークパスを登録
                 StrokePathDict[str] = StrokeList.WithLastStrokeAdded(idx);
             }
-            if (HasRootTable && CurrentStr._startsWith("!{")) {
+            if (HasRootTable && FunctionalDescParser.IsFunctionalDescStart(CurrentStr, 0)) {    // "!{"
                 // Repeatable Key
                 if (Settings.LoggingTableFileInfo) logger.Info(() => $"REPEATABLE");
                 keyComboPool?.AddRepeatableKey(idx);
@@ -1383,7 +1384,7 @@ namespace KanchokuWS.TableParser
                         RootTableNode.GetNthSubNode(dk + comboDeckeyStart) != null) {
                         // 単打設定が存在せず、同時打鍵の先頭キーになっている場合は、単打設定を追加する
                         AddCombinationKeyCombo(Helper.MakeList(dk), 0, true, false, false);  // 出力文字列を持つ単打指定
-                        OutputLines.Add($"-{dk}>\"!{{{keyName}}}\"");
+                        OutputLines.Add($"-{dk}>\"{FunctionalDescParser.MakeFunctionalDesc(keyName)}\"");   // -dk>!{keyName} 形式で出力
                     }
                 }
             }

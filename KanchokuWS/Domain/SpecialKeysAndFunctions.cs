@@ -73,6 +73,12 @@ namespace KanchokuWS
             string key = name._toLower();
             return key == otherName0 || key == otherName1 || key == otherName2;
         }
+
+        public override string ToString()
+        {
+            return $"KeyOrFunction: Name={Name}, DecKey={DecKey}, ModName={ModName}, AttrFlag={AttrFlag:x}H";
+        }
+
     }
 
     public static class SpecialKeysAndFunctions

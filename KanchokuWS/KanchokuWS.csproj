@@ -205,6 +205,7 @@
     <Compile Include="Domain\SpecialKeysAndFunctions.cs" />
     <Compile Include="TableParser\ContextAccessor.cs" />
     <Compile Include="TableParser\TableParserTokenizer.cs" />
+    <Compile Include="Handler\FunctionalDescParser.cs" />
     <Compile Include="TableParser\TOKEN.cs" />
     <EmbeddedResource Include="Gui\BackColorComboBox.resx">
       <DependentUpon>BackColorComboBox.cs</DependentUpon>

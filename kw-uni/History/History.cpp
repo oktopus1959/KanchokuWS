@@ -1492,6 +1492,7 @@ HistoryNode::HistoryNode() {
 
 // デストラクタ
 HistoryNode::~HistoryNode() {
+    LOG_DEBUGH(_T("CALLED: destructor"));
 }
 
 // 当ノードを処理する State インスタンスを作成する

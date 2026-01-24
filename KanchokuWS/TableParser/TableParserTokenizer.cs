@@ -169,7 +169,7 @@ namespace KanchokuWS.TableParser
                         ReadWord();
                         var keyname = CurrentStr;
                         if (alias._notEmpty() && keyname._notEmpty()) {
-                            SendInputHandler.Singleton?.AddFunctionalKeyAlias(alias, keyname);
+                            FunctionalDescParser.AddFunctionalKeyAlias(alias, keyname);
                         }
                     } else if (lcStr._startsWith("if")) {
                         RewriteIfdefBlock(definedNames);
