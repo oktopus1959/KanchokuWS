@@ -74,7 +74,7 @@ namespace KanchokuWS.Handler
         /// <returns></returns>
         public static bool IsFunctionalDescStart(string str, int pos)
         {
-            return (str[pos] == '!' && (pos + 1) < str.Length && str[pos + 1] == '{');    // "!{"
+            return (str != null && (pos + 1) < str.Length && str[pos] == '!' && str[pos + 1] == '{');    // "!{"
         }
 
         public static string MakeFunctionalDesc(string name, bool right = false, int mod = 0, int repeatCount = 1)

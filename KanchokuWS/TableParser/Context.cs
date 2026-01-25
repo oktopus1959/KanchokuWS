@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using KanchokuWS.Domain;
 using KanchokuWS.CombinationKeyStroke.DeterminerLib;
 using Utils;
+using System.Net.NetworkInformation;
 
 namespace KanchokuWS.TableParser
 {
@@ -287,6 +288,7 @@ namespace KanchokuWS.TableParser
                         ++nextLineNum;
                     }
                     blockInfoStack.Push(includeFilePath._getDirPath(), filename, nextLineNum);
+                    rewriteDvorakJStyleLine(lines);
                 }
             }
             if (Settings.LoggingTableFileInfo) logger.Info(() => $"LEAVE: num of lines={lines.Count}");
@@ -342,6 +344,143 @@ namespace KanchokuWS.TableParser
                     }
                 }
             }
+        }
+
+        private static System.Text.RegularExpressions.Regex skipLine = new System.Text.RegularExpressions.Regex(@"^\s*;");
+        private static System.Text.RegularExpressions.Regex dvorakjStyle0 = new System.Text.RegularExpressions.Regex(@"(^|[^!])\{[0-9A-Za-z_\u1000-\uFFFF ]+\}|(^|[\s\|>])\^[A-Za-z]([\s;\|]|$)");
+        //private static System.Text.RegularExpressions.Regex dvorakjStyle1 = new System.Text.RegularExpressions.Regex(@"^\s*([^\|]+)\s*\|");
+        //private static System.Text.RegularExpressions.Regex dvorakjStyle2 = new System.Text.RegularExpressions.Regex(@"^\s*([^\|]+)\s*(\||$)");
+
+        private void rewriteDvorakJStyleLine(List<string> lines)
+        {
+            for (int i = 0; i < lines.Count; ++i) {
+                var line = lines[i];
+                if (skipLine.IsMatch(line) || !dvorakjStyle0.IsMatch(line)) continue;
+
+                if (Settings.LoggingTableFileInfo) logger.Info(() => $"orig line: '{line}'");
+
+                int pos = 0;
+                StringBuilder sbLine = new StringBuilder();
+                bool bFirstChar = true;
+                while (pos < line.Length) {
+                    char ch = line[pos];
+                    if (ch == ';') {
+                       // コメント開始
+                        sbLine.Append(line._safeSubstring(pos));
+                        break;
+                    }
+                    if (ch == ' ' || ch == '\t') {
+                        // 縦棒または空白文字はそのまま
+                        sbLine.Append(ch);
+                        pos++;
+                    } else if (ch == '|') {
+                        sbLine.Append(ch);
+                        bFirstChar = false;
+                        pos++;
+                    } else if (ch == '"') {
+                        // 引用符内はスキップ
+                        sbLine.Append(ch);
+                        bFirstChar = false;
+                        pos++;
+                        while (pos < line.Length) {
+                            ch = line[pos++];
+                            sbLine.Append(ch);
+                            if (ch == '\\') {                                     // エスケープ文字
+                                if (pos < line.Length) {
+                                    sbLine.Append(line[pos++]);
+                                }
+                            } else if (ch == '"') {
+                                break;
+                            }
+                        }
+                    } else if (ch == '-' && bFirstChar) {
+                        // 矢印記法はスキップ
+                        sbLine.Append(ch);
+                        pos++;
+                        while (pos < line.Length) {
+                            ch = line[pos++];
+                            sbLine.Append(ch);
+                            if (ch == '>') break;
+                        }
+                    } else {
+                        bool lbraceFond = false;
+                        bool rbraceFound = false;
+                        bool hatFound = false;
+                        int startPos = pos;
+                        int nonSpacePos = startPos;
+                        while (pos < line.Length) {
+                            ch = line[pos];
+                            if (ch == '|' || ch == ';') break;
+                            if (ch != ' ' && ch != '\t') {
+                                nonSpacePos = pos;
+                                if (ch == '{') {
+                                    lbraceFond = true;
+                                } else if (ch == '}') {
+                                    rbraceFound = true;
+                                } else if (ch == '^') {
+                                    hatFound = true;
+                                }
+                            }
+                            pos++;
+                        }
+                        if (lbraceFond && rbraceFound || hatFound) {
+                            int spacePos = nonSpacePos + 1;
+                            sbLine.Append(rewriteDvorakJStyleChunk(line._safeSubstring(startPos, spacePos - startPos)));
+                            sbLine.Append(line._safeSubstring(spacePos, pos - (spacePos)));
+                        } else {
+                            sbLine.Append(line._safeSubstring(startPos, pos - startPos));
+                        }
+                    }
+                }
+                string newLine = sbLine.ToString();
+                if (Settings.LoggingTableFileInfo) logger.Info(() => $"new line: '{newLine}'");
+                lines[i] = newLine;
+            }
+        }
+
+        private string rewriteDvorakJStyleChunk(string chunk)
+        {
+            if (chunk._isEmpty() || chunk[0] == '"') return chunk;
+
+            // 先頭が引用符でなく、かつ '{' を含む場合、'{...}' 部分を '!{...}' に書き換える
+            StringBuilder sb = new StringBuilder();
+            sb.Append('"');
+            int prevPos = 0;
+            while (prevPos < chunk.Length) {
+                int lbracePos = chunk._safeIndexOf('{', prevPos);
+                if (lbracePos == prevPos) {
+                    sb.Append("!{");
+                } else if (lbracePos > prevPos) {
+                    char prefix = chunk[lbracePos - 1];
+                    if (prefix == '^' || prefix == '+' || prefix == '!') {
+                        sb.Append(chunk._safeSubstring(prevPos, lbracePos - 1 - prevPos)).Append("!{").Append(prefix);
+                    } else {
+                        sb.Append(chunk._safeSubstring(prevPos, lbracePos - prevPos)).Append("!{");
+                    }
+                } else {
+                    int hatPos = chunk._safeIndexOf('^', prevPos);
+                    while (hatPos >= 0 && hatPos < chunk.Length - 1) {
+                        int charPos = hatPos + 1;
+                        char ch = chunk[charPos];
+                        if (ch._isAlphabet()) {
+                            int nextCharPos = charPos + 1;
+                            if (nextCharPos >= chunk.Length || !chunk[nextCharPos]._isAlphabet()) {
+                                // Ctrl+<char> 形式
+                                sb.Append(chunk._safeSubstring(prevPos, hatPos - prevPos)).Append("!{^").Append(ch).Append('}');
+                                prevPos = nextCharPos;
+                                hatPos = chunk._safeIndexOf('^', prevPos);
+                                continue;
+                            }
+                        }
+                        break;
+                    }
+                    sb.Append(chunk._safeSubstring(prevPos));
+                    break;
+                }
+                prevPos = lbracePos + 1;
+            }
+            sb.Append('"');
+            return sb.ToString();
         }
 
         /// <summary>

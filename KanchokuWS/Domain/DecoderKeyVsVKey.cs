@@ -262,7 +262,7 @@ namespace KanchokuWS.Domain
             }
             if (name._toLower().StartsWith("vk")) {
                 // "VKxx" のケース
-                int vk = name._safeSubstring(2)._parseHex();
+                int vk = name._safeSubstring(2, 2)._parseHex();
                 if (vk > 0 && vk < 0xff) return (uint)vk;
             }
             return GetFuncVKeyByIndex(GetFuncKeyIndexByName(name));
