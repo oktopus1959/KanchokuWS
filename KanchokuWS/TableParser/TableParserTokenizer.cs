@@ -628,46 +628,47 @@ namespace KanchokuWS.TableParser
             } else {
                 ArrowIndex = s._parseInt(-1);
                 if (ArrowIndex < 0) {
-                    ArrowIndex = s._safeSubstring(1)._parseInt(-1);
+                    if (s.Length == 1) {
+                        // 1文字の場合は、プレースホルダを優先
+                        ArrowIndex = placeHolders.Get(s);
+                    }
                     if (ArrowIndex < 0) {
-                        if (s.Length == 1) {
-                            // 1文字の場合は、プレースホルダを優先
+                        if (bRewritePre) {
+                            // 前置書き換え対象文字列
+                            RewritePreTargetStr = s;
+                            return true;
+                        } else if (bRewritePost) {
+                            // 後置書き換え文字
+                            RewritePostChar = s;
+                            return true;
+                        } else {
+                            // プレースホルダ (プレーンFの Fxx よりファンクションキーの Fxx が優先される)
                             ArrowIndex = placeHolders.Get(s);
                         }
                         if (ArrowIndex < 0) {
-                            if (bRewritePre) {
-                                // 前置書き換え対象文字列
-                                RewritePreTargetStr = s;
-                                return true;
-                            } else if (bRewritePost) {
-                                // 後置書き換え文字
-                                RewritePostChar = s;
-                                return true;
+                            ArrowIndex = s._safeSubstring(1)._parseInt(-1);
+                            if (ArrowIndex >= 0) {
+                                // 「文字 + 数字列」のパターン
+                                if (c == 'N' || c == 'n') {
+                                    shiftOffset = 0;
+                                } else if (c == 'S' || c == 's' || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')) {
+                                    shiftOffset = ExtraModifiers.CalcShiftOffset(c);
+                                } else if (c == 'X' || c == 'x') {
+                                    shiftOffset = 0;
+                                    funckeyOffset = DecoderKeys.FUNC_DECKEY_START;
+                                } else if (c == 'P' || c == 'P') {
+                                    bShiftPlane = true;
+                                } else {
+                                    ParseError($"parseArrow: 不正なプレーン指定: {s}");
+                                    return false;
+                                }
                             } else {
-                                ArrowIndex = placeHolders.Get(s);
+                                ArrowIndex = getTableIndexRecursive(s);  // 単打文字
                                 if (ArrowIndex < 0) {
-                                    ArrowIndex = getTableIndexRecursive(s);  // 単打文字
-                                    if (ArrowIndex < 0) {
-                                        ParseError($"parseArrow: 定義されていないプレースホルダー: {s}");
-                                        return false;
-                                    }
+                                    ParseError($"parseArrow: 定義されていないプレースホルダー: {s}");
+                                    return false;
                                 }
                             }
-                        }
-                    } else {
-                        // 「文字 + 数字列」のパターン
-                        if (c == 'N' || c == 'n') {
-                            shiftOffset = 0;
-                        } else if (c == 'S' || c == 's' || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f')) {
-                            shiftOffset = ExtraModifiers.CalcShiftOffset(c);
-                        } else if (c == 'X' || c == 'x') {
-                            shiftOffset = 0;
-                            funckeyOffset = DecoderKeys.FUNC_DECKEY_START;
-                        } else if (c == 'P' || c == 'P') {
-                            bShiftPlane = true;
-                        } else {
-                            ParseError($"parseArrow: 不正なプレーン指定: {s}");
-                            return false;
                         }
                     }
                 }
