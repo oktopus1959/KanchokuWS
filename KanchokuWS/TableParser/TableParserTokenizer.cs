@@ -162,7 +162,7 @@ namespace KanchokuWS.TableParser
                                 definedNames[defKey] = CurrentStr;
                             }
                         }
-                    } else if (lcStr == "definekey") {
+                    } else if (lcStr == "definekey" || lcStr == "alias") {
                         // 機能キーの別名定義
                         ReadWord();
                         var alias = CurrentStr;

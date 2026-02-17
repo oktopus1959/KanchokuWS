@@ -393,13 +393,15 @@ namespace KanchokuWS.TableParser
             }
         }
 
-        private static System.Text.RegularExpressions.Regex skipLine = new System.Text.RegularExpressions.Regex(@"^\s*;");
-        private static System.Text.RegularExpressions.Regex dvorakjStyle0 = new System.Text.RegularExpressions.Regex(@"(^|[^!])\{[0-9A-Za-z_\u1000-\uFFFF ]+\}|(^|[\s\|>])\^[A-Za-z]([\s;\|]|$)");
+        private static System.Text.RegularExpressions.Regex skipLine = new System.Text.RegularExpressions.Regex(@"^\s*[;#]");
+        private static System.Text.RegularExpressions.Regex dvorakjStyle0 =
+            new System.Text.RegularExpressions.Regex(@"(^|[\|>])([^\|!""]*\{[0-9A-Za-z_\^\u1000-\uFFFF ]+\}|\s*\^[A-Za-z]\s*([;\|]|$))");
         //private static System.Text.RegularExpressions.Regex dvorakjStyle1 = new System.Text.RegularExpressions.Regex(@"^\s*([^\|]+)\s*\|");
         //private static System.Text.RegularExpressions.Regex dvorakjStyle2 = new System.Text.RegularExpressions.Regex(@"^\s*([^\|]+)\s*(\||$)");
 
         private void rewriteDvorakJStyleLine(List<string> lines)
         {
+            if (Settings.LoggingTableFileInfo) logger.Info("ENTER");
             for (int i = 0; i < lines.Count; ++i) {
                 var line = lines[i];
                 if (skipLine.IsMatch(line) || !dvorakjStyle0.IsMatch(line)) continue;
@@ -483,6 +485,7 @@ namespace KanchokuWS.TableParser
                 if (Settings.LoggingTableFileInfo) logger.Info(() => $"new line: '{newLine}'");
                 lines[i] = newLine;
             }
+            if (Settings.LoggingTableFileInfo) logger.Info("LEAVE");
         }
 
         private string rewriteDvorakJStyleChunk(string chunk)

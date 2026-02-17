@@ -547,19 +547,23 @@ namespace KanchokuWS.Handler
         /// <returns>機能キー記述子の末尾位置</returns>
         private int sendFuncKeyInputs(FunctionalKeyInfo funcInfo)
         {
-            logger.Info(() => $"CALLED: funcInfo={funcInfo}");
-
             string name = funcInfo.Name;
             uint vkey = funcInfo.VKey;
             int endPos = funcInfo.NextPos - 1;
-            if (name._isEmpty() || vkey == 0) return endPos;
+
+            logger.Info(() => $"CALLED: vkey={vkey:x}({vkey}), funcInfo={funcInfo}");
+
+            if (name._isEmpty() || vkey == 0) {
+                logger.Info(() => $"SEND Nothing");
+                return endPos;
+            }
 
             int repeatCount = funcInfo.RepeatCount;
             if (repeatCount == 0) repeatCount = 1;
             bool bRight = funcInfo.IsRight;
-            bool bCtrl = funcInfo.Modifier == FunctionalKeyInfo.Ctrl;
-            bool bShift = funcInfo.Modifier == FunctionalKeyInfo.Shift;
-            bool bAlt = funcInfo.Modifier == FunctionalKeyInfo.Alt;
+            bool bCtrl = funcInfo.IsCtrl();
+            bool bShift = funcInfo.IsShift();
+            bool bAlt = funcInfo.IsAlt();
 
             var info = new InputInfo(repeatCount + 5);
             INPUT[] inputs = info.Inputs;

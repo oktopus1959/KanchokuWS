@@ -1756,6 +1756,19 @@ namespace KanchokuWS
                 $"numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, output={decoderOutput.outString._toString()}, topString={decoderOutput.topString._toString()}, " +
                 $"IsDeckeyToVkey={decoderOutput.IsDeckeyToVkey()}, nextStrokeDeckey={decoderOutput.nextStrokeDeckey}");
 
+            var funcInfo = FunctionalDescParser.Parse(decoderOutput.outString._toString(), 0);
+            if (funcInfo != null && funcInfo.KeyOrFunc != null && funcInfo.KeyOrFunc.IsFunction) {
+                // "!{DECKEY_NAME}" の形式で、特殊機能キー(TOGGLE_DECKEYなど)の場合
+                deckey = funcInfo.KeyOrFunc.DecKey;
+                logger.InfoH($"RE-CALL: HandleDeckeyDecoder({deckey}:{funcInfo.Alias})");
+                // デコーダの再呼び出し
+                HandleDeckeyDecoder(decoderPtr, deckey, targetChar, makeInputFlags(bRomanStrokeGuideMode, bUpperRomanStrokeGuideMode), ref decoderOutput);
+                logger.InfoH(() =>
+                    $"HandleDeckeyDecoder: RESULT: table#={decoderOutput.strokeTableNum}, strokeDepth={decoderOutput.GetStrokeCount()}, layout={decoderOutput.layout}, " +
+                    $"numBS={decoderOutput.numBackSpaces}, resultFlags={decoderOutput.resultFlags:x}H, output={decoderOutput.outString._toString()}, topString={decoderOutput.topString._toString()}, " +
+                    $"IsDeckeyToVkey={decoderOutput.IsDeckeyToVkey()}, nextStrokeDeckey={decoderOutput.nextStrokeDeckey}");
+            }
+
             // 第1打鍵待ち状態になったら、一時的な仮想鍵盤表示カウントをリセットする
             //if (decoderOutput.GetStrokeCount() < 1) Settings.VirtualKeyboardShowStrokeCountTemp = 0;
 

@@ -12,34 +12,92 @@ namespace KanchokuWS.Handler
 
     public class FunctionalKeyInfo
     {
-        public static int Ctrl = 1;
-        public static int Shift = 2;
-        public static int Alt = 3;
+        private static int Ctrl = 1;
+        private static int Shift = 2;
+        private static int Alt = 4;
 
         public bool IsRight { get; }
         public int Modifier { get; }
         public string Name { get; }
         public string Alias { get; }
         public uint VKey { get; }
+        public KeyOrFunction KeyOrFunc { get; }
         public int RepeatCount { get; } = 1;
         public int StartPos { get; } = 0;
         public int NextPos { get; } = 0;
 
-        public FunctionalKeyInfo(bool right, int mod, string name, string alis, uint vkey, int count, int start, int next)
+        public FunctionalKeyInfo(bool right, int mod, string name, string alis, uint vkey, KeyOrFunction keyOrFunc, int count, int start, int next)
         {
             IsRight = right;
             Modifier = mod;
             Name = name;
             Alias = alis;
             VKey = vkey;
+            KeyOrFunc = keyOrFunc;
             RepeatCount = count;
             StartPos = start;
             NextPos = next;
         }
 
+        public static bool IsCtrl(int mod)
+        {
+            return (mod & Ctrl) != 0;
+        }
+
+        public static int SetCtrl(int mod)
+        {
+            return mod | Ctrl;
+        }
+
+        public bool IsCtrl()
+        {
+            return IsCtrl(Modifier);
+        }
+
+        public static bool IsShift(int mod)
+        {
+            return (mod & Shift) != 0;
+        }
+
+        public static int SetShift(int mod)
+        {
+            return mod | Shift;
+        }
+
+        public bool IsShift()
+        {
+            return IsShift(Modifier);
+        }
+
+        public static bool IsAlt(int mod)
+        {
+            return (mod & Alt) != 0;
+        }
+
+        public static int SetAlt(int mod)
+        {
+            return mod | Alt;
+        }
+
+        public bool IsAlt()
+        {
+            return IsAlt(Modifier);
+        }
+
         public override string ToString()
         {
-            return $"FunctionalKeyInfo(Right={IsRight}, Modifier={Modifier}, Name={Name}, Alias={Alias}, VKey={VKey:x}, RepeatCount={RepeatCount}, StartPos={StartPos}, NextPos={NextPos})";
+            string modifierStr = "";
+            if (IsCtrl()) modifierStr += "Ctrl";
+            if (IsShift()) {
+                if (modifierStr.Length > 0) modifierStr += "|";
+                modifierStr += "Shift";
+            }
+            if (IsAlt()) {
+                if (modifierStr.Length > 0) modifierStr += "|";
+                modifierStr += "Alt";
+            }
+            if (modifierStr.Length == 0) modifierStr = "None";
+            return $"FunctionalKeyInfo(Right={IsRight}, Modifier={modifierStr}, Name={Name}, Alias={Alias}, VKey={VKey:x}, KeyOfFunc={(KeyOrFunc != null ? KeyOrFunc.ToString() : "null")}, RepeatCount={RepeatCount}, StartPos={StartPos}, NextPos={NextPos})";
         }
     }
 
@@ -77,14 +135,22 @@ namespace KanchokuWS.Handler
             return (str != null && (pos + 1) < str.Length && str[pos] == '!' && str[pos + 1] == '{');    // "!{"
         }
 
+        /// <summary>
+        /// 機能記述子の作成
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="right"></param>
+        /// <param name="mod"></param>
+        /// <param name="repeatCount"></param>
+        /// <returns></returns>
         public static string MakeFunctionalDesc(string name, bool right = false, int mod = 0, int repeatCount = 1)
         {
             var sb = new StringBuilder();
             sb.Append("!{");
             if (right) sb.Append('>');
-            if (mod == FunctionalKeyInfo.Ctrl) sb.Append('^');
-            if (mod == FunctionalKeyInfo.Shift) sb.Append('+');
-            if (mod == FunctionalKeyInfo.Alt) sb.Append('!');
+            if (FunctionalKeyInfo.IsCtrl(mod)) sb.Append('^');
+            if (FunctionalKeyInfo.IsShift(mod)) sb.Append('+');
+            if (FunctionalKeyInfo.IsAlt(mod)) sb.Append('!');
             sb.Append(name);
             if (repeatCount > 1) {
                 sb.Append(' ');
@@ -94,19 +160,45 @@ namespace KanchokuWS.Handler
             return sb.ToString();
         }
 
+        /// <summary>
+        /// 機能記述子のパース
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="pos"></param>
+        /// <returns></returns>
         public static FunctionalKeyInfo Parse(string str, int pos)
         {
-            logger.DebugH(() => $"CALLED: str={str}, pos={pos}");
-
             if (!IsFunctionalDescStart(str, pos)) {
                 return null;
             }
+
+            logger.Info(() => $"ENTER: str={str}, pos={pos}");
 
             int startPos = pos;
             pos += 2;   // skip "!{"
 
             bool right = false;
             int mod = 0;
+
+            bool checkModifier(char ch)
+            {
+                bool isModifier = true;
+                if (ch == '<') {
+                    right = false;
+                } else if (ch == '>') {
+                    right = true;
+                } else if (ch == '^') {
+                    mod = FunctionalKeyInfo.SetCtrl(mod);
+                } else if (ch == '+') {
+                    mod = FunctionalKeyInfo.SetShift(mod);
+                } else if (ch == '!') {
+                    mod = FunctionalKeyInfo.SetAlt(mod);
+                } else {
+                    isModifier = false;
+                }
+                return isModifier;
+            }
+
             bool bRepeatCnt = false;
             int repeatCount = 0;
             var sb = new StringBuilder();
@@ -118,16 +210,8 @@ namespace KanchokuWS.Handler
                         repeatCount = repeatCount * 10 + (ch - '0');
                     }
                 } else {
-                    if (ch == '<') {
-                        right = false;
-                    } else if (ch == '>') {
-                        right = true;
-                    } else if (ch == '^') {
-                        mod = FunctionalKeyInfo.Ctrl;
-                    } else if (ch == '+') {
-                        mod = FunctionalKeyInfo.Shift;
-                    } else if (ch == '!') {
-                        mod = FunctionalKeyInfo.Alt;
+                    if (checkModifier(ch)) {
+                        // modifier だったら何もしない
                     } else if (ch == ' ' || ch == ',' || ch == ':' || ch == '/') {
                         bRepeatCnt = true;
                     } else {
@@ -137,19 +221,28 @@ namespace KanchokuWS.Handler
             }
 
             if (sb.Length == 0) {
-                return new FunctionalKeyInfo(false, 0, null, null, 0, 0, startPos, pos);
+                return new FunctionalKeyInfo(false, 0, null, null, 0, null, 0, startPos, pos);
             }
 
             if (repeatCount == 0) repeatCount = 1;
 
             string alias = sb.ToString();
             string name = functionalKeyAliases._safeGet(alias, alias);
-            logger.Info(() => $"alias={alias}, key={name}");
+            logger.Info(() => $"PROGRESS: alias={alias}, name={name}");
+            while (name._notEmpty() && checkModifier(name[0])) {
+                // 正式名の先頭がモディファイア指定だったら、再度モディファイア指定をチェックする (ex: name="^M" → mod=Ctrl, name="M")
+                name = name.Substring(1);
+            }
             uint vkey = DecoderKeyVsVKey.GetFuncVkeyByName(name);
             //logger.DebugH(() => $"vkey={vkey:x} by FuncKey");
             if (vkey == 0) vkey = AlphabetVKeys.GetAlphabetVkeyByName(name);
+            var keyOrFunc = SpecialKeysAndFunctions.GetKeyOrFuncByName(name);
 
-            return new FunctionalKeyInfo(right, mod, name, alias, vkey, repeatCount, startPos, pos);
+            var resultInfo = new FunctionalKeyInfo(right, mod, name, alias, vkey, keyOrFunc, repeatCount, startPos, pos);
+
+            logger.Info(() => $"LEAVE: {resultInfo}");
+
+            return resultInfo;
         }
     }
 
@@ -159,7 +252,7 @@ namespace KanchokuWS.Handler
     public static class TernaryOperatorParser
     {
         //private static Logger logger = Logger.GetLogger();
-
+        
         private static System.Text.RegularExpressions.Regex reTernaryOperator = new System.Text.RegularExpressions.Regex(@"\(([^)]+)\)\?\(([^)]+)\):\(([^)]+)\)");
 
         /// <summary>
