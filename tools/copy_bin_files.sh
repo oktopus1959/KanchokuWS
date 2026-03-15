@@ -4,4 +4,5 @@
 
 RUN_CMD -m "cd bin/Release"
 
+RUN_CMD -m "cp -p KanchokuWS.exe* kw-uni.dll Utils.dll ../../../bin/"
 RUN_CMD -m "cp -p KanchokuWS.exe* kw-uni.dll Utils.dll ../../../publish/bin/"
