@@ -86,6 +86,8 @@ namespace KanchokuWS.TableParser
             placeHolders["at"] = 44;
             placeHolders[":"] = 46;
             placeHolders["cl"] = 46;
+            placeHolders["self"] = DecoderKeys.SELF_DECKEY;
+            placeHolders["esc"] = DecoderKeys.ESC_DECKEY;
             placeHolders["ej"] = DecoderKeyVsVKey.GetFuncDecKeyByName("zenkaku");
             placeHolders["hz"] = DecoderKeyVsVKey.GetFuncDecKeyByName("zenkaku");
             placeHolders["tab"] = DecoderKeyVsVKey.GetFuncDecKeyByName("tab");
@@ -176,7 +178,6 @@ namespace KanchokuWS.TableParser
             placeHolders["fn19"] = DecoderKeyVsVKey.GetFuncDecKeyByName("f19");
             placeHolders["f20"] = DecoderKeyVsVKey.GetFuncDecKeyByName("f20");
             placeHolders["fn20"] = DecoderKeyVsVKey.GetFuncDecKeyByName("f20");
-            placeHolders["self"] = DecoderKeys.SELF_DECKEY;
         }
     }
 
