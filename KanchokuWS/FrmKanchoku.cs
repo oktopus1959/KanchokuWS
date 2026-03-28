@@ -367,6 +367,11 @@ namespace KanchokuWS
                 KanjiYomiTable.ReadKanjiYomiFile(Settings.KanjiYomiFile);
             }
 
+            // かなローマ字変換定義ファイルの読み込み
+            if (Settings.KanaRomanFile._notEmpty()) {
+                KanjiYomiTable.ReadKanaRomanFile(Settings.KanaRomanFile);
+            }
+
             // 初期化とテーブルファイルの読み込み、同時打鍵組合せ辞書の作成
             CombinationKeyStroke.Determiner.Singleton.Initialize(Settings.TableFile, Settings.TableFile2, Settings.TableFile3);
 

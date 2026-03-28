@@ -16,7 +16,9 @@ namespace KanchokuWS
 
         private static Dictionary<string, string> romanKanaTbl = new Dictionary<string, string>();
 
-        private static Dictionary<char, string> kanaRomanTbl = new Dictionary<char, string>() {
+        private static Dictionary<char, string> kanaRomanTbl = new Dictionary<char, string>();
+
+        private static Dictionary<char, string> defaultKanaRomanTbl = new Dictionary<char, string>() {
             { 'ぁ', "la" },
             { 'ぃ', "li" },
             { 'ぅ', "lu" },
@@ -476,6 +478,33 @@ namespace KanchokuWS
                 } catch (Exception e) {
                     logger.Error($"Cannot read file: {filePath}: {e.Message}");
                 }
+            }
+        }
+
+        /// <summary>かなローマ字変換定義ファイルの読み込み</summary>
+        public static void ReadKanaRomanFile(string filename)
+        {
+            var filePath = KanchokuIni.Singleton.KanchokuDir._joinPath(filename);
+            logger.DebugH(() => $"ENTER: filePath={filePath}");
+            if (Helper.FileExists(filePath)) {
+                try {
+                    var lines = System.IO.File.ReadAllLines(filePath);
+                    logger.DebugH($"All lines read");
+                    kanaRomanTbl.Clear();
+                    foreach (var line in lines) {
+                        var items = line.Trim()._reReplace(@"[ \t]+", " ")._split(' ');
+                        if (items._safeLength() >= 2 && items[0]._notEmpty() && !items[0].StartsWith("#") && items[1]._notEmpty()) {
+                            var kana = items[0][0];
+                            var roman = items[1];
+                            kanaRomanTbl.Add(kana, roman);
+                        }
+                    }
+                } catch (Exception e) {
+                    logger.Error($"Cannot read file: {filePath}: {e.Message}");
+                }
+            } else {
+                logger.Warn($"File not found: {filePath}, using default kana-roman table");
+                kanaRomanTbl = new Dictionary<char, string>(defaultKanaRomanTbl);
             }
         }
 

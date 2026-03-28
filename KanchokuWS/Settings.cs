@@ -16,7 +16,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.9.2";
+        public static string Version => "1.2.9.3";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
@@ -178,6 +178,8 @@ namespace KanchokuWS
         //public static string HistoryExcludeFile {get; private set; }
         //public static string HistoryNgramFile {get; private set; }
         public static string MazegakiFile { get; private set; }
+
+        public static string KanaRomanFile { get; private set; } = "kana-roman.def.txt";
 
         //-------------------------------------------------------------------------------------
         // 詳細設定
