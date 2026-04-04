@@ -284,6 +284,7 @@ namespace KanchokuWS.TableParser
                                 break;
                             case "shift":
                             case "sands":
+                            case "holds":
                                 shiftPlane = 0;
                                 break;
                             case "__inc":
@@ -302,6 +303,9 @@ namespace KanchokuWS.TableParser
                     } else if (lcStr == "sands") {
                         // #SandS: SandS の有効化、無効化、面の割り当て
                         handleSandSState();
+                    } else if (lcStr == "holdshift") {
+                        // #HoldShift: HoldShift キーの有効化、無効化、面の割り当て
+                        handleHoldShiftState();
                     } else if (lcStr == "assignplane") {
                         // #assignPlane: 拡張シフトキーに対するシフト面の割り当て
                         assignShiftPlane();
@@ -315,6 +319,7 @@ namespace KanchokuWS.TableParser
                             var keyName = definedNames._safeGet(CurrentStr, CurrentStr._toLower());
                             ExtraModifiers.AddDisabledExtKey(keyName);
                             if (keyName._equalsTo("space")) setSandSEnabled(false);
+                            disableHoldShiftKey(keyName);
                         }
                     } else if (lcStr == "ignorewarning" || lcStr == "enablewarning") {
                         // 各種警告の無効化/有効化
@@ -496,6 +501,7 @@ namespace KanchokuWS.TableParser
                 if (shiftPlane <= 0) {
                     shiftPlane = 2;
                     ShiftPlane.AssignSandSPlane(shiftPlane);
+                    Settings.SetHoldShiftKeySetting(DecoderKeys.STROKE_SPACE_DECKEY, shiftPlane, Settings.SandSEnabledWhenOffMode);
                 }
             } else if (word._startsWith("enable")) {
                 //Settings.SandSEnabledCurrently = true;
@@ -505,6 +511,7 @@ namespace KanchokuWS.TableParser
                 //Settings.SandSEnabledCurrently = false;
                 setSandSEnabled(false);
                 ExtraModifiers.AddDisabledExtKey("space");
+                disableHoldShiftKey("space");
                 if (Settings.LoggingTableFileInfo) logger.Info("SandS disabled");
             } else if (word == "s") {
                 //Settings.SandSEnabledCurrently = true;
@@ -512,12 +519,14 @@ namespace KanchokuWS.TableParser
                 shiftPlane = 1;
                 ShiftPlane.AssignSandSPlane(shiftPlane);
                 Settings.SetInternalValue(Settings.SandSAssignedPlane_PropName, $"{shiftPlane}");
+                Settings.SetHoldShiftKeySetting(DecoderKeys.STROKE_SPACE_DECKEY, shiftPlane, Settings.SandSEnabledWhenOffMode);
             } else if (word.Length == 1 && word[0] >= 'a' && word[0] <= 'f') {
                 //Settings.SandSEnabledCurrently = true;
                 setSandSEnabled(true);
                 shiftPlane = word[0] - 'a' + 2;
                 ShiftPlane.AssignSandSPlane(shiftPlane);
                 Settings.SetInternalValue(Settings.SandSAssignedPlane_PropName, $"{shiftPlane}");
+                Settings.SetHoldShiftKeySetting(DecoderKeys.STROKE_SPACE_DECKEY, shiftPlane, Settings.SandSEnabledWhenOffMode);
             } else if (word._startsWith("enabeoneshot")) {
                 //Settings.OneshotSandSEnabledCurrently = true;
                 setOneshotSandSEnabled(true);
@@ -535,7 +544,14 @@ namespace KanchokuWS.TableParser
 
         private void setSandSEnabled(bool enabled)
         {
+            Settings.SandSEnabledCurrently = enabled;
             Settings.SetInternalValue("sandsEnabled", $"{enabled}");
+        }
+
+        private void setSandSEnabledWhenOffMode(bool enabled)
+        {
+            Settings.SandSEnabledWhenOffMode = enabled;
+            Settings.SetInternalValue("sandsEnabledWhenOffMode", $"{enabled}");
         }
 
         private void setOneshotSandSEnabled(bool enabled)
@@ -546,6 +562,138 @@ namespace KanchokuWS.TableParser
         private void setSandSEnablePostShift(bool enabled)
         {
             Settings.SetInternalValue("sandsEnablePostShift", $"{enabled}");
+        }
+
+        void handleHoldShiftState()
+        {
+            ReadWord();
+            logger.InfoH($"ENTER: key='{CurrentStr}'");
+            var word = definedNames._safeGet(CurrentStr, CurrentStr)._toLower();
+            if (word._isEmpty()) {
+                ParseError("holdShift: key name required");
+                return;
+            }
+            if (word == "clear") {
+                Settings.ClearHoldShiftKeySettings();
+                ShiftPlane.ClearHoldShiftPlanes();
+                setSandSEnabled(false);
+                setSandSEnabledWhenOffMode(false);
+                Settings.SetInternalValue(Settings.SandSAssignedPlane_PropName, "0");
+                return;
+            }
+            if (word._startsWith("disable")) {
+                ReadWord();
+                var keyName = definedNames._safeGet(CurrentStr, CurrentStr)._toLower();
+                if (keyName._isEmpty()) {
+                    ParseError("holdShift disable: key name required");
+                    return;
+                }
+                disableHoldShiftKey(keyName);
+                return;
+            }
+
+            var keyDeckey = getHoldShiftDeckey(word);
+            ReadWord();
+            var planeWord = CurrentStr._toLower();
+            var holdShiftPlane = getHoldShiftPlane(planeWord);
+            ReadWord();
+            var optionWord = CurrentStr._toLower();
+            bool holdShiftEnabledWhenOff = parseHoldShiftEnabledWhenOff(optionWord, out bool optionRecognized);
+            logger.InfoH($"holdShift: key='{word}', plane='{planeWord}', option='{optionWord}', keyDeckey={keyDeckey}, shiftPlane={holdShiftPlane}, enabledWhenOff={holdShiftEnabledWhenOff}");
+            if (keyDeckey < 0 || holdShiftPlane <= 0) {
+                ParseError($"holdShift: invalid key or plane: key={word}, plane={planeWord}");
+                return;
+            }
+            if (optionWord._notEmpty() && !optionRecognized) {
+                ParseError($"holdShift: invalid option: {optionWord}");
+                return;
+            }
+
+            shiftPlane = holdShiftPlane;
+            Settings.SetHoldShiftKeySetting(keyDeckey, holdShiftPlane, holdShiftEnabledWhenOff);
+            ShiftPlane.AssignHoldShiftPlane(keyDeckey, holdShiftPlane, holdShiftEnabledWhenOff ? holdShiftPlane : ShiftPlane.ShiftPlane_NONE);
+            if (keyDeckey == DecoderKeys.STROKE_SPACE_DECKEY) {
+                logger.InfoH($"SandS Enabled");
+                setSandSEnabled(true);
+                setSandSEnabledWhenOffMode(holdShiftEnabledWhenOff);
+                ShiftPlane.AssignSandSPlane(holdShiftPlane);
+                Settings.SetInternalValue(Settings.SandSAssignedPlane_PropName, $"{holdShiftPlane}");
+            }
+            logger.InfoH($"LEAVE: key='{word}', plane='{planeWord}', option='{optionWord}', keyDeckey={keyDeckey}, shiftPlane={shiftPlane}, enabledWhenOff={holdShiftEnabledWhenOff}");
+        }
+
+        private void disableHoldShiftKey(string keyName)
+        {
+            var keyDeckey = getHoldShiftDeckey(keyName);
+            if (keyDeckey < 0) return;
+
+            Settings.RemoveHoldShiftKeySetting(keyDeckey);
+            ShiftPlane.RemoveHoldShiftPlane(keyDeckey);
+            if (keyDeckey == DecoderKeys.STROKE_SPACE_DECKEY) {
+                setSandSEnabled(false);
+                setSandSEnabledWhenOffMode(false);
+                Settings.SetInternalValue(Settings.SandSAssignedPlane_PropName, "0");
+            }
+        }
+
+        private int getHoldShiftDeckey(string keyName)
+        {
+            if (keyName._equalsTo("space")) return DecoderKeys.STROKE_SPACE_DECKEY;
+
+            int dk = DecoderKeyVsVKey.GetFuncDecKeyByName(keyName);
+            return dk >= DecoderKeys.FUNC_DECKEY_START && dk < DecoderKeys.FUNC_DECKEY_END ? dk : -1;
+        }
+
+        private int getHoldShiftPlane(string planeWord)
+        {
+            switch (planeWord) {
+                case "s":
+                case "shift":
+                    return ShiftPlane.ShiftPlane_SHIFT;
+                case "a":
+                case "shifta":
+                    return ShiftPlane.ShiftPlane_A;
+                case "b":
+                case "shiftb":
+                    return ShiftPlane.ShiftPlane_B;
+                case "c":
+                case "shiftc":
+                    return ShiftPlane.ShiftPlane_C;
+                case "d":
+                case "shiftd":
+                    return ShiftPlane.ShiftPlane_D;
+                case "e":
+                case "shifte":
+                    return ShiftPlane.ShiftPlane_E;
+                case "f":
+                case "shiftf":
+                    return ShiftPlane.ShiftPlane_F;
+                default:
+                    return ShiftPlane.ShiftPlane_NONE;
+            }
+        }
+
+        private bool parseHoldShiftEnabledWhenOff(string optionWord, out bool optionRecognized)
+        {
+            optionRecognized = true;
+            switch (optionWord) {
+                case "both":
+                case "all":
+                case "off":
+                case "offmode":
+                case "enableoffmode":
+                case "true":
+                    return true;
+                case "on":
+                case "ononly":
+                case "decoderon":
+                case "disableoffmode":
+                case "false":
+                    return false;
+                default:
+                    optionRecognized = false;
+                    return false;
+            }
         }
 
         //void changeSandSState(bool bEnabled)

@@ -94,6 +94,12 @@ namespace KanchokuWS.Domain
         /// <summary> DecoderがOffの時のシフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てるシフト面</summary>
         public static ShiftPlaneMapper ShiftPlaneForShiftModKeyWhenDecoderOff { get; private set; } = new ShiftPlaneMapper();
 
+        /// <summary> HoldShift キーに割り当てるシフト面</summary>
+        public static ShiftPlaneMapper ShiftPlaneForHoldShiftKey { get; private set; } = new ShiftPlaneMapper();
+
+        /// <summary> DecoderがOffの時の HoldShift キーに割り当てるシフト面</summary>
+        public static ShiftPlaneMapper ShiftPlaneForHoldShiftKeyWhenDecoderOff { get; private set; } = new ShiftPlaneMapper();
+
         /// <summary> シフト用の機能キー(space, Caps, alnum, nfer, xfer, Rshift) に割り当てられたシフト面を得る</summary>
         public static int GetShiftPlaneFromShiftModFlag(uint modFlag, bool bDecoderOn)
         {
@@ -110,17 +116,73 @@ namespace KanchokuWS.Domain
         {
             ShiftPlaneForShiftModKey.Clear();
             ShiftPlaneForShiftModKeyWhenDecoderOff.Clear();
+            ShiftPlaneForHoldShiftKey.Clear();
+            ShiftPlaneForHoldShiftKeyWhenDecoderOff.Clear();
         }
 
         public static void InitializeShiftPlaneForShiftModKey()
         {
             ShiftPlaneForShiftModKey.Clear();
             ShiftPlaneForShiftModKeyWhenDecoderOff.Clear();
+            ShiftPlaneForHoldShiftKey.Clear();
+            ShiftPlaneForHoldShiftKeyWhenDecoderOff.Clear();
 
             // SHIFTなら標準シフト面をデフォルトとしておく
             logger.Info(() => $"ShiftPlaneForShiftModKey.Add(Shift)");
             ShiftPlaneForShiftModKey.Add(KeyModifiers.MOD_SHIFT, ShiftPlane_SHIFT);
             ShiftPlaneForShiftModKeyWhenDecoderOff.Add(KeyModifiers.MOD_SHIFT, ShiftPlane_SHIFT);
+        }
+
+        public static void ClearHoldShiftPlanes()
+        {
+            ShiftPlaneForHoldShiftKey.Clear();
+            ShiftPlaneForHoldShiftKeyWhenDecoderOff.Clear();
+        }
+
+        public static void RemoveHoldShiftPlane(int deckey)
+        {
+            AssignHoldShiftPlane(deckey, ShiftPlane_NONE, ShiftPlane_NONE);
+        }
+
+        public static void AssignHoldShiftPlane(int deckey, int shiftPlane, int shiftPlaneWhenOff = -1)
+        {
+            if (shiftPlaneWhenOff < 0) shiftPlaneWhenOff = shiftPlane;
+            if (deckey < 0 || deckey >= DecoderKeys.FUNC_DECKEY_END) return;
+
+            if (shiftPlane > 0 && shiftPlane < ShiftPlane_NUM) {
+                ShiftPlaneForHoldShiftKey.Add((uint)deckey, shiftPlane);
+            } else {
+                ShiftPlaneForHoldShiftKey.Add((uint)deckey, ShiftPlane_NONE);
+            }
+
+            if (shiftPlaneWhenOff > 0 && shiftPlaneWhenOff < ShiftPlane_NUM) {
+                ShiftPlaneForHoldShiftKeyWhenDecoderOff.Add((uint)deckey, shiftPlaneWhenOff);
+            } else {
+                ShiftPlaneForHoldShiftKeyWhenDecoderOff.Add((uint)deckey, ShiftPlane_NONE);
+            }
+
+            if (deckey == DecoderKeys.STROKE_SPACE_DECKEY) {
+                if (shiftPlane > 0 && shiftPlane < ShiftPlane_NUM) {
+                    ShiftPlaneForShiftModKey.Add(KeyModifiers.MOD_SPACE, shiftPlane);
+                } else {
+                    ShiftPlaneForShiftModKey.Add(KeyModifiers.MOD_SPACE, ShiftPlane_NONE);
+                }
+                if (shiftPlaneWhenOff > 0 && shiftPlaneWhenOff < ShiftPlane_NUM) {
+                    ShiftPlaneForShiftModKeyWhenDecoderOff.Add(KeyModifiers.MOD_SPACE, shiftPlaneWhenOff);
+                } else {
+                    ShiftPlaneForShiftModKeyWhenDecoderOff.Add(KeyModifiers.MOD_SPACE, ShiftPlane_NONE);
+                }
+            }
+        }
+
+        public static int GetHoldShiftPlane(int deckey, bool bDecoderOn)
+        {
+            return bDecoderOn ? ShiftPlaneForHoldShiftKey.GetPlane((uint)deckey) : ShiftPlaneForHoldShiftKeyWhenDecoderOff.GetPlane((uint)deckey);
+        }
+
+        public static bool IsHoldShiftPlaneAssigned(int deckey, bool bDecoderOn)
+        {
+            return GetHoldShiftPlane(deckey, bDecoderOn) != ShiftPlane_NONE;
         }
 
         /// <summary>
@@ -184,19 +246,20 @@ namespace KanchokuWS.Domain
         /// <summary>テーブルファイルor設定ダイアログで割り当てたSandSシフト面を優先する</summary>
         public static void AssignSandSPlane(int shiftPlane = 0)
         {
-            logger.Info(() => $"CALLED: SandSEnabled={Settings.SandSEnabledCurrently}, SandSAssignedPlane={Settings.SandSAssignedPlane}");
+            logger.Info(() => $"CALLED: SandSEnabled={Settings.SandSEnabledCurrently}, SandSEnabledWhenOffMode={Settings.SandSEnabledWhenOffMode}, SandSAssignedPlane={Settings.SandSAssignedPlane}");
             if (Settings.SandSEnabledCurrently) {
                 if (shiftPlane <= 0) shiftPlane = Settings.SandSAssignedPlane;
                 if (shiftPlane > 0 && shiftPlane < ShiftPlane_NUM) {
                     logger.Info(() => $"ShiftPlaneForShiftModKey.Add(SandS)");
                     ShiftPlaneForShiftModKey.Add(KeyModifiers.MOD_SPACE, shiftPlane);
+                    AssignHoldShiftPlane(DecoderKeys.STROKE_SPACE_DECKEY, shiftPlane, Settings.SandSEnabledWhenOffMode ? shiftPlane : ShiftPlane_NONE);
                 }
             }
         }
 
         public static int GetSandSPlane()
         {
-            return ShiftPlaneForShiftModKey.GetPlane(KeyModifiers.MOD_SPACE);
+            return ShiftPlaneForHoldShiftKey.GetPlane((uint)DecoderKeys.STROKE_SPACE_DECKEY)._gtZeroOr(() => ShiftPlaneForShiftModKey.GetPlane(KeyModifiers.MOD_SPACE));
         }
 
     }

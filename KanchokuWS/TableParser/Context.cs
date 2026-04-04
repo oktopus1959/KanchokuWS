@@ -1066,7 +1066,9 @@ namespace KanchokuWS.TableParser
         // エラー処理
         void handleError(string msg) {
             logger.Error(msg);
+            logger.Warn(msg);
             logger.Error("lines=\n" + MakeErrorLines());
+            logger.Warn("lines=\n" + MakeErrorLines());
             // エラーメッセージを投げる
             Error(msg);
         }
@@ -1077,8 +1079,8 @@ namespace KanchokuWS.TableParser
         // 警告処理
         void handleWarning(string msg) {
             if (numWarnLog++ < 10) {
-                logger.WarnH(msg);
-                logger.WarnH("lines=\n" + MakeErrorLines());
+                logger.Warn(msg);
+                logger.Warn("lines=\n" + MakeErrorLines());
                 // エラーメッセージを投げる
                 Warn(msg);
             }
