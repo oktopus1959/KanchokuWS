@@ -39,6 +39,20 @@ namespace VkbTableMaker {
         *faces = p.second;
     }
 
+    inline void set_facestr(StringRef s, wchar_t* faces) {
+        faces[0] = 0;
+        faces[1] = 0;
+        if (s.empty()) return;
+
+        size_t pos = 0;
+        if (s.size() >= 2 && s[0] == _T('!') && s[1] == _T('{')) pos = 2;
+
+        if (pos < s.size()) {
+            faces[0] = s[pos];
+            if (pos + 1 < s.size()) faces[1] = s[pos + 1];
+        }
+    }
+
     //----------------------------------------------------------------------------
     String hiraganaArray1 = _T("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや ゆ よらりるれろわ ん を");
 
@@ -250,20 +264,23 @@ namespace VkbTableMaker {
     // キー文字を集めたストローク表を作成する
     void makeKeyCharsStrokePositionTable(StrokeTableNode* rootStrokeNode, wchar_t* faces, size_t start, size_t num) {
         for (size_t i = 0; i < num; ++i) {
-            mchar_t ch = 0;
+            bool bSetByString = false;
             if (rootStrokeNode) {
                 auto blk = rootStrokeNode->getNth(start + i);
                 if (blk) {
                     if (blk->isStrokeTableNode()) {
-                        ch = _T("□")[0];
+                        set_facestr(_T("□"), faces + i * 2);
+                        bSetByString = true;
                     } else if (blk->isStringLikeNode() || blk->isFunctionNode()) {
-                        ch = utils::safe_front(blk->getString());
+                        set_facestr(to_wstr(blk->getString()), faces + i * 2);
+                        bSetByString = true;
                     } else {
-                        ch = _T("・")[0];
+                        set_facestr(_T("・"), faces + i * 2);
+                        bSetByString = true;
                     }
                 }
             }
-            set_facestr(ch, faces + i * 2);
+            if (!bSetByString) set_facestr(0, faces + i * 2);
         }
     }
 
@@ -585,4 +602,3 @@ namespace VkbTableMaker {
     }
 
 }
-

@@ -834,6 +834,7 @@ namespace KanchokuWS
         {
             var sb = new StringBuilder();
             if (pos < chars.Length) {
+                if (pos + 1 < chars.Length && chars[pos] == '!' && chars[pos + 1] == '{') pos += 2;
                 sb.Append(chars[pos]);
                 if (pos + 1 < chars.Length && chars[pos + 1] != 0) sb.Append(chars[pos + 1]);
             }
