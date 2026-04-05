@@ -845,18 +845,18 @@ namespace KanchokuWS
 
         /// <summary>ストロークヘルプを表示するシフト面を設定する</summary>
         /// <param name="shiftPlane"></param>
-        public void SetStrokeHelpShiftPlane(int shiftPlane)
+        public void SetStrokeHelpShiftPlane(int shiftPlane, bool forceShow = false)
         {
-            logger.Info(() => $"CALLED: shiftPlane={shiftPlane}, IsDecoderActive={IsDecoderActive}");
+            logger.Info(() => $"CALLED: shiftPlane={shiftPlane}, forceShow={forceShow}, IsDecoderActive={IsDecoderActive}");
             if (shiftPlane >= 0 && shiftPlane < ShiftPlane.ShiftPlane_NUM) {
                 frmVkb.StrokeHelpShiftPlane = shiftPlane;
                 if (IsDecoderActive) {
-                    if (frmVkb.IsCurrentNormalVkb) frmVkb.DrawInitialVkb();
-                } else if (Settings.ShowEisuVkb) {
+                    if (frmVkb.IsCurrentNormalVkb || forceShow || shiftPlane == 0) frmVkb.DrawInitialVkb(-1, forceShow);
+                } else if (shiftPlane == 0) {
+                    ShowEisuVkbIfNeeded();
+                } else if (forceShow || Settings.ShowEisuVkb) {
                     if (shiftPlane > 0) {
-                        frmVkb.DrawInitialVkb();
-                    } else {
-                        frmVkb.DrawEisuVkb();
+                        frmVkb.DrawInitialVkb(-1, forceShow);
                     }
                 }
             }

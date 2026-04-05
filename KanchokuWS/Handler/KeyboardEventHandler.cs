@@ -173,7 +173,11 @@ namespace KanchokuWS.Handler
 
         private void updateStrokeHelpHoldShiftPlane(bool bDecoderOn)
         {
-            frmKanchoku?.SetStrokeHelpShiftPlane(keyInfoManager?.getShiftPlane(bDecoderOn, false) ?? ShiftPlane.ShiftPlane_NONE);
+            var effectiveInfo = keyInfoManager?.getEffectiveHoldShiftKeyInfoForDisplay(bDecoderOn);
+            var setting = effectiveInfo != null && effectiveInfo.IsGenericHoldShift ? Settings.GetHoldShiftKeySetting(effectiveInfo.Deckey) : null;
+            bool forceShow = setting?.ShowStrokeHelp == true;
+            int shiftPlane = forceShow ? setting.ShiftPlane : keyInfoManager?.getShiftPlane(bDecoderOn, false) ?? ShiftPlane.ShiftPlane_NONE;
+            frmKanchoku?.SetStrokeHelpShiftPlane(shiftPlane, forceShow);
         }
 
         /// <summary> 特殊キーの押下状態</summary>
@@ -518,6 +522,29 @@ namespace KanchokuWS.Handler
                 ExModiferKeyInfo effectiveInfo = null;
                 foreach (var info in holdShiftKeyInfos.Values) {
                     if (info.Shifted && ShiftPlane.IsHoldShiftPlaneAssigned(info.Deckey, bDecoderOn)) {
+                        if (effectiveInfo == null || info.ShiftedSerial > effectiveInfo.ShiftedSerial) {
+                            effectiveInfo = info;
+                        }
+                    }
+                }
+
+                bool sandsAvailable = (spaceKeyInfo.Shifted || spaceKeyInfo.ShiftedOneshot) &&
+                    (Settings.SandSSuperiorToShift || !rshiftKeyInfo.Shifted);
+                if (sandsAvailable) {
+                    if (effectiveInfo == null || Settings.SandSSuperiorToShift || spaceKeyInfo.ShiftedSerial >= effectiveInfo.ShiftedSerial) {
+                        effectiveInfo = spaceKeyInfo;
+                    }
+                }
+                return effectiveInfo;
+            }
+
+            public ExModiferKeyInfo getEffectiveHoldShiftKeyInfoForDisplay(bool bDecoderOn)
+            {
+                refreshHoldShiftKeyInfos();
+                ExModiferKeyInfo effectiveInfo = null;
+                foreach (var info in holdShiftKeyInfos.Values) {
+                    var setting = Settings.GetHoldShiftKeySetting(info.Deckey);
+                    if (info.Shifted && (ShiftPlane.IsHoldShiftPlaneAssigned(info.Deckey, bDecoderOn) || setting?.ShowStrokeHelp == true)) {
                         if (effectiveInfo == null || info.ShiftedSerial > effectiveInfo.ShiftedSerial) {
                             effectiveInfo = info;
                         }

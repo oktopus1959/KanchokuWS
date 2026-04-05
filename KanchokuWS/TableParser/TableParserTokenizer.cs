@@ -596,21 +596,26 @@ namespace KanchokuWS.TableParser
             ReadWord();
             var planeWord = CurrentStr._toLower();
             var holdShiftPlane = getHoldShiftPlane(planeWord);
-            ReadWord();
-            var optionWord = CurrentStr._toLower();
-            bool holdShiftEnabledWhenOff = parseHoldShiftEnabledWhenOff(optionWord, out bool optionRecognized);
-            logger.InfoH($"holdShift: key='{word}', plane='{planeWord}', option='{optionWord}', keyDeckey={keyDeckey}, shiftPlane={holdShiftPlane}, enabledWhenOff={holdShiftEnabledWhenOff}");
+            var optionWords = new List<string>();
+            while (true) {
+                ReadWord();
+                var optionWord = CurrentStr._toLower();
+                if (optionWord._isEmpty()) break;
+                optionWords.Add(optionWord);
+            }
+            parseHoldShiftOptions(optionWords, out bool holdShiftEnabledWhenOff, out bool showStrokeHelp, out bool optionRecognized, out string optionText);
+            logger.InfoH($"holdShift: key='{word}', plane='{planeWord}', option='{optionText}', keyDeckey={keyDeckey}, shiftPlane={holdShiftPlane}, enabledWhenOff={holdShiftEnabledWhenOff}, showStrokeHelp={showStrokeHelp}");
             if (keyDeckey < 0 || holdShiftPlane <= 0) {
                 ParseError($"holdShift: invalid key or plane: key={word}, plane={planeWord}");
                 return;
             }
-            if (optionWord._notEmpty() && !optionRecognized) {
-                ParseError($"holdShift: invalid option: {optionWord}");
+            if (optionText._notEmpty() && !optionRecognized) {
+                ParseError($"holdShift: invalid option: {optionText}");
                 return;
             }
 
             shiftPlane = holdShiftPlane;
-            Settings.SetHoldShiftKeySetting(keyDeckey, holdShiftPlane, holdShiftEnabledWhenOff);
+            Settings.SetHoldShiftKeySetting(keyDeckey, holdShiftPlane, holdShiftEnabledWhenOff, showStrokeHelp);
             ShiftPlane.AssignHoldShiftPlane(keyDeckey, holdShiftPlane, holdShiftEnabledWhenOff ? holdShiftPlane : ShiftPlane.ShiftPlane_NONE);
             if (keyDeckey == DecoderKeys.STROKE_SPACE_DECKEY) {
                 logger.InfoH($"SandS Enabled");
@@ -619,7 +624,7 @@ namespace KanchokuWS.TableParser
                 ShiftPlane.AssignSandSPlane(holdShiftPlane);
                 Settings.SetInternalValue(Settings.SandSAssignedPlane_PropName, $"{holdShiftPlane}");
             }
-            logger.InfoH($"LEAVE: key='{word}', plane='{planeWord}', option='{optionWord}', keyDeckey={keyDeckey}, shiftPlane={shiftPlane}, enabledWhenOff={holdShiftEnabledWhenOff}");
+            logger.InfoH($"LEAVE: key='{word}', plane='{planeWord}', option='{optionText}', keyDeckey={keyDeckey}, shiftPlane={shiftPlane}, enabledWhenOff={holdShiftEnabledWhenOff}, showStrokeHelp={showStrokeHelp}");
         }
 
         private void disableHoldShiftKey(string keyName)
@@ -673,26 +678,41 @@ namespace KanchokuWS.TableParser
             }
         }
 
-        private bool parseHoldShiftEnabledWhenOff(string optionWord, out bool optionRecognized)
+        private void parseHoldShiftOptions(IEnumerable<string> optionWords, out bool enabledWhenOff, out bool showStrokeHelp, out bool optionRecognized, out string optionText)
         {
+            enabledWhenOff = false;
+            showStrokeHelp = false;
             optionRecognized = true;
-            switch (optionWord) {
-                case "both":
-                case "all":
-                case "off":
-                case "offmode":
-                case "enableoffmode":
-                case "true":
-                    return true;
-                case "on":
-                case "ononly":
-                case "decoderon":
-                case "disableoffmode":
-                case "false":
-                    return false;
-                default:
-                    optionRecognized = false;
-                    return false;
+            optionText = optionWords._join(" ")._strip();
+            if (optionText._isEmpty()) return;
+
+            foreach (var word in optionWords
+                .SelectMany(x => x._split(','))
+                .Select(x => x._strip())
+                .Where(x => x._notEmpty())) {
+                switch (word) {
+                    case "both":
+                    case "all":
+                    case "off":
+                    case "offmode":
+                    case "enableoffmode":
+                    case "true":
+                        enabledWhenOff = true;
+                        break;
+                    case "on":
+                    case "ononly":
+                    case "decoderon":
+                    case "disableoffmode":
+                    case "false":
+                        enabledWhenOff = false;
+                        break;
+                    case "show":
+                        showStrokeHelp = true;
+                        break;
+                    default:
+                        optionRecognized = false;
+                        return;
+                }
             }
         }
 

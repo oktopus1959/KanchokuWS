@@ -27,6 +27,7 @@ namespace KanchokuWS
         {
             public int ShiftPlane { get; set; }
             public bool EnabledWhenDecoderOff { get; set; }
+            public bool ShowStrokeHelp { get; set; }
         }
 
         /// <summary> テーブルファイルで定義された HoldShift キー設定 </summary>
@@ -63,12 +64,13 @@ namespace KanchokuWS
             holdShiftKeySettings.Clear();
         }
 
-        public static void SetHoldShiftKeySetting(int deckey, int shiftPlane, bool enabledWhenDecoderOff = true)
+        public static void SetHoldShiftKeySetting(int deckey, int shiftPlane, bool enabledWhenDecoderOff = true, bool showStrokeHelp = false)
         {
             if (deckey >= 0 && shiftPlane > 0) {
                 holdShiftKeySettings[deckey] = new HoldShiftKeySetting() {
                     ShiftPlane = shiftPlane,
-                    EnabledWhenDecoderOff = enabledWhenDecoderOff
+                    EnabledWhenDecoderOff = enabledWhenDecoderOff,
+                    ShowStrokeHelp = showStrokeHelp
                 };
             }
         }

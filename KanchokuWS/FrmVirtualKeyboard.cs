@@ -882,11 +882,11 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------
         /// <summary> 第1打鍵待ち状態の仮想キーボード表示 </summary>
-        public void DrawInitialVkb(int lastDeckey = -1)
+        public void DrawInitialVkb(int lastDeckey = -1, bool forceShow = false)
         {
-            if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"CALLED: EffectiveCount={Settings.VirtualKeyboardShowStrokeCountEffective}");
+            if (Settings.LoggingVirtualKeyboardInfo) logger.Info(() => $"CALLED: EffectiveCount={Settings.VirtualKeyboardShowStrokeCountEffective}, forceShow={forceShow}");
             IsCurrentNormalVkb = true;
-            if (Settings.VirtualKeyboardShowStrokeCountEffective == 1) {
+            if (forceShow || Settings.VirtualKeyboardShowStrokeCountEffective == 1) {
                 // 第1打鍵待ちである
                 StrokeTableDef tblDef = null;
                 // 主コードテーブルか
