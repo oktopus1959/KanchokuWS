@@ -428,6 +428,7 @@ namespace KanchokuWS.Gui
             Settings.SetUserIni("offHotKey", comboBox_modifiedOffKey.Text.Trim()._reReplace(" .*", "")._orElse("X"));
 
             // 仮想鍵盤表示
+            bool prevShowEisuVkb = Settings.ShowEisuVkb;
             Settings.SetUserIni("showEisuVkb", checkBox_showEisuVkb.Checked);
             Settings.SetUserIni("vkbShowStrokeCount", $"{textBox_vkbShowStrokeCount.Text._parseInt(1)._lowLimit(0) * (radioButton_normalVkb.Checked ? 1 : -1)}");
             Settings.SetUserIni("showVkbOrMaker", !radioButton_noVkb.Checked);
@@ -473,8 +474,10 @@ namespace KanchokuWS.Gui
             // 英数用仮想鍵盤の再表示
             if (frmMain?.IsDecoderActivated() != true) {
                 if (Settings.ShowEisuVkb) {
-                    frmVkb.DrawEisuVkb();
-                    frmVkb.Show();
+                    if (!prevShowEisuVkb && checkBox_showEisuVkb.Checked) {
+                        frmMain.ResetEisuVkbHiddenTemporay();
+                    }
+                    frmMain.ShowEisuVkbIfNeeded();
                 } else {
                     frmVkb.Hide();
                 }
@@ -2843,4 +2846,3 @@ namespace KanchokuWS.Gui
 
     }
 }
-

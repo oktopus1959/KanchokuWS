@@ -892,6 +892,7 @@ namespace KanchokuWS
                 // 主コードテーブルか
                 //bool isPrimary = frmMain.DecoderOutput.IsCurrentStrokeTablePrimary();
                 int tableNum = frmMain.DecoderOutput.strokeTableNum;
+                if ((tableNum < 1 || tableNum > 3) && StrokeTables1._notEmpty()) tableNum = 1;
                 if (tableNum < 1 || tableNum > 3 || (tableNum == 1 && StrokeTables1._isEmpty()) || (tableNum == 2 && StrokeTables2._isEmpty()) || (tableNum == 3 && StrokeTables3._isEmpty())) {
                     tblDef = null;
                 } else {
