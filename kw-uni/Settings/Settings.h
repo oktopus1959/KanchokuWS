@@ -43,6 +43,7 @@ struct Settings {
     size_t histMapGobiMaxLength = 3;        // 変換履歴キーに付加できる語尾の最大長
 
     bool autoHistSearchEnabled = false;     // 自動履歴検索を行う
+    bool suppressAutoHistRegister = false;  // 履歴の自動登録を抑制する
     //bool histSearchByCtrlSpace = false;     // Ctrl-Space で履歴検索を行う
     //bool histSearchByShiftSpace = false;    // Shift-Space で履歴検索を行う
     bool selectFirstCandByEnter = false;    // 履歴の第1候補をEnterキーで選択する

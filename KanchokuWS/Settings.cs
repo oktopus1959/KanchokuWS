@@ -611,6 +611,8 @@ namespace KanchokuWS
 
         /// <summary>自動履歴検索</summary>
         public static bool AutoHistSearchEnabled { get; private set; }
+        /// <summary>履歴の自動登録を抑制する</summary>
+        public static bool SuppressAutoHistRegister { get; private set; }
         //public static bool HistSearchByCtrlSpace { get; private set; }
         //public static bool HistSearchByShiftSpace { get; private set; }
         /// <summary>Enterで先頭候補を選択</summary>
@@ -1609,6 +1611,7 @@ namespace KanchokuWS
             HistMapKeyMaxLength = addDecoderSetting("histMapKeyMaxLength", 16, 4);              // 変換履歴キーの最大長
             HistMapGobiMaxLength = addDecoderSetting("histMapGobiMaxLength", 2, 0);             // 変換履歴キーに付加できる語尾の最大長
             AutoHistSearchEnabled = addDecoderSetting("autoHistSearchEnabled", false);          // 自動履歴検索を行う
+            SuppressAutoHistRegister = addDecoderSetting("suppressAutoHistRegister", true);     // 履歴の自動登録を抑制する
             //HistSearchByCtrlSpace = addDecoderSetting("histSearchByCtrlSpace", true);           // Ctrl-Space で履歴検索を行う
             //VKeyComboRepository.AddCtrlDeckeyAndCombo(" ", DecoderKeys.CTRL_SPACE_DECKEY, 0);           // 登録
             //HistSearchByShiftSpace = addDecoderSetting("histSearchByShiftSpace", true);         // Shift-Space で履歴検索を行う

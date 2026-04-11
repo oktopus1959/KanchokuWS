@@ -414,6 +414,7 @@ namespace KanchokuWS.Gui
             this.comboBox_histDelDeckeyId = new System.Windows.Forms.ComboBox();
             this.label42 = new System.Windows.Forms.Label();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
+            this.checkBox_suppressAutoHistRegister = new System.Windows.Forms.CheckBox();
             this.textBox_histKatakanaWordMaxLength = new System.Windows.Forms.TextBox();
             this.label154 = new System.Windows.Forms.Label();
             this.textBox_histKanjiWordMaxLength = new System.Windows.Forms.TextBox();
@@ -4940,7 +4941,7 @@ namespace KanchokuWS.Gui
             this.groupBox23.Controls.Add(this.checkBox_mazeRemoveHeadSpace);
             this.groupBox23.Controls.Add(this.checkBox_mazeBlockerTail);
             this.groupBox23.Controls.Add(this.checkBox_mazegakiSelectFirstCand);
-            this.groupBox23.Location = new System.Drawing.Point(332, 107);
+            this.groupBox23.Location = new System.Drawing.Point(332, 121);
             this.groupBox23.Name = "groupBox23";
             this.groupBox23.Size = new System.Drawing.Size(292, 191);
             this.groupBox23.TabIndex = 4;
@@ -5185,6 +5186,7 @@ namespace KanchokuWS.Gui
             // 
             // groupBox14
             // 
+            this.groupBox14.Controls.Add(this.checkBox_suppressAutoHistRegister);
             this.groupBox14.Controls.Add(this.textBox_histKatakanaWordMaxLength);
             this.groupBox14.Controls.Add(this.label154);
             this.groupBox14.Controls.Add(this.textBox_histKanjiWordMaxLength);
@@ -5198,18 +5200,29 @@ namespace KanchokuWS.Gui
             this.groupBox14.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.groupBox14.Location = new System.Drawing.Point(332, 4);
             this.groupBox14.Name = "groupBox14";
-            this.groupBox14.Size = new System.Drawing.Size(317, 88);
+            this.groupBox14.Size = new System.Drawing.Size(317, 111);
             this.groupBox14.TabIndex = 3;
             this.groupBox14.TabStop = false;
             this.groupBox14.Text = "履歴登録";
             // 
+            // checkBox_suppressAutoHistRegister
+            // 
+            this.checkBox_suppressAutoHistRegister.AutoSize = true;
+            this.checkBox_suppressAutoHistRegister.Location = new System.Drawing.Point(20, 18);
+            this.checkBox_suppressAutoHistRegister.Name = "checkBox_suppressAutoHistRegister";
+            this.checkBox_suppressAutoHistRegister.Size = new System.Drawing.Size(137, 19);
+            this.checkBox_suppressAutoHistRegister.TabIndex = 0;
+            this.checkBox_suppressAutoHistRegister.Text = "履歴の自動登録を行う";
+            this.toolTip1.SetToolTip(this.checkBox_suppressAutoHistRegister, "文字列の入力時に自動的に履歴登録を実行する設定\r\n\r\nここにチェックを入れると、文字入力時に自動的に履歴登録を\r\n行うようになります。");
+            this.checkBox_suppressAutoHistRegister.UseVisualStyleBackColor = true;
+            // 
             // textBox_histKatakanaWordMaxLength
             // 
             this.textBox_histKatakanaWordMaxLength.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_histKatakanaWordMaxLength.Location = new System.Drawing.Point(272, 61);
+            this.textBox_histKatakanaWordMaxLength.Location = new System.Drawing.Point(272, 83);
             this.textBox_histKatakanaWordMaxLength.Name = "textBox_histKatakanaWordMaxLength";
             this.textBox_histKatakanaWordMaxLength.Size = new System.Drawing.Size(36, 19);
-            this.textBox_histKatakanaWordMaxLength.TabIndex = 4;
+            this.textBox_histKatakanaWordMaxLength.TabIndex = 5;
             this.textBox_histKatakanaWordMaxLength.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.textBox_histKatakanaWordMaxLength, "自動履歴登録するカタカナ文字列の最大長を設定します。\r\n\r\nたとえば 8 と設定すると、9文字以上のカタカナ文字列は\r\n自動登録の対象外となります。\r\nこの場合、" +
         "9文字以上のカタカナ文字を登録するには、\r\n仮想鍵盤のミニバッファにコピペするか「辞書登録」を\r\n行ってください。\r\n");
@@ -5217,7 +5230,7 @@ namespace KanchokuWS.Gui
             // label154
             // 
             this.label154.AutoSize = true;
-            this.label154.Location = new System.Drawing.Point(253, 63);
+            this.label154.Location = new System.Drawing.Point(253, 85);
             this.label154.Name = "label154";
             this.label154.Size = new System.Drawing.Size(19, 15);
             this.label154.TabIndex = 30;
@@ -5226,10 +5239,10 @@ namespace KanchokuWS.Gui
             // textBox_histKanjiWordMaxLength
             // 
             this.textBox_histKanjiWordMaxLength.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_histKanjiWordMaxLength.Location = new System.Drawing.Point(272, 16);
+            this.textBox_histKanjiWordMaxLength.Location = new System.Drawing.Point(272, 38);
             this.textBox_histKanjiWordMaxLength.Name = "textBox_histKanjiWordMaxLength";
             this.textBox_histKanjiWordMaxLength.Size = new System.Drawing.Size(36, 19);
-            this.textBox_histKanjiWordMaxLength.TabIndex = 1;
+            this.textBox_histKanjiWordMaxLength.TabIndex = 2;
             this.textBox_histKanjiWordMaxLength.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.textBox_histKanjiWordMaxLength, "自動履歴登録する漢字文字列の最大長を設定します。\r\n\r\nたとえば 6 と設定すると、7文字以上の漢字文字列は\r\n自動登録の対象外となります。\r\nこの場合、7文字以" +
         "上の漢字文字を登録するのは、\r\n仮想鍵盤のミニバッファにコピペするか「辞書登録」を\r\n行ってください。");
@@ -5237,7 +5250,7 @@ namespace KanchokuWS.Gui
             // label150
             // 
             this.label150.AutoSize = true;
-            this.label150.Location = new System.Drawing.Point(253, 18);
+            this.label150.Location = new System.Drawing.Point(253, 40);
             this.label150.Name = "label150";
             this.label150.Size = new System.Drawing.Size(19, 15);
             this.label150.TabIndex = 28;
@@ -5246,7 +5259,7 @@ namespace KanchokuWS.Gui
             // label27
             // 
             this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(20, 42);
+            this.label27.Location = new System.Drawing.Point(32, 64);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(180, 15);
             this.label27.TabIndex = 24;
@@ -5255,17 +5268,17 @@ namespace KanchokuWS.Gui
             // textBox_histKanjiWordMinLengthEx
             // 
             this.textBox_histKanjiWordMinLengthEx.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_histKanjiWordMinLengthEx.Location = new System.Drawing.Point(216, 39);
+            this.textBox_histKanjiWordMinLengthEx.Location = new System.Drawing.Point(216, 61);
             this.textBox_histKanjiWordMinLengthEx.Name = "textBox_histKanjiWordMinLengthEx";
             this.textBox_histKanjiWordMinLengthEx.Size = new System.Drawing.Size(36, 19);
-            this.textBox_histKanjiWordMinLengthEx.TabIndex = 2;
+            this.textBox_histKanjiWordMinLengthEx.TabIndex = 3;
             this.textBox_histKanjiWordMinLengthEx.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.textBox_histKanjiWordMinLengthEx, resources.GetString("textBox_histKanjiWordMinLengthEx.ToolTip"));
             // 
             // label26
             // 
             this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(20, 19);
+            this.label26.Location = new System.Drawing.Point(32, 41);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(149, 15);
             this.label26.TabIndex = 21;
@@ -5274,10 +5287,10 @@ namespace KanchokuWS.Gui
             // textBox_histKanjiWordMinLength
             // 
             this.textBox_histKanjiWordMinLength.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_histKanjiWordMinLength.Location = new System.Drawing.Point(216, 16);
+            this.textBox_histKanjiWordMinLength.Location = new System.Drawing.Point(216, 38);
             this.textBox_histKanjiWordMinLength.Name = "textBox_histKanjiWordMinLength";
             this.textBox_histKanjiWordMinLength.Size = new System.Drawing.Size(36, 19);
-            this.textBox_histKanjiWordMinLength.TabIndex = 0;
+            this.textBox_histKanjiWordMinLength.TabIndex = 1;
             this.textBox_histKanjiWordMinLength.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.textBox_histKanjiWordMinLength, "自動履歴登録する漢字文字列の最小長を設定します。\r\n\r\nたとえば 5 と設定すると、4文字までの漢字文字列は\r\n自動登録の対象外となります。\r\nこの場合、4文字以" +
         "下の漢字文字を登録するのは、\r\n仮想鍵盤のミニバッファにコピペするか「辞書登録」を\r\n行ってください。");
@@ -5285,7 +5298,7 @@ namespace KanchokuWS.Gui
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(20, 65);
+            this.label28.Location = new System.Drawing.Point(32, 87);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(161, 15);
             this.label28.TabIndex = 22;
@@ -5294,10 +5307,10 @@ namespace KanchokuWS.Gui
             // textBox_histKatakanaWordMinLength
             // 
             this.textBox_histKatakanaWordMinLength.Font = new System.Drawing.Font("BIZ UDゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.textBox_histKatakanaWordMinLength.Location = new System.Drawing.Point(216, 62);
+            this.textBox_histKatakanaWordMinLength.Location = new System.Drawing.Point(216, 84);
             this.textBox_histKatakanaWordMinLength.Name = "textBox_histKatakanaWordMinLength";
             this.textBox_histKatakanaWordMinLength.Size = new System.Drawing.Size(36, 19);
-            this.textBox_histKatakanaWordMinLength.TabIndex = 3;
+            this.textBox_histKatakanaWordMinLength.TabIndex = 4;
             this.textBox_histKatakanaWordMinLength.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolTip1.SetToolTip(this.textBox_histKatakanaWordMinLength, "自動履歴登録するカタカナ文字列の最小長を設定します。\r\n\r\nたとえば 5 と設定すると、4文字までのカタカナ文字列は\r\n自動登録の対象外となります。\r\nこの場合、" +
         "4文字以下のカタカナ文字を登録するには、\r\n仮想鍵盤のミニバッファにコピペするか「辞書登録」を\r\n行ってください。\r\n");
@@ -7648,5 +7661,6 @@ namespace KanchokuWS.Gui
         private System.Windows.Forms.TextBox textBox_charKeyComboMinOverlappingTime;
         private System.Windows.Forms.Label label156;
         private System.Windows.Forms.CheckBox checkBox_postRewriteCompatibleWithGoogle;
+        private System.Windows.Forms.CheckBox checkBox_suppressAutoHistRegister;
     }
 }
