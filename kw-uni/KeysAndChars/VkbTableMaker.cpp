@@ -49,7 +49,7 @@ namespace VkbTableMaker {
 
         if (pos < s.size()) {
             faces[0] = s[pos];
-            if (pos + 1 < s.size()) faces[1] = s[pos + 1];
+            if (pos + 1 < s.size() && s[pos + 1] != '!' && s[pos + 1] != '{' && s[pos + 1] != '}' && s[pos + 1] != '|') faces[1] = s[pos + 1];
         }
     }
 
