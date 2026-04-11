@@ -70,6 +70,25 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             }
         }
 
+        class ThreeKeyPrefixPendingInfo
+        {
+            public string PrefixKeyString { get; private set; } = "";
+            public List<int> PrefixModuloKeys { get; private set; } = new List<int>();
+            public bool IsActive => PrefixModuloKeys._notEmpty();
+
+            public void Set(IEnumerable<Stroke> strokes)
+            {
+                PrefixModuloKeys = strokes.Select(x => x.ModuloDecKey).ToList();
+                PrefixKeyString = PrefixModuloKeys._keyString();
+            }
+
+            public void Clear()
+            {
+                PrefixKeyString = "";
+                PrefixModuloKeys = new List<int>();
+            }
+        }
+
         // TODO: このあたりは不要のはず。後で削除する
         ///// <summary>
         ///// 前回のComboシフトキーが解放された時刻をシフトキーごとに保存するマップ<br/>
@@ -82,6 +101,8 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         /// シフトキーの解放後、後置シフトを無効にする時間を計測する起点となる
         /// </summary>
         private ComboShiftUpTimeInfo comboShiftUpTimeInfo = new ComboShiftUpTimeInfo();
+
+        private ThreeKeyPrefixPendingInfo threeKeyPrefixPendingInfo = new ThreeKeyPrefixPendingInfo();
 
         //public DateTime GetPrevComboShiftKeyUpDt(int deckey)
         //{
@@ -167,6 +188,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
         {
             logger.InfoH(() => $"CALLED");
             comboList.Clear();
+            clearThreeKeyPrefixPending("ClearComboList");
         }
 
         public void Clear()
@@ -175,6 +197,40 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
             downKeyList.Clear();
             comboList.Clear();
             unprocList.Clear();
+            clearThreeKeyPrefixPending("Clear");
+        }
+
+        private string currentComboPrefixKeyString()
+        {
+            return comboList.Select(x => x.ModuloDecKey)._keyString();
+        }
+
+        private bool isThreeKeyPrefixPendingCurrent()
+        {
+            return threeKeyPrefixPendingInfo.IsActive && threeKeyPrefixPendingInfo.PrefixKeyString == currentComboPrefixKeyString();
+        }
+
+        private void startThreeKeyPrefixPending(KeyCombination keyCombo)
+        {
+            if (keyCombo == null || !keyCombo.IsTerminal || !keyCombo.IsUnordered || keyCombo.DecKeyList._safeCount() < 3 || comboList.Count != 2) return;
+
+            threeKeyPrefixPendingInfo.Set(comboList);
+            logger.InfoH(() => $"ThreeKeyPrefixPending: prefix={threeKeyPrefixPendingInfo.PrefixKeyString}, combo={keyCombo.ComboKeysString()}");
+        }
+
+        private void clearThreeKeyPrefixPending(string reason)
+        {
+            if (threeKeyPrefixPendingInfo.IsActive) {
+                logger.InfoH(() => $"Clear ThreeKeyPrefixPending: reason={reason}, prefix={threeKeyPrefixPendingInfo.PrefixKeyString}");
+            }
+            threeKeyPrefixPendingInfo.Clear();
+        }
+
+        private void validateThreeKeyPrefixPending()
+        {
+            if (threeKeyPrefixPendingInfo.IsActive && !isThreeKeyPrefixPendingCurrent()) {
+                clearThreeKeyPrefixPending("comboList changed");
+            }
         }
 
         public bool IsEmpty()
@@ -409,7 +465,9 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 if (comboList.Count >= 1 && unprocList.Count == 1) {
                     // 2文字目以降のケース
                     logger.InfoH(() => $"Try second or later successive combo: bTemporaryComboDisabled={IsTemporaryComboDisabled}");
-                    if (IsTemporaryComboDisabled) {
+                    if (isThreeKeyPrefixPendingCurrent()) {
+                        logger.InfoH(() => $"ThreeKeyPrefixPending active on key down: prefix={threeKeyPrefixPendingInfo.PrefixKeyString}; defer combo check to key release");
+                    } else if (IsTemporaryComboDisabled) {
                         // 連続シフト版「月光」などで、先行してShiftキーが送出され、一時的に同時打鍵がOFFになっている場合
                         result = getAndCheckCombo(Helper.MakeList(unprocList[0]));
                         IsTemporaryComboDisabled = false;
@@ -511,6 +569,17 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 copyShiftLen = 0;
                                 discardLen = 1;
                                 logger.InfoH(() => $"ADD: result={result._keyString()}");
+                            } else if (isThreeKeyPrefixPendingCurrent()) {
+                                int overlapLen = tryResolvePendingThreeKeyPrefix(result, unprocList, upKeyIdxFromTail, out bTempComboDisabled);
+                                if (overlapLen > 0) {
+                                    logger.InfoH(() => $"PENDING PREFIX COMBO FOUND: overlapLen={overlapLen}");
+                                    bSecondComboCheck = true;
+                                    outputLen = copyShiftLen = 0;
+                                    discardLen = overlapLen;
+                                } else {
+                                    logger.InfoH(() => $"PENDING PREFIX ACTIVE: no tail match for prefix={threeKeyPrefixPendingInfo.PrefixKeyString}; break");
+                                    break;
+                                }
                             } else {
                                 //同時打鍵を見つける
                                 List<List<Stroke>> subComboLists = gatherSubList(comboList);
@@ -568,6 +637,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                 // Spaceまたは機能キーのシフトキーがきたら、使い終わったキーを破棄する
                                 logger.InfoH(() => $"Abandon Used Keys When Special Combo Shift Down");
                                 comboList.Clear();
+                                validateThreeKeyPrefixPending();
                             }
                             logger.InfoH(() => $"TRY NEXT: result={result._keyString()}, {ToDebugString()}");
                         } // while(unprocList)
@@ -587,6 +657,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 //bTemporaryUnconditional = comboList._notEmpty() && (bTempUnconditional || KeyCombinationPool.CurrentPool.IsPrefixedOrSequentialShift && bSomeShiftKeyUp);
                 //IsTemporaryComboDisabled = comboList._notEmpty() && bTempComboDisabled;
                 IsTemporaryComboDisabled = bTempComboDisabled;
+                validateThreeKeyPrefixPending();
                 logger.InfoH(() => $"CLEANUP: UpKey or Oneshot in comboList Removed: bTemporaryComboDisabled={IsTemporaryComboDisabled}, {ToDebugString()}");
 
                 // 指定個数以上の打鍵が残っていたら警告をログ出力する
@@ -702,6 +773,7 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                                         // Oneshot以外のシフトキーは使い回す
                                         logger.InfoH(() => $"Move to next combination: overlapLen={overlapLen}");
                                         copyToComboList(unprocList, overlapLen/*, false*/);
+                                        updateThreeKeyPrefixPending(keyCombo);
                                         // 連続シフトキー以外はコピーしないようにした (薙刀式で J,W,Pが3打同時でなく、J,Wだけの同時と判定されたときに、Jだけをコピーするため)
                                     }
                                     // 見つかった
@@ -783,6 +855,42 @@ namespace KanchokuWS.CombinationKeyStroke.DeterminerLib
                 }
             }
             logger.InfoH(() => $"LEAVE: comboList={comboList._toString()}");
+        }
+
+        private int tryResolvePendingThreeKeyPrefix(List<int> result, List<Stroke> pendingUnprocList, int upKeyIdxFromTail, out bool bComboBlocked)
+        {
+            bComboBlocked = false;
+
+            if (!isThreeKeyPrefixPendingCurrent() || pendingUnprocList._isEmpty()) return 0;
+
+            int upKeyIdx = upKeyIdxFromTail >= 0 ? pendingUnprocList.Count - upKeyIdxFromTail - 1 : -1;
+            if (upKeyIdx < 0) {
+                logger.InfoH(() => $"ThreeKeyPrefixPending waiting: prefix={threeKeyPrefixPendingInfo.PrefixKeyString}, unproc={pendingUnprocList._toString()}");
+                return 0;
+            }
+
+            int overlapLen = Math.Min(1, pendingUnprocList.Count);
+            var tailStroke = pendingUnprocList[0];
+            var keyCombo = KeyCombinationPool.CurrentPool.GetTerminalComboForThreeKeyPrefix(comboList, tailStroke);
+            logger.InfoH(() => $"ThreeKeyPrefixPending lookup: prefix={threeKeyPrefixPendingInfo.PrefixKeyString}, tail={tailStroke.ModuloDecKey}, combo={(keyCombo == null ? "(none)" : keyCombo.ComboKeysString())}");
+            if (keyCombo == null) return -1;
+
+            result.AddRange(keyCombo.DecKeyList);
+            if (!keyCombo.IsOneshotShift) {
+                logger.InfoH(() => $"ThreeKeyPrefixPending resolved: overlapLen={overlapLen}, combo={keyCombo.ComboKeysString()}");
+                copyToComboList(pendingUnprocList, overlapLen);
+            }
+            clearThreeKeyPrefixPending("resolved");
+            return overlapLen;
+        }
+
+        private void updateThreeKeyPrefixPending(KeyCombination keyCombo)
+        {
+            if (keyCombo != null && keyCombo.IsTerminal && keyCombo.IsUnordered && keyCombo.DecKeyList._safeCount() >= 3 && comboList.Count == 2) {
+                startThreeKeyPrefixPending(keyCombo);
+            } else if (threeKeyPrefixPendingInfo.IsActive) {
+                clearThreeKeyPrefixPending("new combo does not keep prefix");
+            }
         }
 
         /// <summary>同時打鍵のチャレンジ列を作成する</summary>
