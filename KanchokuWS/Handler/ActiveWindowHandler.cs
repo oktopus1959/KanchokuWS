@@ -269,6 +269,7 @@ namespace KanchokuWS.Handler
                     //logger.Warn("LEAVE: In Progress");
                     // ビジーカウントをインクリメント
                     ++busyCount;
+                    if (bLog) logger.Info($"INCREMENT: busy count={busyCount}");
                     if (lastBusyDt._notValid()) {
                         // 初回のビジー
                         lastBusyDt = HRDateTime.Now;
@@ -287,6 +288,9 @@ namespace KanchokuWS.Handler
                         logger.Info("LEAVE: In Progress");
                     }
                     return;
+                } else {
+                    if (bLog) logger.Info($"RESET: busy count={busyCount}");
+                    busyCount = 0;
                 }
             }
 
