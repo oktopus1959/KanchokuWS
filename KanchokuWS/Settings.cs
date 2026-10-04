@@ -16,7 +16,7 @@ namespace KanchokuWS
 
         //-------------------------------------------------------------------------------------
         /// <summary> バージョン </summary>
-        public static string Version => "1.2.9.4";
+        public static string Version => "1.2.9.5";
         public static string Version2 => "";
 
         //-------------------------------------------------------------------------------------
