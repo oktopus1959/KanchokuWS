@@ -46,49 +46,44 @@ namespace KanchokuWS.CombinationKeyStroke
         }
 
         /// <summary>
-        /// 全体よりも長さの短いリストの順列置換されたキーのリストを返す<br/>
-        /// bUnordered=trueなら、順序固定で1つずつ短くした全ての組合せを返す
+        /// 全体よりも短い部分キーを順次返す<br/>
+        /// bUnordered=trueなら、元の順序を保つ全ての組合せを重複なく返す
         /// bUnordered=falseなら、順序固定で末尾から1つずつ短くしたものを返す
         /// </summary>
         /// <param name="keyList"></param>
         /// <returns></returns>
-        public static List<string> _makeSubKeys(this List<int> keyList, bool bUnordered)
+        public static IEnumerable<string> _makeSubKeys(this List<int> keyList, bool bUnordered)
         {
-            var result = new List<string>();
+            int count = keyList._safeCount();
             if (!bUnordered) {
                 // 順序固定で末尾から1つずつ短くしたものを採用
-                for (int len = keyList._safeCount() - 1; len >= 1; --len) {
-                    result.Add(keyList.Take(len)._keyString());
+                for (int len = count - 1; len >= 1; --len) {
+                    yield return keyList.Take(len)._keyString();
                 }
-            } else {
-                // 順序固定で1つずつ短くした全ての組合せを返す
-                if (keyList._safeCount() > 1) {
-                    // 長さが2以上になる組合せを登録
-                    addSubKeys(keyList, result);
-                    // 個々のキーを登録
-                    foreach (var k in keyList) {
-                        result.Add(k._keyString());
+            } else if (count > 1) {
+                var indices = new int[count - 1];
+                var seen = new HashSet<string>();
+                // 長い組合せから列挙し、同じキーコードによる重複も除く
+                for (int len = count - 1; len >= 1; --len) {
+                    foreach (var subkey in enumerateSubKeys(keyList, indices, len, 0, 0)) {
+                        if (seen.Add(subkey)) yield return subkey;
                     }
                 }
             }
-            return result;
         }
 
-        // keyListが3つ以上のキーを持つ場合に、その部分リスト集合を result に追加する
-        // bUnordered = true の時だけ呼ぶこと
-        private static void addSubKeys(List<int> keyList, List<string> result)
+        // 添字を昇順に選び、同じ部分集合を別の除去順から再生成しない
+        private static IEnumerable<string> enumerateSubKeys(List<int> keyList, int[] indices, int length, int depth, int start)
         {
-            if (keyList.Count > 3) {
-                for (int i = keyList.Count - 1; i >= 0; --i) {
-                    var subList = keyList.Take(i).ToList();
-                    if (i < keyList.Count - 1) subList.AddRange(keyList.Skip(i + 1));
-                    result.Add(subList._keyString());
-                    addSubKeys(subList, result);
+            for (int i = start; i <= keyList.Count - (length - depth); ++i) {
+                indices[depth] = i;
+                if (depth + 1 == length) {
+                    yield return indices.Take(length).Select(index => keyList[index])._keyString();
+                } else {
+                    foreach (var subkey in enumerateSubKeys(keyList, indices, length, depth + 1, i + 1)) {
+                        yield return subkey;
+                    }
                 }
-            } else if (keyList.Count == 3) {
-                result.Add(Helper.MakeList(keyList[0], keyList[1])._keyString());
-                result.Add(Helper.MakeList(keyList[0], keyList[2])._keyString());
-                result.Add(Helper.MakeList(keyList[1], keyList[2])._keyString());
             }
         }
 
